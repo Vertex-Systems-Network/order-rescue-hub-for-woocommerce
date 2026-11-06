@@ -12,9 +12,9 @@ final class Installer
 
     public static function maybe_upgrade(): void
     {
-        if ('1.0.0' !== get_option('wperh_schema_version')) {
+        if (version_compare((string) get_option('wperh_schema_version', '0.0.0'), '1.1.0', '<')) {
             self::upgrade_schema();
-            update_option('wperh_schema_version', '1.0.0', false);
+            update_option('wperh_schema_version', '1.1.0', false);
         }
     }
 
