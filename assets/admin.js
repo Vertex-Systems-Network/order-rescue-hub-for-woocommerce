@@ -220,6 +220,12 @@
                         h('option', { value: 'sla.breached' }, __('SLA is breached', 'wpessential-order-rescue-hub'))
                     )
                 ),
+                h('label', null, __('Only for case state (optional)', 'wpessential-order-rescue-hub'),
+                    h('select', { value: rule.case_state || '', onChange: function (event) { updateRule(index, 'case_state', event.target.value); } },
+                        h('option', { value: '' }, __('Any state', 'wpessential-order-rescue-hub')),
+                        ['open', 'triaged', 'assigned', 'waiting', 'escalated'].map(function (state) { return h('option', { key: state, value: state }, labelForState(state)); })
+                    )
+                ),
                 h('label', null, __('Only for reason (optional)', 'wpessential-order-rescue-hub'),
                     h('select', { value: rule.reason || '', onChange: function (event) { updateRule(index, 'reason', event.target.value); } },
                         h('option', { value: '' }, __('Any reason', 'wpessential-order-rescue-hub')),
@@ -525,7 +531,7 @@
                     h('input', { id: 'wperh-search', type: 'search', placeholder: __('e.g. 1042', 'wpessential-order-rescue-hub'), onChange: searchChanged }),
                     h('label', { htmlFor: 'wperh-state-filter' }, __('Case state', 'wpessential-order-rescue-hub')),
                     h('select', { id: 'wperh-state-filter', value: filters.state, onChange: function (event) { updateFilter('state', event.target.value); } },
-                        ['open', 'triaged', 'waiting', 'closed', 'all'].map(function (state) {
+                        ['open', 'triaged', 'assigned', 'waiting', 'escalated', 'closed', 'all'].map(function (state) {
                             return h('option', { key: state, value: state }, 'all' === state ? __('All states', 'wpessential-order-rescue-hub') : labelForState(state));
                         })
                     ),
