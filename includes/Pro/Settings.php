@@ -97,6 +97,10 @@ final class Settings
             if ('' === $name) {
                 continue;
             }
+            $case_state = sanitize_key((string) ($rule['case_state'] ?? ''));
+            if ('' !== $case_state && !in_array($case_state, array('open', 'triaged', 'assigned', 'waiting', 'escalated', 'closed'), true)) {
+                $case_state = '';
+            }
             if ('set_case_state' === $action && !in_array(($rule['value'] ?? ''), array('open', 'triaged', 'waiting'), true)) {
                 continue;
             }
@@ -113,6 +117,7 @@ final class Settings
                 'dry_run' => !array_key_exists('dry_run', $rule) || !empty($rule['dry_run']),
                 'trigger' => $trigger,
                 'reason' => sanitize_key((string) ($rule['reason'] ?? '')),
+                'case_state' => $case_state,
                 'min_age_hours' => min(2160, absint($rule['min_age_hours'] ?? 0)),
                 'action' => $action,
                 'value' => sanitize_text_field((string) ($rule['value'] ?? '')),
