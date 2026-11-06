@@ -22,7 +22,8 @@ final class CaseService
         }
 
         $note = trim(sanitize_textarea_field($raw_note));
-        $note_length = function_exists('mb_strlen') ? mb_strlen($note) : strlen($note);\n        if ('' === $note || $note_length > 2000) {
+        $note_length = function_exists('mb_strlen') ? mb_strlen($note) : strlen($note);
+        if ('' === $note || $note_length > 2000) {
             return new WP_Error('wperh_note_invalid', __('Enter a note of 1 to 2,000 characters.', 'wpessential-order-rescue-hub'), array('status' => 400));
         }
 
