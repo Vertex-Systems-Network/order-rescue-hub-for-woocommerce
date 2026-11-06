@@ -277,7 +277,7 @@
                 error ? h('div', { className: 'notice notice-error' }, h('p', null, error)) : null,
                 notice ? h('div', { className: 'notice notice-success' }, h('p', null, notice)) : null,
                 h('div', { className: 'wperh-filters' },
-                    h('label', { htmlFor: 'wperh-search' }, __('Search order number', 'wpessential-order-rescue-hub')),
+                    h('label', { htmlFor: 'wperh-search' }, __('Search order ID', 'wpessential-order-rescue-hub')),
                     h('input', { id: 'wperh-search', type: 'search', placeholder: __('e.g. 1042', 'wpessential-order-rescue-hub'), onChange: searchChanged }),
                     h('label', { htmlFor: 'wperh-state-filter' }, __('Case state', 'wpessential-order-rescue-hub')),
                     h('select', { id: 'wperh-state-filter', value: filters.state, onChange: function (event) { updateFilter('state', event.target.value); } },
