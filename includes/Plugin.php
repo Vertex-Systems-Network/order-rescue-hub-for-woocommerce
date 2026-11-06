@@ -45,7 +45,7 @@ final class Plugin
         (new Detector($repository))->register();
 
         if (defined('WPERH_PRO_EDITION') && true === WPERH_PRO_EDITION) {
-            (new \\WPEssential\\OrderRescueHub\\Pro\\Plugin($repository, $service))->register();
+            (new \WPEssential\OrderRescueHub\Pro\Plugin($repository, $service))->register();
         }
 
         add_action('admin_init', array(Installer::class, 'maybe_upgrade'));
