@@ -37,7 +37,7 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 | 2. Product and UX specification | Jobs-to-be-done, information architecture, React admin UI flows, accessibility requirements | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 3. Architecture and data flow | Case/event schema, detection flow, REST permissions, retention, failure handling, Composer PSR-4 autoloader design | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Planned | `░░░░░ 0%` | 2026-11-20 | 2026-11-23 |
-| 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled PSR-4 autoloader | Not started | `░░░░░ 0%` | 2026-11-24 | 2026-12-08 |
+| 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled Composer PSR-4 autoloader | Not started | `░░░░░ 0%` | 2026-11-24 | 2026-12-08 |
 | 6. Pro capabilities | Alerts, workflow rules, assignment, SLA controls, approvals | Not started | `░░░░░ 0%` | 2026-12-09 | 2026-12-22 |
 | 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | Not started | `░░░░░ 0%` | 2026-12-23 | 2027-01-08 |
 | 8. WordPress.org Free submission | GPL-compatible Free package, readme/assets, directory review submission and SVN release preparation | Not started | `░░░░░ 0%` | 2027-01-09 | 2027-01-22 |
@@ -67,9 +67,13 @@ Research is based on published listings and documentation, not hands-on plugin t
 
 ## Phase 2: product and UX specification
 
-**Status: complete (100%, 2026-11-06).** The React admin information architecture, inbox and case detail behavior, Free/Pro boundaries, workflow/assignment/SLA interaction, accessibility/localization requirements and UI states are specified in [docs/UX-SPECIFICATION.md](docs/UX-SPECIFICATION.md). Phase 3 remains planned. No UI or plugin code has been implemented.
+**Status: complete (100%, 2026-11-06).** The React admin information architecture, inbox and case detail behavior, Free/Pro boundaries, workflow/assignment/SLA interaction, accessibility/localization requirements and UI states are specified in [docs/UX-SPECIFICATION.md](docs/UX-SPECIFICATION.md). Phase 3 is complete and Phase 4 remains planned. No UI or plugin code has been implemented.
 
-## Phase 3: architecture and data flow\n\n**Status: complete (100%, 2026-11-06).** The case/event storage decision, WooCommerce detection and data flow, REST permission model, retention/privacy behavior, failure handling and Composer PSR-4 mapping are documented in [docs/ARCHITECTURE-DATA-FLOW.md](docs/ARCHITECTURE-DATA-FLOW.md) and [docs/ARCHITECTURE-DECISIONS.md](docs/ARCHITECTURE-DECISIONS.md). Phase 4 remains planned. No plugin code or runtime components have been built.\n\n## Unified options bank
+## Phase 3: architecture and data flow
+
+**Status: complete (100%, 2026-11-06).** The case/event storage decision, WooCommerce detection and data flow, REST permission model, retention/privacy behavior, failure handling and Composer PSR-4 mapping are documented in [docs/ARCHITECTURE-DATA-FLOW.md](docs/ARCHITECTURE-DATA-FLOW.md) and [docs/ARCHITECTURE-DECISIONS.md](docs/ARCHITECTURE-DECISIONS.md). Phase 4 remains planned. No plugin code or runtime components have been built.
+
+## Unified options bank
 
 Each capability has one canonical key. Filter controls, rule logic and delivery behavior belong inside the owning capability; they are not duplicate settings.
 
@@ -120,7 +124,7 @@ No CLI tasks or CLI work items are included before the plugin is final.
 ## Technical direction and constraints
 
 - **Admin UI:** React-based WordPress admin application, using WordPress-provided packages (`@wordpress/element`, `@wordpress/components` and related packages) and WordPress/WooCommerce design conventions. Ship compiled assets; do not load React from a public CDN. Final component and build approach is an architecture decision in Phase 3.
-- **PHP structure:** Use Composer PSR-4 mapping `WPEssential\\OrderRescueHub\\` to `src/`. The production package must include Composer's generated `vendor/autoload.php` and required runtime metadata; merchants must not need Composer installed. This requirement is architecture in Phase 3 and implementation acceptance in Phase 5. No CLI task is added before plugin finalization.
+- **PHP structure:** Use Composer PSR-4 mapping `WPEssential\OrderRescueHub\` to `src/`. The production package must include Composer's generated `vendor/autoload.php` and required runtime metadata; merchants must not need Composer installed. This requirement is architecture in Phase 3 and implementation acceptance in Phase 5. No CLI task is added before plugin finalization.
 - **Order access:** Use WooCommerce order CRUD/query APIs (`WC_Order`, `wc_get_order`, `wc_get_orders` / `WC_Order_Query`) and declare HPOS compatibility only after tests. Do not directly query or mutate `posts`, `postmeta`, or WooCommerce order tables for order data.
 - **Integration boundary:** The add-on should detect WooCommerce availability, fail gracefully when dependencies are missing, and keep the WPEssential suite relationship optional unless a concrete shared-core dependency is justified.
 - **CLI deferral:** Do not create, schedule, implement, or run any CLI-related task before the plugin is final. Do not add WP-CLI commands or CLI-only merchant setup. Revisit CLI work only after finalization.
