@@ -22,11 +22,24 @@ final class WorkflowEngine
     {
         add_action('wperh_case_detected', array($this, 'on_case_detected'), 20);
         add_action('wperh_sla_event', array($this, 'on_sla_event'), 20, 2);
+        add_action('wperh_exception_sweep', array($this, 'on_scheduled_sweep'), 30);
     }
 
     public function on_case_detected(array $case): void
     {
         $this->run_for('case.opened', $case);
+    }
+
+    public function on_scheduled_sweep(): void
+    {
+        $page = 1;
+        do {
+            $batch = $this->repository->list(array('state' => 'all', 'page' => $page, 'per_page' => 100));
+            foreach ($batch['items'] as $case) {
+                $this->run_for('case.age_check', $case);
+            }
+            $page++;
+        } while ($page <= min((int) $batch['total_pages'], 10));
     }
 
     public function on_sla_event(array $case, string $event): void
