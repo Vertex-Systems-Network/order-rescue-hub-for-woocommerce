@@ -60,6 +60,7 @@ final class Settings
         $pause_input = is_array($input['pause_states'] ?? null) ? $input['pause_states'] : array('waiting');
         $pause_states = array_values(array_intersect(array_map(static function ($state): string { return is_scalar($state) ? sanitize_key((string) $state) : ''; }, $pause_input), array('waiting')));
 
+        $rules = self::version_rules(self::sanitize_rules(is_array($input['rules'] ?? null) ? $input['rules'] : array()), self::get()['rules']);
         $settings = array(
             'alerts_enabled' => !empty($input['alerts_enabled']),
             'recipients' => array_slice($recipients, 0, 20),
@@ -75,7 +76,7 @@ final class Settings
             'pause_states' => $pause_states,
             'require_approval_for_order_actions' => true,
             'order_action_execution_enabled' => false,
-            'rules' => self::sanitize_rules((array) ($input['rules'] ?? array())),
+            'rules' => $rules,
         );
 
         if ($settings['work_start'] >= $settings['work_end']) {
@@ -85,6 +86,28 @@ final class Settings
 
         update_option(self::OPTION, $settings, false);
         return $settings;
+    }
+
+    private static function version_rules(array $rules, array $existing): array
+    {
+        $existing_by_id = array();
+        foreach ($existing as $old_rule) {
+            $existing_by_id[$old_rule['id']] = $old_rule;
+        }
+        foreach ($rules as &$rule) {
+            if (!isset($existing_by_id[$rule['id']])) {
+                continue;
+            }
+            $old = $existing_by_id[$rule['id']];
+            $old_config = $old;
+            $new_config = $rule;
+            unset($old_config['version'], $new_config['version']);
+            $rule['version'] = $old_config === $new_config
+                ? (int) $old['version']
+                : max((int) $old['version'] + 1, (int) $rule['version']);
+        }
+        unset($rule);
+        return $rules;
     }
 
     public static function sanitize_rules(array $rules): array
