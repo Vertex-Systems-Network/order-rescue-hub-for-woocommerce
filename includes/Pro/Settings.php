@@ -21,6 +21,8 @@ final class Settings
             'workdays' => array(1, 2, 3, 4, 5),
             'holidays' => array(),
             'pause_states' => array('waiting'),
+            'require_approval_for_order_actions' => true,
+            'order_action_execution_enabled' => false,
             'rules' => array(),
         );
     }
@@ -78,7 +80,7 @@ final class Settings
     public static function sanitize_rules(array $rules): array
     {
         $clean = array();
-        $allowed_triggers = array('case.opened', 'sla.warning', 'sla.breached');
+        $allowed_triggers = array('case.opened', 'case.age_check', 'sla.warning', 'sla.breached');
         $allowed_actions = array('set_priority', 'assign_case', 'set_case_state', 'admin_alert');
         foreach (array_slice($rules, 0, 20) as $rule) {
             if (!is_array($rule)) {
@@ -89,9 +91,22 @@ final class Settings
             if (!in_array($trigger, $allowed_triggers, true) || !in_array($action, $allowed_actions, true)) {
                 continue;
             }
+            $name = sanitize_text_field((string) ($rule['name'] ?? ''));
+            if ('' === $name) {
+                continue;
+            }
+            if ('set_case_state' === $action && !in_array(($rule['value'] ?? ''), array('open', 'triaged', 'waiting'), true)) {
+                continue;
+            }
+            if ('set_priority' === $action && (absint($rule['value'] ?? 0) < 1 || absint($rule['value'] ?? 0) > 100)) {
+                continue;
+            }
+            if ('assign_case' === $action && absint($rule['value'] ?? 0) < 1) {
+                continue;
+            }
             $clean[] = array(
                 'id' => sanitize_key((string) ($rule['id'] ?? wp_generate_uuid4())),
-                'name' => sanitize_text_field((string) ($rule['name'] ?? '')),
+                'name' => $name,
                 'enabled' => !empty($rule['enabled']),
                 'dry_run' => !array_key_exists('dry_run', $rule) || !empty($rule['dry_run']),
                 'trigger' => $trigger,
