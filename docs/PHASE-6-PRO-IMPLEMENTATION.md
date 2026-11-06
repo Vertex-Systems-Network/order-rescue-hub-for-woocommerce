@@ -18,7 +18,7 @@
 ## Data and capability changes
 
 - Hub schema version is now `1.1.0`, adding nullable case owner, response/resolution due timestamps, first-response timestamp, SLA state, and pause timestamp with queue indexes. `dbDelta()` migration runs when the saved schema version differs.
-- New REST routes are under `wperh/v1/pro/` and `wperh/v1/cases/{id}/assignment`; settings require `manage_woocommerce`, case operations require order-management capability, and assignment verifies the target user's `edit_shop_orders` capability.
+- New REST routes are under `wperh/v1/pro/` and `wperh/v1/cases/{id}/assignment`; settings and the global case inbox require `manage_woocommerce`; assignment targets must have both `manage_woocommerce` and `edit_shop_orders`. Assignment does not grant order access, and order-specific detail routes continue to check the current user's per-order capability.
 - Alerts contain case/order IDs and an admin link only. Customer addresses, email addresses, payment tokens, and gateway payloads are not copied into Pro event records.
 
 ## Pro boundary and current limitations
