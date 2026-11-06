@@ -34,6 +34,10 @@ if (is_readable($wperh_autoloader)) {
 
 register_activation_hook(__FILE__, array(\WPEssential\OrderRescueHub\Database\Installer::class, 'install'));
 
-register_deactivation_hook(__FILE__, static function () {\n    wp_clear_scheduled_hook('wperh_exception_sweep');\n});\n\nadd_action('plugins_loaded', static function () {
+register_deactivation_hook(__FILE__, static function () {
+    wp_clear_scheduled_hook('wperh_exception_sweep');
+});
+
+add_action('plugins_loaded', static function () {
     \WPEssential\OrderRescueHub\Plugin::instance()->boot();
 }, 20);
