@@ -8,7 +8,7 @@
 
 ## Product rules
 
-- This is a WPEssential add-on for WooCommerce, planned as an exception and resolution workspace.
+- This is a WPEssential add-on for WooCommerce, implemented as an exception and resolution workspace; read README and phase reports for current development and release status.
 - Keep order data access on WooCommerce CRUD/query APIs and design for HPOS.
 - Use React for the WordPress admin interface. Prefer WordPress-provided packages and patterns; bundle production assets and do not fetch React from a CDN.
 - Use Composer PSR-4 mapping WPEssential\OrderRescueHub\ to includes/ for plugin PHP classes; the bootstrap directly loads Composer's generated vendor/autoload.php. Composer is the only class loader; do not add a handwritten SPL loader or per-class include list. Ship required generated metadata; the merchant must not need Composer installed.
@@ -16,6 +16,7 @@
 - Payment capture, refunds, cancellations, and payment-implying status changes are sensitive. Never execute silently. Require fresh state checks, capabilities, nonce validation, explicit human approval, idempotency, and audit events if the feature is approved at all.
 - Keep external requests, telemetry, customer messages, and licensing services opt-in and separately reviewed.
 - Treat WPML and Polylang compatibility as requirements to test, not as a claim to make without evidence.
+- Pro source is gated by the paid build flag and is not license validation. Keep high-impact order actions unavailable until a separate approval design is reviewed and implemented.
 
 ## Change discipline
 
