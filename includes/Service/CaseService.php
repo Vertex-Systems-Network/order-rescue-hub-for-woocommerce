@@ -31,6 +31,7 @@ final class CaseService
             return new WP_Error('wperh_note_failed', __('The private note could not be saved.', 'wpessential-order-rescue-hub'), array('status' => 500));
         }
 
+        do_action('wperh_case_note_added', $case_id);
         return true;
     }
 
