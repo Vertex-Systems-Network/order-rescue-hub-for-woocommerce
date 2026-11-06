@@ -46,12 +46,17 @@ final class Settings
         $workdays = array_values(array_unique(array_filter(array_map(static function ($day): int { return is_scalar($day) ? absint($day) : 0; }, $workdays_input), static function (int $day): bool {
             return $day >= 1 && $day <= 7;
         })));
-        $holidays = array_values(array_unique(array_filter(array_map('sanitize_text_field', (array) ($input['holidays'] ?? array())), static function (string $date): bool {
-            $parsed = \DateTimeImmutable::createFromFormat('!Y-m-d', $date);
-            return $parsed && $parsed->format('Y-m-d') === $date;
+        $holidays_input = is_array($input['holidays'] ?? null) ? $input['holidays'] : array();
+        $holidays = array_values(array_unique(array_filter(array_map(static function ($date): string { return is_scalar($date) ? sanitize_text_field((string) $date) : ''; }, $holidays_input), static function (string $date): bool {
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+                return false;
+            }
+            $parts = array_map('intval', explode('-', $date));
+            return checkdate($parts[1], $parts[2], $parts[0]);
         })));
         $recipients_input = is_array($input['recipients'] ?? null) ? $input['recipients'] : array();
         $recipients = array_values(array_unique(array_filter(array_map(static function ($email): string { return is_scalar($email) ? sanitize_email((string) $email) : ''; }, $recipients_input), 'is_email')));
+        $clock_mode = self::text($input['clock_mode'] ?? 'calendar');
         $pause_input = is_array($input['pause_states'] ?? null) ? $input['pause_states'] : array('waiting');
         $pause_states = array_values(array_intersect(array_map(static function ($state): string { return is_scalar($state) ? sanitize_key((string) $state) : ''; }, $pause_input), array('waiting')));
 
@@ -61,7 +66,7 @@ final class Settings
             'response_hours' => min(720, max(1, absint($input['response_hours'] ?? 4))),
             'resolution_hours' => min(2160, max(1, absint($input['resolution_hours'] ?? 24))),
             'warning_percent' => min(95, max(25, absint($input['warning_percent'] ?? 75))),
-            'clock_mode' => in_array(($input['clock_mode'] ?? 'calendar'), array('calendar', 'business'), true) ? $input['clock_mode'] : 'calendar',
+            'clock_mode' => in_array($clock_mode, array('calendar', 'business'), true) ? $clock_mode : 'calendar',
             'timezone' => $timezone,
             'work_start' => self::valid_time($input['work_start'] ?? '09:00', '09:00'),
             'work_end' => self::valid_time($input['work_end'] ?? '17:00', '17:00'),
@@ -108,24 +113,24 @@ final class Settings
             if ('set_case_state' === $action && !in_array($value, array('open', 'triaged', 'waiting'), true)) {
                 continue;
             }
-            if ('set_priority' === $action && (absint($rule['value'] ?? 0) < 1 || absint($rule['value'] ?? 0) > 100)) {
+            if ('set_priority' === $action && (!is_scalar($rule['value'] ?? null) || absint($rule['value']) < 1 || absint($rule['value']) > 100)) {
                 continue;
             }
-            if ('assign_case' === $action && absint($rule['value'] ?? 0) < 1) {
+            if ('assign_case' === $action && (!is_scalar($rule['value'] ?? null) || absint($rule['value']) < 1)) {
                 continue;
             }
             $clean[] = array(
-                'id' => sanitize_key((string) ($rule['id'] ?? wp_generate_uuid4())),
+                'id' => is_scalar($rule['id'] ?? null) ? sanitize_key((string) $rule['id']) : sanitize_key(wp_generate_uuid4()),
                 'name' => $name,
                 'enabled' => !empty($rule['enabled']),
                 'dry_run' => !array_key_exists('dry_run', $rule) || !empty($rule['dry_run']),
                 'trigger' => $trigger,
                 'reason' => is_scalar($rule['reason'] ?? null) ? sanitize_key((string) $rule['reason']) : '',
                 'case_state' => $case_state,
-                'min_age_hours' => min(2160, absint($rule['min_age_hours'] ?? 0)),
+                'min_age_hours' => min(2160, is_scalar($rule['min_age_hours'] ?? null) ? absint($rule['min_age_hours']) : 0),
                 'action' => $action,
                 'value' => $value,
-                'version' => max(1, absint($rule['version'] ?? 1)),
+                'version' => max(1, is_scalar($rule['version'] ?? null) ? absint($rule['version']) : 1),
             );
         }
         return $clean;
