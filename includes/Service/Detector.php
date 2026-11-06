@@ -19,7 +19,13 @@ final class Detector
         add_action('woocommerce_new_order', array($this, 'on_order_change'), 20, 1);
         add_action('woocommerce_update_order', array($this, 'on_order_change'), 20, 1);
         add_action('woocommerce_order_status_changed', array($this, 'on_order_change'), 20, 1);
-        add_action('woocommerce_reduce_order_stock', array($this, 'on_order_object'), 20, 1);\n        add_filter('cron_schedules', array($this, 'add_schedule'));\n        add_action('wperh_exception_sweep', array($this, 'sweep'));\n\n        if (!wp_next_scheduled('wperh_exception_sweep')) {\n            wp_schedule_event(time() + 900, 'wperh_fifteen_minutes', 'wperh_exception_sweep');\n        }
+        add_action('woocommerce_reduce_order_stock', array($this, 'on_order_object'), 20, 1);
+        add_filter('cron_schedules', array($this, 'add_schedule'));
+        add_action('wperh_exception_sweep', array($this, 'sweep'));
+
+        if (!wp_next_scheduled('wperh_exception_sweep')) {
+            wp_schedule_event(time() + 900, 'wperh_fifteen_minutes', 'wperh_exception_sweep');
+        }
     }
 
     public function on_order_change($order_id): void
@@ -34,7 +40,52 @@ final class Detector
         }
     }
 
-    public function add_schedule(array $schedules): array\n    {\n        if (!isset($schedules['wperh_fifteen_minutes'])) {\n            $schedules['wperh_fifteen_minutes'] = array(\n                'interval' => 15 * MINUTE_IN_SECONDS,\n                'display' => __('Every 15 minutes (Order Rescue Hub)', 'wpessential-order-rescue-hub'),\n            );\n        }\n        return $schedules;\n    }\n\n    public function sweep(): void\n    {\n        $now = time();\n        $lock = (int) get_option('wperh_sweep_lock', 0);\n        if ($lock && ($now - $lock) < 600) {\n            return;\n        }\n        if ($lock) {\n            delete_option('wperh_sweep_lock');\n        }\n        if (!add_option('wperh_sweep_lock', $now, '', false)) {\n            return;\n        }\n\n        try {\n            $page = max(1, (int) get_option('wperh_sweep_page', 1));\n            $order_ids = wc_get_orders(array(\n                'status' => array('pending', 'processing', 'failed'),\n                'date_created' => '<=' . ($now - HOUR_IN_SECONDS),\n                'limit' => 100,\n                'page' => $page,\n                'orderby' => 'date',\n                'order' => 'ASC',\n                'return' => 'ids',\n            ));\n            foreach ($order_ids as $order_id) {\n                $this->evaluate((int) $order_id);\n            }\n            update_option('wperh_sweep_page', count($order_ids) >= 100 ? $page + 1 : 1, false);\n        } finally {\n            delete_option('wperh_sweep_lock');\n        }\n    }\n\n    public function evaluate(int $order_id): void
+    public function add_schedule(array $schedules): array
+    {
+        if (!isset($schedules['wperh_fifteen_minutes'])) {
+            $schedules['wperh_fifteen_minutes'] = array(
+                'interval' => 15 * MINUTE_IN_SECONDS,
+                'display' => __('Every 15 minutes (Order Rescue Hub)', 'wpessential-order-rescue-hub'),
+            );
+        }
+        return $schedules;
+    }
+
+    public function sweep(): void
+    {
+        $now = time();
+        $lock = (int) get_option('wperh_sweep_lock', 0);
+        if ($lock && ($now - $lock) < 600) {
+            return;
+        }
+        if ($lock) {
+            delete_option('wperh_sweep_lock');
+        }
+        if (!add_option('wperh_sweep_lock', $now, '', false)) {
+            return;
+        }
+
+        try {
+            $page = max(1, (int) get_option('wperh_sweep_page', 1));
+            $order_ids = wc_get_orders(array(
+                'status' => array('pending', 'processing', 'failed'),
+                'date_created' => '<=' . ($now - HOUR_IN_SECONDS),
+                'limit' => 100,
+                'page' => $page,
+                'orderby' => 'date',
+                'order' => 'ASC',
+                'return' => 'ids',
+            ));
+            foreach ($order_ids as $order_id) {
+                $this->evaluate((int) $order_id);
+            }
+            update_option('wperh_sweep_page', count($order_ids) >= 100 ? $page + 1 : 1, false);
+        } finally {
+            delete_option('wperh_sweep_lock');
+        }
+    }
+
+    public function evaluate(int $order_id): void
     {
         if ($order_id < 1 || !function_exists('wc_get_order')) {
             return;
