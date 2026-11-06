@@ -71,7 +71,7 @@ final class CaseRepository
         $offset = ($page - 1) * $per_page;
 
         $count_sql = "SELECT COUNT(*) FROM {$this->cases} WHERE {$where_sql}";
-        $query_sql = "SELECT case_id, order_id, state, reason_codes, evidence, priority, first_detected_at, last_detected_at, created_at, updated_at, closed_at, outcome, episode, row_version FROM {$this->cases} WHERE {$where_sql} ORDER BY priority ASC, first_detected_at ASC LIMIT %d OFFSET %d";
+        $query_sql = "SELECT case_id, order_id, state, reason_codes, evidence, priority, first_detected_at, last_detected_at, created_at, updated_at, closed_at, outcome, episode, row_version, assignee_id, sla_response_due_at, sla_resolution_due_at, sla_state, sla_paused_at FROM {$this->cases} WHERE {$where_sql} ORDER BY priority ASC, first_detected_at ASC LIMIT %d OFFSET %d";
 
         $count = (int) $wpdb->get_var($values ? $wpdb->prepare($count_sql, $values) : $count_sql);
         $query_values = array_merge($values, array($per_page, $offset));
@@ -205,6 +205,17 @@ final class CaseRepository
         return true;
     }
 
+    public function has_event(string $idempotency_key): bool
+    {
+        global $wpdb;
+        return (bool) $wpdb->get_var($wpdb->prepare("SELECT event_id FROM {$this->events} WHERE idempotency_key = %s LIMIT 1", substr($idempotency_key, 0, 64)));
+    }
+
+    public function record_event(int $case_id, string $event_type, array $payload, ?int $actor_id, string $idempotency_key): bool
+    {
+        return $this->add_event($case_id, $event_type, $payload, $actor_id, $idempotency_key);
+    }
+
     public function add_note(int $case_id, string $note): bool
     {
         $event_key = hash('sha256', $case_id . ':note:' . wp_generate_uuid4());
@@ -237,6 +248,7 @@ final class CaseRepository
         $row['priority'] = (int) $row['priority'];
         $row['episode'] = (int) $row['episode'];
         $row['row_version'] = (int) $row['row_version'];
+        $row['assignee_id'] = $row['assignee_id'] === null ? null : (int) $row['assignee_id'];
         $row['reason_codes'] = json_decode((string) $row['reason_codes'], true) ?: array();
         $row['evidence'] = json_decode((string) $row['evidence'], true) ?: array();
         return $row;
