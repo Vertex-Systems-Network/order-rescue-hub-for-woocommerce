@@ -14,7 +14,7 @@ All assistants must follow `AGENTS.md` and README first. The backlog is tool-agn
 | AI-06 | Pre-development | MVP tickets and Definition of Done | Small ordered backlog with acceptance criteria and dependencies |
 | AI-07 | Implementation | Free MVP | Code, reproducible verification evidence, updated status log |
 | AI-08 | Pro | Alerts, assignment, workflows, SLA | Opt-in controls, dry-run, audit, failure/retry and pricing validation |
-| AI-09 | Release | Compatibility and distribution package | HPOS, WPML, Polylang, security, performance, support, documentation evidence |
+| AI-09 | Release | WordPress.org Free submission package and WooCommerce.com paid Pro submission package, tracked as separate review gates | Directory ZIP/readme/GPL/security evidence; vendor approval, billing model, QIT/UX/accessibility/compatibility evidence; reviewer feedback closed for each channel |
 
 ## Standard handoff prompt
 
