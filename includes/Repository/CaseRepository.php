@@ -165,6 +165,10 @@ final class CaseRepository
         }
 
         $was_closed = 'closed' === $existing['state'];
+        $dismissed_outcomes = array('dismissed', 'duplicate', 'no_action_required');
+        if ($was_closed && in_array($existing['outcome'], $dismissed_outcomes, true) && $reason_codes === $existing['reason_codes']) {
+            return $existing;
+        }
         if (!$was_closed && $reason_codes === $existing['reason_codes'] && $evidence === $existing['evidence']) {
             return $existing;
         }
@@ -212,7 +216,13 @@ final class CaseRepository
     public function resolve_if_clear(int $order_id): void
     {
         $case = $this->find_by_order($order_id);
-        if (!$case || 'closed' === $case['state']) {
+        if (!$case) {
+            return;
+        }
+        if ('closed' === $case['state']) {
+            if ($case['reason_codes']) {
+                $this->update_case($case, array('reason_codes' => wp_json_encode(array())), 'case_exceptions_cleared', array('reason' => 'no_active_exception'));
+            }
             return;
         }
         $now = gmdate('Y-m-d H:i:s');
@@ -223,7 +233,7 @@ final class CaseRepository
             array('reason' => 'no_active_exception')
         );
         if ($updated) {
-            do_action('wperh_case_transitioned', $order_id === (int) $case['order_id'] ? (int) $case['case_id'] : 0, 'closed');
+            do_action('wperh_case_transitioned', (int) $case['case_id'], 'closed');
         }
     }
 
