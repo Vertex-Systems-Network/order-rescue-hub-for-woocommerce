@@ -34,10 +34,10 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 |---|---|---:|---|---|---|
 | 0. Product framing | Problem, audience, boundaries, free/pro hypothesis | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 1. Market and requirements | Competitor map, canonical option/system banks, product gap, version baseline and distribution requirements | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
-| 2. Product and UX specification | Jobs-to-be-done, information architecture, React admin UI flows, accessibility requirements | Planned | `░░░░░ 0%` | 2026-11-11 | 2026-11-14 |
-| 3. Architecture and data flow | Storage model, event lifecycle, permissions, retention, failure handling | Planned | `░░░░░ 0%` | 2026-11-15 | 2026-11-19 |
+| 2. Product and UX specification | Jobs-to-be-done, information architecture, React admin UI flows, accessibility requirements | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
+| 3. Architecture and data flow | Storage model, event lifecycle, permissions, retention, failure handling, PSR-4 namespace/autoloader design | Planned | `░░░░░ 0%` | 2026-11-15 | 2026-11-19 |
 | 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Planned | `░░░░░ 0%` | 2026-11-20 | 2026-11-23 |
-| 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI | Not started | `░░░░░ 0%` | 2026-11-24 | 2026-12-08 |
+| 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled PSR-4 autoloader | Not started | `░░░░░ 0%` | 2026-11-24 | 2026-12-08 |
 | 6. Pro capabilities | Alerts, workflow rules, assignment, SLA controls, approvals | Not started | `░░░░░ 0%` | 2026-12-09 | 2026-12-22 |
 | 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | Not started | `░░░░░ 0%` | 2026-12-23 | 2027-01-08 |
 | 8. WordPress.org Free submission | GPL-compatible Free package, readme/assets, directory review submission and SVN release preparation | Not started | `░░░░░ 0%` | 2027-01-09 | 2027-01-22 |
@@ -65,7 +65,7 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 
 Research is based on published listings and documentation, not hands-on plugin testing. The proposed $99/year remains unvalidated with customers.
 
-## Unified options bank
+## Phase 2: product and UX specification\n\n**Status: complete (100%, 2026-11-06).** The React admin information architecture, inbox and case detail behavior, Free/Pro boundaries, workflow/assignment/SLA interaction, accessibility/localization requirements and UI states are specified in [docs/UX-SPECIFICATION.md](docs/UX-SPECIFICATION.md). Phase 3 remains planned. No UI or plugin code has been implemented.\n\n## Unified options bank
 
 Each capability has one canonical key. Filter controls, rule logic and delivery behavior belong inside the owning capability; they are not duplicate settings.
 
@@ -115,7 +115,7 @@ No CLI tasks or CLI work items are included before the plugin is final.
 
 ## Technical direction and constraints
 
-- **Admin UI:** React-based WordPress admin application, using WordPress-provided packages (`@wordpress/element` and related packages) and WordPress design conventions. Ship compiled assets; do not load React from a public CDN. Final component and build approach is an architecture decision in Phase 3.
+- **Admin UI:** React-based WordPress admin application, using WordPress-provided packages (`@wordpress/element`, `@wordpress/components` and related packages) and WordPress/WooCommerce design conventions. Ship compiled assets; do not load React from a public CDN. Final component and build approach is an architecture decision in Phase 3.\n- **PHP structure:** Implement a PSR-4 autoloader for plugin PHP classes. Phase 3 will finalize the namespace root, directory mapping and runtime loading approach; Phase 5 acceptance requires the shipped plugin to load namespaced classes through that autoloader. This is a PHP runtime requirement, not a CLI work item.
 - **Order access:** Use WooCommerce order CRUD/query APIs (`WC_Order`, `wc_get_order`, `wc_get_orders` / `WC_Order_Query`) and declare HPOS compatibility only after tests. Do not directly query or mutate `posts`, `postmeta`, or WooCommerce order tables for order data.
 - **Integration boundary:** The add-on should detect WooCommerce availability, fail gracefully when dependencies are missing, and keep the WPEssential suite relationship optional unless a concrete shared-core dependency is justified.
 - **CLI deferral:** Do not create, schedule, implement, or run any CLI-related task before the plugin is final. Do not add WP-CLI commands or CLI-only merchant setup. Revisit CLI work only after finalization.
