@@ -111,6 +111,9 @@ final class WorkflowEngine
 
     private function matches(array $rule, array $case): bool
     {
+        if (!empty($rule['case_state']) && $rule['case_state'] !== $case['state']) {
+            return false;
+        }
         if (!empty($rule['reason']) && !in_array($rule['reason'], $case['reason_codes'], true)) {
             return false;
         }
@@ -138,6 +141,10 @@ final class WorkflowEngine
                 return is_wp_error($result) ? 'failed' : 'applied';
 
             case 'admin_alert':
+                $settings = Settings::get();
+                if (empty($settings['alerts_enabled']) || empty($settings['recipients'])) {
+                    return 'skipped';
+                }
                 do_action('wperh_send_admin_alert', $case, 'workflow.' . $rule['id']);
                 return 'queued';
         }
