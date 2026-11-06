@@ -39,3 +39,16 @@
 - Clarified the WooCommerce trademark naming rule: keep WPEssential Order Rescue Hub distinctive and use “for WooCommerce” only as a compatibility descriptor; retain the requested repository slug separately.
 - Updated the README Marketplace row to show the PHP 7.4 policy conflict alongside the PHP 8.3+ product target, so the release gate is visible in the phase summary.
 - **Phase status remains:** Complete, 100%. No CLI work item was added. No code or tests were run.
+
+
+
+## 2026-11-06 — Phase 2 completed
+
+- **Phase:** 2 — Product and UX specification (**Complete, 100%**). Phase 3 remains planned.
+- **Completed:** Added `docs/UX-SPECIFICATION.md` with user/jobs, information architecture, exception inbox and case-detail requirements, canonical case states, Pro workflows/assignment/SLA, settings-to-option-bank mapping, React design direction, error/loading/empty states, accessibility, localization, RTL and responsive behavior.
+- **Safety and scope:** Kept case state separate from WooCommerce order status; private notes are explicitly internal; MVP excludes payment capture/refund/cancel controls and customer communication; no new option key or CLI task was added.
+- **PSR-4:** Added the required PSR-4 PHP runtime autoloader to README, architecture decisions, AI handoff acceptance and repository instructions. Phase 3 must settle namespace root, mapping and loading method; implementation belongs to Phase 5 and must ship without a merchant-run CLI requirement.
+- **Research reviewed:** Official WooCommerce extension UX/settings guidance, WordPress Components reference, WordPress admin-menu guidance and WordPress accessibility standards (WCAG 2.2 AA), checked 2026-11-06.
+- **Verification:** Re-read the current repository planning files, reviewed official UX/accessibility references, and verified GitHub content writes. Documentation/research verification only. No React UI, PHP code, CLI task, automated test, compatibility test or live-store action was performed.
+- **Evidence:** `docs/UX-SPECIFICATION.md`, updated README phase table, `docs/ARCHITECTURE-DECISIONS.md`, `docs/AI-PLAN.md` and `AGENTS.md`.
+- **Open for Phase 3:** Data ownership/schema, event lifecycle/idempotency, capability matrix, retention/migration, concrete WordPress/WooCommerce UI components, PSR-4 namespace root/mapping, and runtime autoloader implementation approach.
