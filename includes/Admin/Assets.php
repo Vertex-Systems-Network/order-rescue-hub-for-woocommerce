@@ -36,7 +36,6 @@ final class Assets
             'apiRoot' => esc_url_raw(rest_url('wperh/v1/')),
             'pageSize' => 25,
             'timezone' => wp_timezone_string(),
-            'timezone' => wp_timezone_string(),
         ));
     }
 }
