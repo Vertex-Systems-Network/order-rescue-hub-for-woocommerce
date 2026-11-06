@@ -166,7 +166,7 @@ final class CasesController
             'status' => sanitize_key($order->get_status()),
             'date' => $order->get_date_created() ? $order->get_date_created()->date_i18n('Y-m-d H:i') : '',
             'payment_method' => sanitize_text_field($order->get_payment_method_title()),
-            'total' => wc_price($order->get_total(), array('currency' => $order->get_currency())),
+            'total' => (string) wc_format_localized_price($order->get_total()),\n            'currency' => sanitize_text_field($order->get_currency()),
             'shipping_missing' => $shipping_missing,
             'items' => $items,
         );
