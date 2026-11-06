@@ -209,7 +209,7 @@
                     h('dt', null, __('Payment method', 'wpessential-order-rescue-hub')),
                     h('dd', null, selected.order.payment_method || '—'),
                     h('dt', null, __('Order total', 'wpessential-order-rescue-hub')),
-                    h('dd', { dangerouslySetInnerHTML: { __html: selected.order.total } }),
+                    h('dd', null, selected.order.total + ' ' + selected.order.currency),
                     h('dt', null, __('Shipping details', 'wpessential-order-rescue-hub')),
                     h('dd', null, selected.order.shipping_missing ? __('Incomplete', 'wpessential-order-rescue-hub') : __('Available or not required', 'wpessential-order-rescue-hub')),
                     h('dt', null, __('Created', 'wpessential-order-rescue-hub')),
