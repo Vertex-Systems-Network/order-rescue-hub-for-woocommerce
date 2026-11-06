@@ -65,7 +65,11 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 
 Research is based on published listings and documentation, not hands-on plugin testing. The proposed $99/year remains unvalidated with customers.
 
-## Phase 2: product and UX specification\n\n**Status: complete (100%, 2026-11-06).** The React admin information architecture, inbox and case detail behavior, Free/Pro boundaries, workflow/assignment/SLA interaction, accessibility/localization requirements and UI states are specified in [docs/UX-SPECIFICATION.md](docs/UX-SPECIFICATION.md). Phase 3 remains planned. No UI or plugin code has been implemented.\n\n## Unified options bank
+## Phase 2: product and UX specification
+
+**Status: complete (100%, 2026-11-06).** The React admin information architecture, inbox and case detail behavior, Free/Pro boundaries, workflow/assignment/SLA interaction, accessibility/localization requirements and UI states are specified in [docs/UX-SPECIFICATION.md](docs/UX-SPECIFICATION.md). Phase 3 remains planned. No UI or plugin code has been implemented.
+
+## Unified options bank
 
 Each capability has one canonical key. Filter controls, rule logic and delivery behavior belong inside the owning capability; they are not duplicate settings.
 
@@ -115,7 +119,8 @@ No CLI tasks or CLI work items are included before the plugin is final.
 
 ## Technical direction and constraints
 
-- **Admin UI:** React-based WordPress admin application, using WordPress-provided packages (`@wordpress/element`, `@wordpress/components` and related packages) and WordPress/WooCommerce design conventions. Ship compiled assets; do not load React from a public CDN. Final component and build approach is an architecture decision in Phase 3.\n- **PHP structure:** Implement a PSR-4 autoloader for plugin PHP classes. Phase 3 will finalize the namespace root, directory mapping and runtime loading approach; Phase 5 acceptance requires the shipped plugin to load namespaced classes through that autoloader. This is a PHP runtime requirement, not a CLI work item.
+- **Admin UI:** React-based WordPress admin application, using WordPress-provided packages (`@wordpress/element`, `@wordpress/components` and related packages) and WordPress/WooCommerce design conventions. Ship compiled assets; do not load React from a public CDN. Final component and build approach is an architecture decision in Phase 3.
+- **PHP structure:** Implement a PSR-4 autoloader for plugin PHP classes. Phase 3 will finalize the namespace root, directory mapping and runtime loading approach; Phase 5 acceptance requires the shipped plugin to load namespaced classes through that autoloader. This is a PHP runtime requirement, not a CLI work item.
 - **Order access:** Use WooCommerce order CRUD/query APIs (`WC_Order`, `wc_get_order`, `wc_get_orders` / `WC_Order_Query`) and declare HPOS compatibility only after tests. Do not directly query or mutate `posts`, `postmeta`, or WooCommerce order tables for order data.
 - **Integration boundary:** The add-on should detect WooCommerce availability, fail gracefully when dependencies are missing, and keep the WPEssential suite relationship optional unless a concrete shared-core dependency is justified.
 - **CLI deferral:** Do not create, schedule, implement, or run any CLI-related task before the plugin is final. Do not add WP-CLI commands or CLI-only merchant setup. Revisit CLI work only after finalization.
