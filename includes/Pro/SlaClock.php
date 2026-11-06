@@ -43,7 +43,17 @@ final class SlaClock
             return;
         }
         $now = gmdate('Y-m-d H:i:s');
-        $this->repository->update_case($case, array('sla_response_met_at' => $now), 'sla_response_met', array('source' => 'private_note'));
+        if ($this->repository->update_case($case, array('sla_response_met_at' => $now), 'sla_response_met', array('source' => 'private_note'))) {
+            $this->evaluate($this->repository->find($case_id));
+        }
+    }
+
+    public function on_case_transitioned(int $case_id, string $state): void
+    {
+        $case = $this->repository->find($case_id);
+        if ($case) {
+            $this->evaluate($case);
+        }
     }
 
     public function evaluate_all(): void
@@ -76,7 +86,10 @@ final class SlaClock
         $resolution_due = $this->utc_date($case['sla_resolution_due_at']);
 
         if ('closed' === $case['state']) {
-            $breached = $resolution_due <= $now || (empty($case['sla_response_met_at']) && $response_due <= $now);
+            $closed_at = !empty($case['closed_at']) ? $this->utc_date($case['closed_at']) : $now;
+            $response_met_at = !empty($case['sla_response_met_at']) ? $this->utc_date($case['sla_response_met_at']) : null;
+            $response_missed = $response_met_at ? $response_met_at > $response_due : $closed_at > $response_due;
+            $breached = $resolution_due < $closed_at || $response_missed;
             $next = $breached ? 'breached' : 'met';
             if ($next !== $case['sla_state']) {
                 $this->change_sla($case, array('sla_state' => $next, 'sla_paused_at' => null), 'sla_' . $next);
@@ -110,7 +123,9 @@ final class SlaClock
         $active_due = empty($case['sla_response_met_at']) ? $response_due : $resolution_due;
         $active_target = empty($case['sla_response_met_at']) ? (int) $settings['response_hours'] : (int) $settings['resolution_hours'];
         $response_warning = $active_due > $now && ($active_due->getTimestamp() - $now->getTimestamp()) <= ($active_target * HOUR_IN_SECONDS * (100 - (int) $settings['warning_percent']) / 100);
-        $breached = (empty($case['sla_response_met_at']) && $response_due <= $now) || $resolution_due <= $now;
+        $response_met_at = !empty($case['sla_response_met_at']) ? $this->utc_date($case['sla_response_met_at']) : null;
+        $response_missed = $response_met_at ? $response_met_at > $response_due : $response_due <= $now;
+        $breached = $response_missed || $resolution_due <= $now;
         $next = $breached ? 'breached' : ($response_warning ? 'warning' : 'running');
 
         if ($next !== $case['sla_state']) {
