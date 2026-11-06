@@ -225,3 +225,114 @@
         margin-bottom: 8px;
     }
 }
+
+.wperh-pro-panel {
+    margin-top: 28px;
+    padding: 20px;
+    border: 1px solid #c3c4c7;
+    background: #fff;
+}
+.wperh-pro-panel h2,
+.wperh-pro-panel h3 {
+    margin-top: 0;
+}
+.wperh-settings-card,
+.wperh-rule-card,
+.wperh-pro-case-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px 18px;
+    margin: 16px 0;
+    padding: 16px;
+    border: 1px solid #dcdcde;
+}
+.wperh-settings-card legend,
+.wperh-rule-card legend {
+    padding: 0 6px;
+    font-weight: 600;
+}
+.wperh-settings-card > label:not(.wperh-inline-check),
+.wperh-rule-card > label:not(.wperh-inline-check),
+.wperh-pro-case-fields > form > label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.wperh-settings-card input[type="text"],
+.wperh-settings-card input[type="number"],
+.wperh-settings-card input[type="time"],
+.wperh-settings-card select,
+.wperh-rule-card input,
+.wperh-rule-card select,
+.wperh-pro-case-fields select {
+    max-width: 100%;
+}
+.wperh-inline-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+.wperh-business-hours,
+.wperh-pro-case-fields form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: end;
+}
+.wperh-workflows-heading {
+    margin-top: 20px;
+}
+.wperh-workflows-heading p,
+.wperh-approval-policy p {
+    max-width: 850px;
+}
+.wperh-approval-policy {
+    margin: 16px 0;
+    padding: 12px 16px;
+    border-left: 4px solid #dba617;
+    background: #fcf9e8;
+}
+.wperh-rule-card .button-link-delete {
+    justify-self: start;
+}
+.wperh-sla-state {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 2px;
+    background: #f0f0f1;
+    text-transform: capitalize;
+}
+.wperh-sla-warning {
+    color: #8a5d00;
+    background: #fcf0c3;
+}
+.wperh-sla-breached {
+    color: #8a2424;
+    background: #fce8e8;
+}
+.wperh-sla-met {
+    color: #145c2e;
+    background: #e8f5ec;
+}
+.wperh-sla-paused {
+    color: #50575e;
+    background: #f0f0f1;
+}
+.wperh-pro-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: end;
+    margin: 14px 0;
+}
+.wperh-pro-filters label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.wperh-pro-panel :focus-visible,
+.wperh-pro-case-fields :focus-visible,
+.wperh-rule-card :focus-visible {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+}
