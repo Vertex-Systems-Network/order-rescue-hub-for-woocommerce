@@ -70,6 +70,9 @@ final class SlaClock
         $is_paused = in_array($case['state'], $paused_states, true);
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
 
+        $response_due = $this->utc_date($case['sla_response_due_at']);
+        $resolution_due = $this->utc_date($case['sla_resolution_due_at']);
+
         if ('closed' === $case['state']) {
             $breached = $resolution_due <= $now || (empty($case['sla_response_met_at']) && $response_due <= $now);
             $next = $breached ? 'breached' : 'met';
@@ -102,8 +105,6 @@ final class SlaClock
             return;
         }
 
-        $response_due = $this->utc_date($case['sla_response_due_at']);
-        $resolution_due = $this->utc_date($case['sla_resolution_due_at']);
         $active_due = empty($case['sla_response_met_at']) ? $response_due : $resolution_due;
         $active_target = empty($case['sla_response_met_at']) ? (int) $settings['response_hours'] : (int) $settings['resolution_hours'];
         $response_warning = $active_due > $now && ($active_due->getTimestamp() - $now->getTimestamp()) <= ($active_target * HOUR_IN_SECONDS * (100 - (int) $settings['warning_percent']) / 100);
@@ -147,6 +148,31 @@ final class SlaClock
         }
 
         return $date;
+    }
+
+    private function business_elapsed_seconds(\DateTimeImmutable $start_utc, \DateTimeImmutable $end_utc, array $settings): int
+    {
+        $zone = new \DateTimeZone($settings['timezone']);
+        $start = $start_utc->setTimezone($zone);
+        $end = $end_utc->setTimezone($zone);
+        $seconds = 0;
+        $cursor = $start->setTime(0, 0);
+        $last_day = $end->setTime(0, 0);
+        $guard = 0;
+        while ($cursor <= $last_day && $guard++ < 4000) {
+            $date_key = $cursor->format('Y-m-d');
+            if (in_array((int) $cursor->format('N'), $settings['workdays'], true) && !in_array($date_key, $settings['holidays'], true)) {
+                $open = new \DateTimeImmutable($date_key . ' ' . $settings['work_start'], $zone);
+                $close = new \DateTimeImmutable($date_key . ' ' . $settings['work_end'], $zone);
+                $from = $start > $open ? $start : $open;
+                $to = $end < $close ? $end : $close;
+                if ($to > $from) {
+                    $seconds += $to->getTimestamp() - $from->getTimestamp();
+                }
+            }
+            $cursor = $cursor->modify('+1 day');
+        }
+        return $seconds;
     }
 
     private function utc_date(string $value): \DateTimeImmutable
