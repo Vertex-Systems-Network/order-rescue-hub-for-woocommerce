@@ -52,3 +52,15 @@
 - **Verification:** Re-read the current repository planning files, reviewed official UX/accessibility references, and verified GitHub content writes. Documentation/research verification only. No React UI, PHP code, CLI task, automated test, compatibility test or live-store action was performed.
 - **Evidence:** `docs/UX-SPECIFICATION.md`, updated README phase table, `docs/ARCHITECTURE-DECISIONS.md`, `docs/AI-PLAN.md` and `AGENTS.md`.
 - **Open for Phase 3:** Data ownership/schema, event lifecycle/idempotency, capability matrix, retention/migration, concrete WordPress/WooCommerce UI components, PSR-4 namespace root/mapping, and runtime autoloader implementation approach.
+
+
+## 2026-11-06 — Phase 3 completed
+
+- **Phase:** 3 — Architecture and data flow (**Complete, 100%**). Phase 4 remains planned.
+- **Completed:** Added `docs/ARCHITECTURE-DATA-FLOW.md` and finalized architecture decisions for case/event storage, exception processing, idempotency/concurrency, REST boundaries, capabilities, privacy/retention, failures/recovery, Pro rules, and multisite scope.
+- **Data design:** Selected site-prefixed Hub-owned case and append-only event tables; one case row per order, with multiple reason codes and episode-aware reopening. WooCommerce remains the order source of truth and is accessed through CRUD/query APIs. Proposed 12-month retention for closed cases is explicitly marked for Phase 4 validation.
+- **Composer PSR-4:** Specified namespace mapping WPEssential\\OrderRescueHub\\ to src/ and the requirement to ship Composer-generated vendor/autoload.php plus required metadata. Merchant installs must not require Composer. No Composer CLI task or other CLI backlog item was added.
+- **Research reviewed:** Official WooCommerce HPOS/order query guidance, WordPress custom table guidance, and Composer autoload documentation, checked 2026-11-06.
+- **Verification:** Re-read current repository plans, reviewed official primary-source documentation, and verified the new architecture document and planning updates on GitHub. Documentation/research verification only; no code, schema, Composer artifact, CLI task, automated test, compatibility test, or live-store operation was performed.
+- **Evidence:** `docs/ARCHITECTURE-DATA-FLOW.md`, updated `docs/ARCHITECTURE-DECISIONS.md`, README phase table, `docs/AI-PLAN.md`, and `AGENTS.md`.
+- **Phase 4 validation items:** Final database/index compatibility against the supported MySQL/MariaDB matrix; exact hooks, scheduler cadence and batch sizing; concrete REST/capability matrix; retention defaults; component/build choices and release package contents.
