@@ -111,7 +111,8 @@ final class CaseRepository
         $now = gmdate('Y-m-d H:i:s');
         $reason_codes = array_values(array_unique(array_map('sanitize_key', $reasons)));
         sort($reason_codes);
-        $evidence = $this->redact_evidence($evidence);\n        $priority = in_array('failed_payment', $reason_codes, true) ? 10 : (in_array('pending_payment', $reason_codes, true) ? 20 : (array_intersect($reason_codes, array('missing_shipping', 'stock_discrepancy')) ? 30 : 40));
+        $evidence = $this->redact_evidence($evidence);
+        $priority = in_array('failed_payment', $reason_codes, true) ? 10 : (in_array('pending_payment', $reason_codes, true) ? 20 : (array_intersect($reason_codes, array('missing_shipping', 'stock_discrepancy')) ? 30 : 40));
         $existing = $this->find_by_order($order_id);
 
         if (!$existing && !$reason_codes) {
@@ -144,12 +145,16 @@ final class CaseRepository
             return $this->find($case_id);
         }
 
-        $was_closed = 'closed' === $existing['state'];\n        if (!$was_closed && $reason_codes === $existing['reason_codes'] && $evidence === $existing['evidence']) {\n            return $existing;\n        }
+        $was_closed = 'closed' === $existing['state'];
+        if (!$was_closed && $reason_codes === $existing['reason_codes'] && $evidence === $existing['evidence']) {
+            return $existing;
+        }
         $wpdb->update(
             $this->cases,
             array(
                 'state' => $was_closed && $reason_codes ? 'open' : $existing['state'],
-                'reason_codes' => wp_json_encode($reason_codes ?: $existing['reason_codes']),\n                'priority' => $priority,
+                'reason_codes' => wp_json_encode($reason_codes ?: $existing['reason_codes']),
+                'priority' => $priority,
                 'evidence' => wp_json_encode($evidence),
                 'last_detected_at' => $now,
                 'updated_at' => $now,
