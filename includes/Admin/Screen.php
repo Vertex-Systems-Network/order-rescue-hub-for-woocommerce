@@ -15,7 +15,7 @@ final class Screen
             'woocommerce',
             __('Order Rescue Hub', 'wpessential-order-rescue-hub'),
             __('Order Rescue Hub', 'wpessential-order-rescue-hub'),
-            'manage_woocommerce',
+            'edit_shop_orders',
             'wperh-order-rescue-hub',
             array($this, 'render')
         );
@@ -23,7 +23,7 @@ final class Screen
 
     public function render(): void
     {
-        if (!current_user_can('manage_woocommerce')) {
+        if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
             wp_die(esc_html__('You do not have permission to access this page.', 'wpessential-order-rescue-hub'));
         }
 
