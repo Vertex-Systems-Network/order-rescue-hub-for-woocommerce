@@ -25,7 +25,7 @@ Use site-prefixed Hub-owned case and append-only event tables. One case row per 
 ## AD-005 — Composer PSR-4 autoloading
 
 **Status:** Required and specified.  
-Use Composer mapping WPEssential\\OrderRescueHub\\ to src/. Ship Composer's generated vendor/autoload.php and the required generated metadata in the production plugin package. The plugin bootstrap loads it; merchant servers do not need Composer installed. Do not maintain a parallel handwritten class loader. The release artifact must be self-contained for class loading.
+Use Composer mapping WPEssential\OrderRescueHub\ to src/. Ship Composer's generated vendor/autoload.php and the required generated metadata in the production plugin package. The plugin bootstrap loads it; merchant servers do not need Composer installed. Do not maintain a parallel handwritten class loader. The release artifact must be self-contained for class loading.
 
 ## AD-006 — Event-driven detection with bounded catch-up
 
