@@ -35,7 +35,7 @@ Before application/submission:
 - Prepare the business rationale, product differentiation, company/developer history, customer support plan and requested product/demo/test information.
 - Ask the Marketplace team to confirm the listing model for this split distribution: paid standalone Pro extension that depends on the WordPress.org Free base, or a Marketplace freemium listing. The current public guidance describes paid and freemium options; it does not by itself settle which packaging is best for this exact two-channel design.
 - Confirm the Pro billing/licensing approach, marketplace revenue share, renewal/update flow and pricing parity. Keep $99/year provisional until confirmed.
-- Check trademark rules for product name and listing copy.
+- Use **WPEssential Order Rescue Hub** as the distinctive brand and “for WooCommerce” only as a truthful compatibility descriptor; review all listing copy, logo and slug against current Woo trademark rules and Marketplace naming guidance.
 - Support the two latest major WordPress and WooCommerce releases at submission. The project baseline targets PHP 8.3+ because WordPress/WooCommerce recommend it and PHP 8.1 is already EOL. WooCommerce 11.6 is announced to require PHP 8.1+ from January 2027. The Marketplace submission page still says extensions must support PHP 7.4+ while recommending PHP 8.3+, so this published policy conflicts with the changing platform floor. Obtain written Marketplace clarification before submission; submit the PHP 8.3+ baseline only if accepted. Do not recommend an EOL runtime to merchants.
 - Meet WordPress accessibility coding standards and Woo UX/security/development guidelines; use WooCommerce APIs and avoid adding telemetry or intrusive admin ads.
 - Prepare test instructions, documentation, demo/store and critical-flow evidence.
@@ -64,3 +64,5 @@ Before application/submission:
 - Woo Marketplace submission checklist: https://developer.woocommerce.com/docs/woo-marketplace/submitting-your-product
 - Woo Marketplace vendor process: https://developer.woocommerce.com/docs/woo-marketplace/getting-started/
 - Woo Marketplace paid/freemium monetization: https://developer.woocommerce.com/docs/woo-marketplace/monetization-expectations
+- Woo trademark guidelines: https://woocommerce.com/trademark-guidelines/
+- Woo Marketplace product naming style: https://developer.woocommerce.com/docs/woo-marketplace/content-style-guide
