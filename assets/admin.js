@@ -13,7 +13,21 @@
             return '—';
         }
         var date = new Date(value.replace(' ', 'T') + 'Z');
-        return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+        if (Number.isNaN(date.getTime())) {
+            return value;
+        }
+        var zone = window.wperhSettings && window.wperhSettings.timezone;
+        if (zone && /^[+-]\\d{2}:\\d{2}$/.test(zone)) {
+            var sign = '-' === zone.charAt(0) ? -1 : 1;
+            var parts = zone.slice(1).split(':').map(Number);
+            var shifted = new Date(date.getTime() + sign * (parts[0] * 60 + parts[1]) * 60000);
+            return shifted.toLocaleString(undefined, { timeZone: 'UTC' });
+        }
+        try {
+            return zone ? date.toLocaleString(undefined, { timeZone: zone }) : date.toLocaleString();
+        } catch (error) {
+            return date.toLocaleString();
+        }
     }
 
     function labelForReason(reason) {
@@ -449,6 +463,7 @@
             ),
             window.wperhSettings && window.wperhSettings.isPro ? h('section', { className: 'wperh-pro-case-fields', 'aria-label': __('Pro case routing and SLA', 'wpessential-order-rescue-hub') },
                 h('p', null, h('strong', null, __('SLA status: ', 'wpessential-order-rescue-hub')), selected.sla_state || __('Starting', 'wpessential-order-rescue-hub')),
+                h('p', null, __('Deadlines use the store timezone: ', 'wpessential-order-rescue-hub') + ((window.wperhSettings && window.wperhSettings.timezone) || 'UTC')),
                 h('p', null, h('strong', null, __('Assigned to: ', 'wpessential-order-rescue-hub')), team.filter(function (member) { return Number(member.id) === Number(selected.assignee_id); }).map(function (member) { return member.name; })[0] || __('Unassigned', 'wpessential-order-rescue-hub')),
                 h('p', null, h('strong', null, __('Assigned to: ', 'wpessential-order-rescue-hub')), team.filter(function (member) { return Number(member.id) === Number(selected.assignee_id); }).map(function (member) { return member.name; })[0] || __('Unassigned', 'wpessential-order-rescue-hub')),
                 selected.sla_response_due_at ? h('p', null, __('First response due: ', 'wpessential-order-rescue-hub') + formatDate(selected.sla_response_due_at)) : null,
