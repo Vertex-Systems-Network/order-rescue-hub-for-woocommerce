@@ -36,7 +36,7 @@ Before application/submission:
 - Ask the Marketplace team to confirm the listing model for this split distribution: paid standalone Pro extension that depends on the WordPress.org Free base, or a Marketplace freemium listing. The current public guidance describes paid and freemium options; it does not by itself settle which packaging is best for this exact two-channel design.
 - Confirm the Pro billing/licensing approach, marketplace revenue share, renewal/update flow and pricing parity. Keep $99/year provisional until confirmed.
 - Check trademark rules for product name and listing copy.
-- Meet current stated technical compatibility requirements: support the two latest major WordPress and WooCommerce releases; current submission guidance says PHP 7.4 minimum and strongly recommends PHP 8.3+. Select a secure, realistically testable baseline rather than targeting an obsolete runtime solely because it is the minimum.
+- Support the two latest major WordPress and WooCommerce releases at submission. The project baseline targets PHP 8.3+ because WordPress/WooCommerce recommend it and PHP 8.1 is already EOL. WooCommerce 11.6 is announced to require PHP 8.1+ from January 2027. The Marketplace submission page still says extensions must support PHP 7.4+ while recommending PHP 8.3+, so this published policy conflicts with the changing platform floor. Obtain written Marketplace clarification before submission; submit the PHP 8.3+ baseline only if accepted. Do not recommend an EOL runtime to merchants.
 - Meet WordPress accessibility coding standards and Woo UX/security/development guidelines; use WooCommerce APIs and avoid adding telemetry or intrusive admin ads.
 - Prepare test instructions, documentation, demo/store and critical-flow evidence.
 - Run the currently required QIT suites: API, end-to-end, activation, security, PHPCompatibility, malware and validation. Record exact versions and results. Recheck the required suite at submission time.
@@ -51,8 +51,8 @@ Before application/submission:
 3. **Dependency behavior:** Pro must clearly identify whether the Free base is required; fail gracefully and explain missing dependencies.
 4. **Data migration:** define schema upgrades, rollback expectations, uninstall behavior, retention and export/delete responsibilities.
 5. **Security:** capabilities, nonces, input validation, escaping, privacy minimization, redacted logs and explicit approval for financially consequential actions.
-6. **Compatibility:** HPOS, classic order storage where supported, latest platform versions, WPML and Polylang tests; advertise only verified combinations.
-7. **Packaging:** separate clean production artifacts from source/docs/test tooling. No user-facing CLI requirement.
+6. **Compatibility:** Use the baseline in `docs/PLATFORM-BASELINE.md`; recheck the latest two stable WP/Woo majors, PHP lifecycle and Marketplace policy before release. Test HPOS, classic storage where supported, WPML and Polylang; advertise only verified combinations.
+7. **Packaging:** separate clean production artifacts from source/docs/test tooling. No CLI-related task or user-facing CLI work before the plugin is final.
 8. **Pricing/support:** finalize price parity, license activation/renewal, update policy, support channel and service expectations.
 9. **Review closure:** track WordPress.org and Woo Marketplace review comments separately; do not conflate submission with approval or publication.
 
