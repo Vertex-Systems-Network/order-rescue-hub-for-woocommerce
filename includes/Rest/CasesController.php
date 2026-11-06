@@ -167,6 +167,7 @@ final class CasesController
             'date' => $order->get_date_created() ? $order->get_date_created()->date_i18n('Y-m-d H:i') : '',
             'payment_method' => sanitize_text_field($order->get_payment_method_title()),
             'total' => (string) wc_format_localized_price($order->get_total()),
+            'total_label' => get_woocommerce_currency_symbol($order->get_currency()) . wc_format_localized_price($order->get_total()),
             'currency' => sanitize_text_field($order->get_currency()),
             'shipping_missing' => $shipping_missing,
             'items' => $items,
