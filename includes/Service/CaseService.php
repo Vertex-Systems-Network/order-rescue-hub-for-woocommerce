@@ -91,6 +91,7 @@ final class CaseService
             return new WP_Error('wperh_case_conflict', __('The case changed while you were saving. Refresh and try again.', 'wpessential-order-rescue-hub'), array('status' => 409));
         }
 
+        do_action('wperh_case_transitioned', $case_id, $target);
         return $this->repository->find($case_id);
     }
 }
