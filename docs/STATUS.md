@@ -64,3 +64,16 @@
 - **Verification:** Re-read current repository plans, reviewed official primary-source documentation, and verified the new architecture document and planning updates on GitHub. Documentation/research verification only; no code, schema, Composer artifact, CLI task, automated test, compatibility test, or live-store operation was performed.
 - **Evidence:** `docs/ARCHITECTURE-DATA-FLOW.md`, updated `docs/ARCHITECTURE-DECISIONS.md`, README phase table, `docs/AI-PLAN.md`, and `AGENTS.md`.
 - **Phase 4 validation items:** Final database/index compatibility against the supported MySQL/MariaDB matrix; exact hooks, scheduler cadence and batch sizing; concrete REST/capability matrix; retention defaults; component/build choices and release package contents.
+
+
+## 2026-11-06 — Phase 4 completed
+
+- **Phase:** 4 — Pre-development package (**Complete, 100%**). Phase 5 remains planned.
+- **Completed:** Added `docs/PRE-DEVELOPMENT-PLAN.md` with frozen product constraints, implementation contracts, ordered Free MVP work packages, Definition of Done, threat review, compatibility/release matrix and test scenarios.
+- **Compatibility snapshot refreshed:** WordPress 7.1.4; WooCommerce 11.2.2; PHP 8.3 target minimum and 8.3/8.4/8.5 test targets subject to current support; WPML 5.3.0 / String Translation 5.3.0 / WooCommerce Multilingual 5.8.0; Polylang 3.9.1 / Polylang for WooCommerce 2.2.7. The matrix is a plan, not a compatibility claim.
+- **Policy note:** WordPress/WooCommerce recommend PHP 8.3+, while Woo Marketplace generic guidance asks for PHP 7.4+ support. Maintain the project’s security-oriented baseline unless Marketplace clarifies its minimum in writing. Verify exact PHP constraints for the multilingual bundle selected for each test.
+- **Composer PSR-4:** Standardized mapping WPEssential\\OrderRescueHub\\ to includes/, direct bootstrap load of vendor/autoload.php, and Composer-only class loading. No custom SPL loader, per-class include list, or CLI task/work item was added.
+- **Research reviewed:** Official WordPress release/requirements, WooCommerce releases/system requirements and Marketplace guidance, PHP supported-version lifecycle, WPML compatibility/minimum requirements, and Polylang directory/add-on changelog pages (checked 2026-11-06).
+- **Verification:** Re-read current repository files, checked official source pages, and verified GitHub documentation writes. Documentation/research verification only; no source implementation, test execution, package build, live-store test, or submission was performed.
+- **Evidence:** `docs/PRE-DEVELOPMENT-PLAN.md`, refreshed `docs/PLATFORM-BASELINE.md`, README phase table, `docs/AI-PLAN.md`, `docs/ARCHITECTURE-DATA-FLOW.md`, `docs/ARCHITECTURE-DECISIONS.md` and `AGENTS.md`.
+- **Phase 5 is next:** Free MVP implementation according to PRE-01 through PRE-09; no implementation was started as part of this documentation phase.
