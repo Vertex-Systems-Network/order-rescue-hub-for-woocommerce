@@ -137,6 +137,9 @@ final class WorkflowEngine
                 if (!in_array($target, array('open', 'triaged', 'waiting'), true)) {
                     return 'rejected';
                 }
+                if ($target === $case['state']) {
+                    return 'no_change';
+                }
                 $result = $this->case_service->transition((int) $case['case_id'], $target, '', (int) $case['row_version']);
                 return is_wp_error($result) ? 'failed' : 'applied';
 
