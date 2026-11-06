@@ -36,6 +36,8 @@ register_activation_hook(__FILE__, array(\WPEssential\OrderRescueHub\Database\In
 
 register_deactivation_hook(__FILE__, static function () {
     wp_clear_scheduled_hook('wperh_exception_sweep');
+    wp_clear_scheduled_hook('wperh_retry_alert');
+    wp_clear_scheduled_hook('wperh_retry_workflow');
 });
 
 add_action('plugins_loaded', static function () {
