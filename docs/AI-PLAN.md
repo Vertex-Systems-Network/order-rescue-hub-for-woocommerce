@@ -16,6 +16,10 @@ All assistants must follow `AGENTS.md` and README first. The backlog is tool-agn
 | AI-08 | Pro | Alerts, assignment, workflows, SLA | Opt-in controls, dry-run, audit, failure/retry and pricing validation |
 | AI-09 | Release | WordPress.org Free submission package and WooCommerce.com paid Pro submission package, tracked as separate review gates | Directory ZIP/readme/GPL/security evidence; vendor approval, billing model, QIT/UX/accessibility/compatibility evidence; reviewer feedback closed for each channel |
 
+## Phase 5 completion note
+
+AI-07 implementation is complete for the planned Free MVP scope. Do not treat this as a production release or compatibility certification. Phase 7 owns PHP runtime, WordPress/WooCommerce/HPOS, WPML/Polylang, accessibility, security and performance validation. No CLI-related backlog item was added.
+
 ## Standard handoff prompt
 
 > Work on the WPEssential Order Rescue Hub for WooCommerce repository. Read `AGENTS.md`, `README.md`, `docs/STATUS.md`, and the relevant specification before changing anything. Report the active phase and scope. Preserve canonical option keys and architecture decisions. Do not create, schedule, implement, or run any CLI-related task before the plugin is final. Do not execute payment/refund/cancel actions, send customer communications, add telemetry, or introduce dependencies unless the documented approval gate is satisfied. Make only the deliverable for the active phase, record what changed and what was actually verified in `docs/STATUS.md`, and update the README phase table only when evidence justifies it. Do not claim tests or compatibility checks that were not run.
