@@ -142,7 +142,11 @@ final class CaseRepository
                 return $this->find_by_order($order_id);
             }
             $this->add_event($case_id, 'detected', array('reasons' => $reason_codes), null, 'detect:' . $order_id . ':' . hash('sha256', wp_json_encode($reason_codes) . gmdate('YmdH')));
-            return $this->find($case_id);
+            $case = $this->find($case_id);
+            if ($case) {
+                do_action('wperh_case_detected', $case);
+            }
+            return $case;
         }
 
         $was_closed = 'closed' === $existing['state'];
