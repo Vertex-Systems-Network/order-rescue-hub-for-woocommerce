@@ -23,6 +23,16 @@ final class WorkflowEngine
         add_action('wperh_case_detected', array($this, 'on_case_detected'), 20);
         add_action('wperh_sla_event', array($this, 'on_sla_event'), 20, 2);
         add_action('wperh_exception_sweep', array($this, 'on_scheduled_sweep'), 30);
+        add_action('wperh_retry_workflow', array($this, 'retry_rule'), 10, 5);
+    }
+
+    public function retry_rule(int $case_id, string $rule_id, int $version, string $trigger, int $attempt): void
+    {
+        $case = $this->repository->find($case_id);
+        if (!$case || $attempt > 3) {
+            return;
+        }
+        $this->run_for($trigger, $case, $attempt, $rule_id, $version);
     }
 
     public function on_case_detected(array $case): void
@@ -50,15 +60,15 @@ final class WorkflowEngine
         }
     }
 
-    private function run_for(string $trigger, array $case): void
+    private function run_for(string $trigger, array $case, int $attempt = 1, string $only_rule = '', int $only_version = 0): void
     {
         $settings = Settings::get();
         foreach ($settings['rules'] as $rule) {
-            if (empty($rule['enabled']) || $rule['trigger'] !== $trigger || !$this->matches($rule, $case)) {
+            if (empty($rule['enabled']) || $rule['trigger'] !== $trigger || ($only_rule && ($rule['id'] !== $only_rule || (int) $rule['version'] !== $only_version)) || !$this->matches($rule, $case)) {
                 continue;
             }
 
-            $key = hash('sha256', implode(':', array('workflow', $rule['id'], $rule['version'], $case['case_id'], $case['episode'], $trigger)));
+            $key = hash('sha256', implode(':', array('workflow', $rule['id'], $rule['version'], $case['case_id'], $case['episode'], $trigger, $attempt)));
             if ($this->repository->has_event($key)) {
                 continue;
             }
@@ -90,8 +100,12 @@ final class WorkflowEngine
                 'rule_id' => $rule['id'],
                 'rule_version' => $rule['version'],
                 'trigger' => $trigger,
+                'attempt' => $attempt,
                 'result' => $result,
             ), null, hash('sha256', $key . ':result'));
+            if (in_array($result, array('failed', 'stale'), true) && $attempt < 3) {
+                wp_schedule_single_event(time() + (300 * $attempt), 'wperh_retry_workflow', array((int) $case['case_id'], $rule['id'], (int) $rule['version'], $trigger, $attempt + 1));
+            }
         }
     }
 
