@@ -28,7 +28,7 @@ Use the current site table prefix with stable suffixes:
 - {site-prefix}wperh_cases
 - {site-prefix}wperh_case_events
 
-Create and update tables through WordPress’s supported schema-upgrade mechanism (dbDelta) and a plugin schema-version option. Migrations must be repeatable, forward-only, bounded and preserve existing data. Destructive migrations require a documented backup and rollback plan. Validate exact column types, index sizes, charset/collation, and InnoDB behavior against the Phase 4 MySQL/MariaDB matrix.
+Create and update tables through WordPress’s supported schema-upgrade mechanism (dbDelta) and a plugin schema-version option. Migrations must be repeatable, forward-only, bounded and preserve existing data. Destructive migrations require a documented backup and rollback plan. Validate exact column types, index sizes, charset/collation, and InnoDB behavior against the Phase 7 MySQL/MariaDB test matrix.
 
 ### Cases table
 
@@ -78,7 +78,7 @@ Do not persist full order snapshots, addresses, emails, payment tokens, gateway 
 3. **Age checks:** A recurring WordPress scheduled event performs a paginated, bounded sweep of eligible orders with wc_get_orders / WC_Order_Query. A short-lived lock, batch cap, progress cursor, and backoff prevent overlap and expensive runs. This is an eventual catch-up mechanism, not a real-time SLA guarantee.
 4. **Case actions:** REST actions validate the current case version and current order access, then persist the state change and attributed event as one logical operation. Conflicts return a refreshable stale-case response.
 
-Schedule interval, batch size, stale-lock recovery, and supported WooCommerce hooks are finalized in Phase 4 against the target platform matrix. WordPress scheduled events are traffic-driven and may run late on low-traffic sites; the UI must display observation and last-run times accurately.
+Schedule interval, batch size, stale-lock recovery, and supported WooCommerce hooks are implemented and measured in Phases 5 and 7 against the target platform matrix. WordPress scheduled events are traffic-driven and may run late on low-traffic sites; the UI must display observation and last-run times accurately.
 
 ### Classification rules
 
@@ -126,7 +126,7 @@ Use a versioned namespace such as wperh/v1. Define explicit routes for paginated
 ## 6. Retention, privacy and uninstall
 
 - Open cases are not removed by time-based retention.
-- Proposed default: closed cases and related history are retained for 12 months after closure, then deleted in bounded batches. Settings can shorten or extend this within documented limits; validate the default against privacy/support requirements in Phase 4.
+- Proposed default: closed cases and related history are retained for 12 months after closure, then deleted in bounded batches. Settings can shorten or extend this within documented limits; reconfirm the default against applicable privacy/support requirements before release.
 - Private notes are user-generated personal data. Include Hub notes and case records in applicable WordPress privacy exporter/eraser integration while respecting order access and data-rights rules.
 - On plugin deletion, retain Hub tables by default to avoid accidental loss of operational history. Provide a clear setting to purge Hub-owned data on deletion; this destructive setting is off by default.
 - Explicit purge or erase requests remove only Hub-owned data, never WooCommerce orders.
