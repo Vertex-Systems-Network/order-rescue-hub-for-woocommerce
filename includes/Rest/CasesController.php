@@ -72,6 +72,7 @@ final class CasesController
         $data = $this->repository->list(array(
             'state' => $state ?: 'open',
             'reason' => sanitize_key((string) $request->get_param('reason')),
+            'priority' => sanitize_key((string) $request->get_param('priority')),
             'assignee_id' => '' === (string) $request->get_param('assignee_id') ? '' : absint($request->get_param('assignee_id')),
             'sla_state' => sanitize_key((string) $request->get_param('sla_state')),
             'search' => sanitize_text_field((string) $request->get_param('search')),
