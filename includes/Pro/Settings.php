@@ -35,22 +35,25 @@ final class Settings
     public static function save(array $input): array
     {
         $defaults = self::defaults();
-        $timezone = sanitize_text_field((string) ($input['timezone'] ?? $defaults['timezone']));
+        $timezone = self::text($input['timezone'] ?? $defaults['timezone']);
         try {
             new \DateTimeZone($timezone);
         } catch (\Throwable $exception) {
             $timezone = $defaults['timezone'];
         }
 
-        $workdays = array_values(array_unique(array_filter(array_map('absint', (array) ($input['workdays'] ?? $defaults['workdays'])), static function (int $day): bool {
+        $workdays_input = is_array($input['workdays'] ?? null) ? $input['workdays'] : $defaults['workdays'];
+        $workdays = array_values(array_unique(array_filter(array_map(static function ($day): int { return is_scalar($day) ? absint($day) : 0; }, $workdays_input), static function (int $day): bool {
             return $day >= 1 && $day <= 7;
         })));
         $holidays = array_values(array_unique(array_filter(array_map('sanitize_text_field', (array) ($input['holidays'] ?? array())), static function (string $date): bool {
             $parsed = \DateTimeImmutable::createFromFormat('!Y-m-d', $date);
             return $parsed && $parsed->format('Y-m-d') === $date;
         })));
-        $recipients = array_values(array_unique(array_filter(array_map('sanitize_email', (array) ($input['recipients'] ?? array())), 'is_email')));
-        $pause_states = array_values(array_intersect(array_map('sanitize_key', (array) ($input['pause_states'] ?? array('waiting'))), array('waiting')));
+        $recipients_input = is_array($input['recipients'] ?? null) ? $input['recipients'] : array();
+        $recipients = array_values(array_unique(array_filter(array_map(static function ($email): string { return is_scalar($email) ? sanitize_email((string) $email) : ''; }, $recipients_input), 'is_email')));
+        $pause_input = is_array($input['pause_states'] ?? null) ? $input['pause_states'] : array('waiting');
+        $pause_states = array_values(array_intersect(array_map(static function ($state): string { return is_scalar($state) ? sanitize_key((string) $state) : ''; }, $pause_input), array('waiting')));
 
         $settings = array(
             'alerts_enabled' => !empty($input['alerts_enabled']),
@@ -88,20 +91,21 @@ final class Settings
             if (!is_array($rule)) {
                 continue;
             }
-            $trigger = sanitize_key((string) ($rule['trigger'] ?? ''));
-            $action = sanitize_key((string) ($rule['action'] ?? ''));
+            $trigger = is_scalar($rule['trigger'] ?? null) ? sanitize_key((string) $rule['trigger']) : '';
+            $action = is_scalar($rule['action'] ?? null) ? sanitize_key((string) $rule['action']) : '';
             if (!in_array($trigger, $allowed_triggers, true) || !in_array($action, $allowed_actions, true)) {
                 continue;
             }
-            $name = sanitize_text_field((string) ($rule['name'] ?? ''));
+            $name = self::text($rule['name'] ?? '');
             if ('' === $name) {
                 continue;
             }
-            $case_state = sanitize_key((string) ($rule['case_state'] ?? ''));
+            $case_state = is_scalar($rule['case_state'] ?? null) ? sanitize_key((string) $rule['case_state']) : '';
             if ('' !== $case_state && !in_array($case_state, array('open', 'triaged', 'assigned', 'waiting', 'escalated', 'closed'), true)) {
                 $case_state = '';
             }
-            if ('set_case_state' === $action && !in_array(($rule['value'] ?? ''), array('open', 'triaged', 'waiting'), true)) {
+            $value = self::text($rule['value'] ?? '');
+            if ('set_case_state' === $action && !in_array($value, array('open', 'triaged', 'waiting'), true)) {
                 continue;
             }
             if ('set_priority' === $action && (absint($rule['value'] ?? 0) < 1 || absint($rule['value'] ?? 0) > 100)) {
@@ -116,20 +120,25 @@ final class Settings
                 'enabled' => !empty($rule['enabled']),
                 'dry_run' => !array_key_exists('dry_run', $rule) || !empty($rule['dry_run']),
                 'trigger' => $trigger,
-                'reason' => sanitize_key((string) ($rule['reason'] ?? '')),
+                'reason' => is_scalar($rule['reason'] ?? null) ? sanitize_key((string) $rule['reason']) : '',
                 'case_state' => $case_state,
                 'min_age_hours' => min(2160, absint($rule['min_age_hours'] ?? 0)),
                 'action' => $action,
-                'value' => sanitize_text_field((string) ($rule['value'] ?? '')),
+                'value' => $value,
                 'version' => max(1, absint($rule['version'] ?? 1)),
             );
         }
         return $clean;
     }
 
+    private static function text($value): string
+    {
+        return is_scalar($value) ? sanitize_text_field((string) $value) : '';
+    }
+
     private static function valid_time($value, string $fallback): string
     {
-        $value = sanitize_text_field((string) $value);
+        $value = self::text($value);
         return preg_match('/^(?:[01]\\d|2[0-3]):[0-5]\\d$/', $value) ? $value : $fallback;
     }
 }
