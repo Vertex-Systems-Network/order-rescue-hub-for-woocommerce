@@ -1,0 +1,147 @@
+<?php
+
+namespace WPEssential\OrderRescueHub\Pro;
+
+use WPEssential\OrderRescueHub\Repository\CaseRepository;
+
+final class SlaClock
+{
+    private CaseRepository $repository;
+
+    public function __construct(CaseRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    public function start(array $case): void
+    {
+        if (!empty($case['sla_resolution_due_at'])) {
+            return;
+        }
+
+        $settings = Settings::get();
+        $zone = new \DateTimeZone($settings['timezone']);
+        $now = new \DateTimeImmutable('now', $zone);
+        $response = $this->due_after($now, (int) $settings['response_hours'], $settings);
+        $resolution = $this->due_after($now, (int) $settings['resolution_hours'], $settings);
+        $this->repository->update_case(
+            $case,
+            array(
+                'sla_response_due_at' => $response->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+                'sla_resolution_due_at' => $resolution->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+                'sla_state' => 'running',
+            ),
+            'sla_started',
+            array('response_hours' => (int) $settings['response_hours'], 'resolution_hours' => (int) $settings['resolution_hours'], 'mode' => $settings['clock_mode'])
+        );
+    }
+
+    public function evaluate_all(): void
+    {
+        $page = 1;
+        do {
+            $batch = $this->repository->list(array('state' => 'all', 'page' => $page, 'per_page' => 100));
+            foreach ($batch['items'] as $case) {
+                $this->evaluate($case);
+            }
+            $page++;
+        } while ($page <= min((int) $batch['total_pages'], 10));
+    }
+
+    public function evaluate(array $case): void
+    {
+        if (empty($case['sla_resolution_due_at'])) {
+            $this->start($case);
+            return;
+        }
+
+        $settings = Settings::get();
+        $paused_states = $settings['pause_states'];
+        $is_paused = in_array($case['state'], $paused_states, true);
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+
+        if ('closed' === $case['state']) {
+            if ('met' !== $case['sla_state']) {
+                $this->change_sla($case, array('sla_state' => 'met', 'sla_paused_at' => null), 'sla_met');
+            }
+            return;
+        }
+
+        if ($is_paused && empty($case['sla_paused_at'])) {
+            $this->change_sla($case, array('sla_state' => 'paused', 'sla_paused_at' => $now->format('Y-m-d H:i:s')), 'sla_paused');
+            return;
+        }
+
+        if (!$is_paused && !empty($case['sla_paused_at'])) {
+            $paused_at = new \DateTimeImmutable($case['sla_paused_at'], new \DateTimeZone('UTC'));
+            $seconds = max(0, $now->getTimestamp() - $paused_at->getTimestamp());
+            $changes = array(
+                'sla_state' => 'running',
+                'sla_paused_at' => null,
+                'sla_response_due_at' => $this->shift_due($case['sla_response_due_at'], $seconds),
+                'sla_resolution_due_at' => $this->shift_due($case['sla_resolution_due_at'], $seconds),
+            );
+            $this->change_sla($case, $changes, 'sla_resumed', array('paused_seconds' => $seconds));
+            return;
+        }
+
+        $response_due = $this->utc_date($case['sla_response_due_at']);
+        $resolution_due = $this->utc_date($case['sla_resolution_due_at']);
+        $response_warning = $response_due > $now && ($response_due->getTimestamp() - $now->getTimestamp()) <= ((int) $settings['response_hours'] * HOUR_IN_SECONDS * (100 - (int) $settings['warning_percent']) / 100);
+        $breached = $response_due <= $now || $resolution_due <= $now;
+        $next = $breached ? 'breached' : ($response_warning ? 'warning' : 'running');
+
+        if ($next !== $case['sla_state']) {
+            $this->change_sla($case, array('sla_state' => $next), 'sla_' . $next, array('response_due_at' => $case['sla_response_due_at'], 'resolution_due_at' => $case['sla_resolution_due_at']));
+            do_action('wperh_sla_event', $this->repository->find((int) $case['case_id']), $next);
+        }
+    }
+
+    private function due_after(\DateTimeImmutable $start, int $hours, array $settings): \DateTimeImmutable
+    {
+        if ('calendar' === $settings['clock_mode']) {
+            return $start->modify('+' . $hours . ' hours');
+        }
+
+        $remaining = $hours * HOUR_IN_SECONDS;
+        $date = $start;
+        $guard = 0;
+        while ($remaining > 0 && $guard++ < 4000) {
+            $day = (int) $date->format('N');
+            $date_key = $date->format('Y-m-d');
+            $is_workday = in_array($day, $settings['workdays'], true) && !in_array($date_key, $settings['holidays'], true);
+            $begin = new \DateTimeImmutable($date_key . ' ' . $settings['work_start'], $date->getTimezone());
+            $end = new \DateTimeImmutable($date_key . ' ' . $settings['work_end'], $date->getTimezone());
+            if ($is_workday && $date < $end) {
+                if ($date < $begin) {
+                    $date = $begin;
+                }
+                $available = max(0, $end->getTimestamp() - $date->getTimestamp());
+                $use = min($remaining, $available);
+                $date = $date->modify('+' . $use . ' seconds');
+                $remaining -= $use;
+                if ($remaining <= 0) {
+                    break;
+                }
+            }
+            $date = new \DateTimeImmutable($date_key . ' 00:00:00', $date->getTimezone())->modify('+1 day');
+        }
+
+        return $date;
+    }
+
+    private function utc_date(string $value): \DateTimeImmutable
+    {
+        return new \DateTimeImmutable($value, new \DateTimeZone('UTC'));
+    }
+
+    private function shift_due(string $value, int $seconds): string
+    {
+        return $this->utc_date($value)->modify('+' . $seconds . ' seconds')->format('Y-m-d H:i:s');
+    }
+
+    private function change_sla(array $case, array $changes, string $event, array $payload = array()): void
+    {
+        $this->repository->update_case($case, $changes, $event, $payload);
+    }
+}
