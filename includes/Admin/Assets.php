@@ -35,6 +35,7 @@ final class Assets
         wp_localize_script('wperh-admin', 'wperhSettings', array(
             'apiRoot' => esc_url_raw(rest_url('wperh/v1/')),
             'pageSize' => 25,
+            'orderEditUrlPrefix' => esc_url_raw(admin_url('admin.php?page=wc-orders&action=edit&id=')),
             'isPro' => defined('WPERH_PRO_EDITION') && true === WPERH_PRO_EDITION,
             'canManageSettings' => current_user_can('manage_woocommerce'),
             'timezone' => wp_timezone_string(),
