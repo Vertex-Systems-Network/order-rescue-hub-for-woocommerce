@@ -10,7 +10,7 @@
 
 - This is a WPEssential add-on for WooCommerce, planned as an exception and resolution workspace.
 - Keep order data access on WooCommerce CRUD/query APIs and design for HPOS.
-- Use React for the WordPress admin interface. Prefer WordPress-provided packages and patterns; bundle production assets and do not fetch React from a CDN.
+- Use React for the WordPress admin interface. Prefer WordPress-provided packages and patterns; bundle production assets and do not fetch React from a CDN.\n- Implement a PSR-4 runtime autoloader for namespaced PHP classes; define its namespace root and mapping in the architecture plan, and ship the loader in the plugin package.
 - Do not create, schedule, implement, or run any CLI-related task before the plugin is final. Do not add WP-CLI commands or CLI-only merchant setup; revisit only after finalization.
 - Payment capture, refunds, cancellations, and payment-implying status changes are sensitive. Never execute silently. Require fresh state checks, capabilities, nonce validation, explicit human approval, idempotency, and audit events if the feature is approved at all.
 - Keep external requests, telemetry, customer messages, and licensing services opt-in and separately reviewed.
