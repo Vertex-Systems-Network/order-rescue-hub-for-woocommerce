@@ -50,6 +50,7 @@ final class WorkflowEngine
                 continue;
             }
 
+            $case = $this->repository->find((int) $case['case_id']) ?: $case;
             $dry_run = !empty($rule['dry_run']);
             if ($dry_run) {
                 $this->repository->record_event((int) $case['case_id'], 'workflow_preview', array(
