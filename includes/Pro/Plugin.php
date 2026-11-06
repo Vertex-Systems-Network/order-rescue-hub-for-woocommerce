@@ -29,6 +29,5 @@ final class Plugin
         $workflows->register();
         (new Controller($this->repository, $assignment, $alerts))->register();
 
-        add_action('wperh_send_admin_alert', array($alerts, 'on_case_detected'), 10, 1);
     }
 }
