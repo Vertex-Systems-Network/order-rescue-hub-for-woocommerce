@@ -25,6 +25,7 @@ final class Plugin
 
         add_action('wperh_case_detected', array($sla, 'start'), 10);
         add_action('wperh_case_note_added', array($sla, 'on_note_added'), 10);
+        add_action('wperh_case_transitioned', array($sla, 'on_case_transitioned'), 10, 2);
         add_action('wperh_exception_sweep', array($sla, 'evaluate_all'), 20);
         $alerts->register();
         $workflows->register();
