@@ -36,6 +36,6 @@
 
 ## Execution boundary
 
-No CLI task, command, workflow, or CLI-only merchant setup was added or run. The authorized staging site was used for a package upload and read-only environment/log inspection; no orders, payments, refunds, customer records or production settings were changed. The first activation failed with the Composer class collision described above. The fix is committed, but a browser security-policy block prevented the corrected package from being reinstalled and activated. WPML, Polylang, legacy order storage, security runtime, accessibility and performance gates have not been executed.
+No WP-CLI feature, CLI-related work item, workflow, or CLI-only merchant setup was added or executed. A local Python script was used only to assemble the test ZIP. The authorized staging site was used for a package upload and read-only environment/log inspection; no orders, payments, refunds, customer records or production settings were changed. The first activation failed with the Composer class collision described above. The fix is committed, but a browser security-policy block prevented the corrected package from being reinstalled and activated. WPML, Polylang, legacy order storage, security runtime, accessibility and performance gates have not been executed.
 
 **Phase 7 is not complete.** The critical source defect has a committed fix, but it is not runtime-verified. Do not submit or advertise compatibility until the remaining gates above have passed and evidence is recorded.
