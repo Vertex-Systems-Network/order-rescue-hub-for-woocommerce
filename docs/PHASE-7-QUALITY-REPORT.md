@@ -32,6 +32,6 @@
 
 ## Execution boundary
 
-No CLI task, command, workflow, or CLI-only merchant setup was added or run. Repository instructions prohibit CLI work before plugin readiness, and no attached WordPress test environment or PHP runtime was available in this pass. The source fixes are committed, but they do not establish PHP parsing, WordPress/WooCommerce compatibility, HPOS, multilingual, security, accessibility, or performance certification.
+No CLI task, command, workflow, or CLI-only merchant setup was added or run. Repository instructions prohibit CLI work before plugin readiness. The authorized staging site was inspected read-only and showed WordPress 7.1.4 with WooCommerce 11.2.2. The GitHub ZIP download did not complete in the browser, so the plugin was not installed or activated and no runtime checks were performed. The source fixes are committed, but they do not establish PHP parsing, WordPress/WooCommerce compatibility, HPOS, multilingual, security, accessibility, or performance certification.
 
 **Phase 7 is not complete.** Do not submit or advertise compatibility until the remaining gates above have executed and their evidence is attached.
