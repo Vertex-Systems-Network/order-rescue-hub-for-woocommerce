@@ -148,6 +148,13 @@
             if (!proSettings) {
                 return;
             }
+            var invalidRule = (proSettings.rules || []).find(function (rule) {
+                return !String(rule.name || '').trim() || ('assign_case' === rule.action && !Number(rule.value)) || ('set_priority' === rule.action && (Number(rule.value) < 1 || Number(rule.value) > 100));
+            });
+            if (invalidRule) {
+                setError(__('Each workflow needs a name and a valid action value.', 'wpessential-order-rescue-hub'));
+                return;
+            }
             setSaving(true);
             setError('');
             var data = Object.assign({}, proSettings);
@@ -350,12 +357,16 @@
                 h('fieldset', { className: 'wperh-settings-card' },
                     h('legend', null, __('SLA policy', 'wpessential-order-rescue-hub')),
                     h('p', null, __('Store timezone: ', 'wpessential-order-rescue-hub') + proSettings.timezone),
+                    h('p', null, __('SLA policy changes apply to newly detected cases. Open cases retain their recorded deadlines.', 'wpessential-order-rescue-hub')),
                     h('p', null, __('Store timezone: ', 'wpessential-order-rescue-hub') + proSettings.timezone),
                     h('label', null, __('First response target (hours)', 'wpessential-order-rescue-hub'),
                         h('input', { type: 'number', min: 1, max: 720, value: proSettings.response_hours, onChange: function (event) { updatePro('response_hours', Number(event.target.value)); } })
                     ),
                     h('label', null, __('Resolution target (hours)', 'wpessential-order-rescue-hub'),
                         h('input', { type: 'number', min: 1, max: 2160, value: proSettings.resolution_hours, onChange: function (event) { updatePro('resolution_hours', Number(event.target.value)); } })
+                    ),
+                    h('label', null, __('Warning threshold (% of target elapsed)', 'wpessential-order-rescue-hub'),
+                        h('input', { type: 'number', min: 25, max: 95, value: proSettings.warning_percent, onChange: function (event) { updatePro('warning_percent', Number(event.target.value)); } })
                     ),
                     h('label', null, __('Clock', 'wpessential-order-rescue-hub'),
                         h('select', { value: proSettings.clock_mode, onChange: function (event) { updatePro('clock_mode', event.target.value); } },
