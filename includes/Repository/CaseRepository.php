@@ -71,7 +71,7 @@ final class CaseRepository
         $offset = ($page - 1) * $per_page;
 
         $count_sql = "SELECT COUNT(*) FROM {$this->cases} WHERE {$where_sql}";
-        $query_sql = "SELECT case_id, order_id, state, reason_codes, evidence, priority, first_detected_at, last_detected_at, created_at, updated_at, closed_at, outcome, episode, row_version, assignee_id, sla_response_due_at, sla_resolution_due_at, sla_state, sla_paused_at FROM {$this->cases} WHERE {$where_sql} ORDER BY priority ASC, first_detected_at ASC LIMIT %d OFFSET %d";
+        $query_sql = "SELECT case_id, order_id, state, reason_codes, evidence, priority, first_detected_at, last_detected_at, created_at, updated_at, closed_at, outcome, episode, row_version, assignee_id, sla_response_due_at, sla_response_met_at, sla_resolution_due_at, sla_state, sla_paused_at FROM {$this->cases} WHERE {$where_sql} ORDER BY priority ASC, first_detected_at ASC LIMIT %d OFFSET %d";
 
         $count = (int) $wpdb->get_var($values ? $wpdb->prepare($count_sql, $values) : $count_sql);
         $query_values = array_merge($values, array($per_page, $offset));
