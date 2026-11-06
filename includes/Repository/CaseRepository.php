@@ -209,6 +209,24 @@ final class CaseRepository
         return $updated;
     }
 
+    public function resolve_if_clear(int $order_id): void
+    {
+        $case = $this->find_by_order($order_id);
+        if (!$case || 'closed' === $case['state']) {
+            return;
+        }
+        $now = gmdate('Y-m-d H:i:s');
+        $updated = $this->update_case(
+            $case,
+            array('state' => 'closed', 'closed_at' => $now, 'outcome' => 'resolved'),
+            'case_auto_resolved',
+            array('reason' => 'no_active_exception')
+        );
+        if ($updated) {
+            do_action('wperh_case_transitioned', $order_id === (int) $case['order_id'] ? (int) $case['case_id'] : 0, 'closed');
+        }
+    }
+
     public function update_case(array $case, array $changes, string $event_type, array $payload): bool
     {
         global $wpdb;
