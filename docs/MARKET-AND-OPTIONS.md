@@ -21,6 +21,8 @@ The market is not empty: workflow rules, status transitions, alerts, failed-paym
 
 **Chosen positioning:** an exception-resolution workspace. Its core record is a *case* linked to an order and a specific exception reason, with age, evidence, next action, owner/SLA where enabled, and a documented outcome. WooCommerce order status remains the order's payment/fulfilment state; a Hub case state is not a replacement order status.
 
+**Naming rule:** use **WPEssential Order Rescue Hub** as the distinctive product name and use “for WooCommerce” only as a compatibility descriptor in the marketplace-style suffix. Do not use Woo/WooCommerce as the product brand, company identity, or domain. Keep the repository slug requested by the owner; treat it separately from product branding and confirm the final listing copy against the current trademark rules.
+
 **Product boundaries:**
 
 - Pending and On hold are not automatically errors. Payment method, gateway notes, stock reservation and expected confirmation windows affect whether an order is genuinely stuck.
@@ -85,3 +87,5 @@ These are system responsibilities, not duplicate UI settings:
 - Universal Workflow Automation: https://wordpress.org/plugins/universal-workflow-automation/
 - Out The Door: https://wordpress.org/plugins/out-the-door-order-tasks-workflows-for-woocommerce/
 - WooCommerce HPOS recipe book: https://developer.woocommerce.com/docs/features/orders/high-performance-order-storage/recipe-book/
+- Woo trademark guidelines and compatibility naming: https://woocommerce.com/trademark-guidelines/
+- Woo Marketplace product naming style: https://developer.woocommerce.com/docs/woo-marketplace/content-style-guide
