@@ -24,6 +24,7 @@ final class Plugin
         $workflows = new WorkflowEngine($this->repository, $this->case_service, $assignment);
 
         add_action('wperh_case_detected', array($sla, 'start'), 10);
+        add_action('wperh_case_note_added', array($sla, 'on_note_added'), 10);
         add_action('wperh_exception_sweep', array($sla, 'evaluate_all'), 20);
         $alerts->register();
         $workflows->register();
