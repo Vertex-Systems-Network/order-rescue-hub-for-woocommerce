@@ -43,8 +43,8 @@ final class AssignmentService
         }
 
         $user = get_user_by('id', $user_id);
-        if (!$user || !user_can($user, 'edit_shop_orders')) {
-            return new WP_Error('wperh_assignee_invalid', __('Choose a staff member who can edit WooCommerce orders.', 'wpessential-order-rescue-hub'), array('status' => 400));
+        if (!$user || !user_can($user, 'manage_woocommerce') || !user_can($user, 'edit_shop_orders')) {
+            return new WP_Error('wperh_assignee_invalid', __('Choose a WooCommerce manager who can manage store orders.', 'wpessential-order-rescue-hub'), array('status' => 400));
         }
 
         if ((int) $case['assignee_id'] === $user_id) {
