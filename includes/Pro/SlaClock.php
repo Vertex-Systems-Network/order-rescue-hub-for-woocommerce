@@ -87,6 +87,14 @@ final class SlaClock
 
         if ('closed' === $case['state']) {
             $closed_at = !empty($case['closed_at']) ? $this->utc_date($case['closed_at']) : $now;
+            if (!empty($case['sla_paused_at'])) {
+                $paused_at = $this->utc_date($case['sla_paused_at']);
+                $paused_seconds = 'business' === $settings['clock_mode']
+                    ? $this->business_elapsed_seconds($paused_at, $closed_at, $settings)
+                    : max(0, $closed_at->getTimestamp() - $paused_at->getTimestamp());
+                $response_due = $this->utc_date($this->shift_due($case['sla_response_due_at'], $paused_seconds));
+                $resolution_due = $this->utc_date($this->shift_due($case['sla_resolution_due_at'], $paused_seconds));
+            }
             $response_met_at = !empty($case['sla_response_met_at']) ? $this->utc_date($case['sla_response_met_at']) : null;
             $response_missed = $response_met_at ? $response_met_at > $response_due : $closed_at > $response_due;
             $breached = $resolution_due < $closed_at || $response_missed;
