@@ -15,7 +15,7 @@ final class SlaClock
 
     public function start(array $case): void
     {
-        if (!empty($case['sla_resolution_due_at'])) {
+        if ('closed' === $case['state'] || !empty($case['sla_resolution_due_at'])) {
             return;
         }
 
@@ -61,7 +61,9 @@ final class SlaClock
     public function evaluate(array $case): void
     {
         if (empty($case['sla_resolution_due_at'])) {
-            $this->start($case);
+            if ('closed' !== $case['state']) {
+                $this->start($case);
+            }
             return;
         }
 
