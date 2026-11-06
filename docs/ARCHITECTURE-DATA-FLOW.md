@@ -1,7 +1,7 @@
 # Architecture and data-flow specification
 
-**Status:** Phase 3 complete — architecture baseline approved for pre-development (2026-11-06).  
-**Scope:** Design decisions and data contracts only. No plugin implementation or runtime behavior has been built.
+**Status:** Phase 3 architecture baseline complete (2026-11-06); implementation source was added in Phases 5–6.  
+**Scope:** This document records design contracts. The implementation and audit evidence is linked from the README and `docs/PHASE-AUDIT-0-6.md`; runtime behavior has not yet been validated.
 
 ## 1. Architecture summary
 
