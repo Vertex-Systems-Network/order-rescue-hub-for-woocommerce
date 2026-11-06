@@ -479,6 +479,7 @@
             ) : null,
             selected.order ? h('section', { className: 'wperh-order-summary' },
                 h('h3', null, __('Order summary', 'wpessential-order-rescue-hub')),
+                selected.order.admin_url ? h('p', null, h('a', { href: selected.order.admin_url }, __('Open order in WooCommerce', 'wpessential-order-rescue-hub'))) : null,
                 h('dl', null,
                     h('dt', null, __('WooCommerce status', 'wpessential-order-rescue-hub')),
                     h('dd', null, selected.order.status),
