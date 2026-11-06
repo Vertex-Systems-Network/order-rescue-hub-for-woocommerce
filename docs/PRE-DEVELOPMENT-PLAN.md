@@ -1,7 +1,7 @@
 # Pre-development plan
 
-**Status:** Phase 4 complete — pre-development package ready for implementation planning (2026-11-06).  
-**Scope:** Implementation contracts, acceptance criteria, threat review and compatibility/release test plan. No source code or tests have been added or run.
+**Status:** Phase 4 pre-development package completed before implementation (2026-11-06).  
+**Scope:** This document records implementation contracts, acceptance criteria, threat review and compatibility/release test plan as they stood at the Phase 4 handoff. Source work completed later is tracked in the Phase 5/6 reports; the compatibility/release tests are still outstanding.
 
 ## 1. Frozen product constraints
 
