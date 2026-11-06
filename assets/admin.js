@@ -52,6 +52,9 @@
         var _l = useState(''), nextState = _l[0], setNextState = _l[1];
         var _m = useState(''), outcome = _m[0], setOutcome = _m[1];
         var _n = useState(false), saving = _n[0], setSaving = _n[1];
+        var _o = useState(null), proSettings = _o[0], setProSettings = _o[1];
+        var _p = useState([]), team = _p[0], setTeam = _p[1];
+        var _q = useState(''), assignee = _q[0], setAssignee = _q[1];
 
         function loadCases() {
             setLoading(true);
@@ -81,6 +84,21 @@
             loadCases();
         }, [filters.state, filters.reason, filters.search, filters.older_than_hours, filters.page]);
 
+        useEffect(function () {
+            if (!(window.wperhSettings && window.wperhSettings.isPro)) {
+                return;
+            }
+            Promise.all([
+                wp.apiFetch({ path: '/wperh/v1/pro/settings' }),
+                wp.apiFetch({ path: '/wperh/v1/pro/users' })
+            ]).then(function (result) {
+                setProSettings(result[0]);
+                setTeam(result[1] || []);
+            }).catch(function (requestError) {
+                setError(requestError.message || __('Could not load Pro settings.', 'wpessential-order-rescue-hub'));
+            });
+        }, []);
+
         function updateFilter(key, value) {
             setFilters(function (current) {
                 var updated = Object.assign({}, current);
@@ -101,10 +119,144 @@
                     setSelected(item);
                     setNextState(item.state);
                     setOutcome(item.outcome || '');
+                    setAssignee(item.assignee_id ? String(item.assignee_id) : '');
                 })
                 .catch(function (requestError) {
                     setError(requestError.message || __('Could not open this case.', 'wpessential-order-rescue-hub'));
                 });
+        }
+
+        function updatePro(key, value) {
+            setProSettings(function (current) {
+                return Object.assign({}, current || {}, { [key]: value });
+            });
+        }
+
+        function updateRule(index, key, value) {
+            setProSettings(function (current) {
+                var rules = (current.rules || []).slice();
+                rules[index] = Object.assign({}, rules[index], { [key]: value });
+                return Object.assign({}, current, { rules: rules });
+            });
+        }
+
+        function saveProSettings(event) {
+            event.preventDefault();
+            if (!proSettings) {
+                return;
+            }
+            setSaving(true);
+            setError('');
+            var data = Object.assign({}, proSettings);
+            data.recipients = String(proSettings.recipients_text || (proSettings.recipients || []).join(',')).split(/[;,\\n]+/).map(function (email) { return email.trim(); }).filter(Boolean);
+            delete data.recipients_text;
+            wp.apiFetch({ path: '/wperh/v1/pro/settings', method: 'POST', data: data })
+                .then(function (saved) {
+                    setProSettings(saved);
+                    setNotice(__('Pro settings saved.', 'wpessential-order-rescue-hub'));
+                })
+                .catch(function (requestError) {
+                    setError(requestError.message || __('Could not save Pro settings.', 'wpessential-order-rescue-hub'));
+                })
+                .finally(function () { setSaving(false); });
+        }
+
+        function testAlert() {
+            setSaving(true);
+            wp.apiFetch({ path: '/wperh/v1/pro/alerts/test', method: 'POST', data: {} })
+                .then(function () { setNotice(__('Test alert sent to the configured administrators.', 'wpessential-order-rescue-hub')); })
+                .catch(function (requestError) { setError(requestError.message || __('Test alert failed.', 'wpessential-order-rescue-hub')); })
+                .finally(function () { setSaving(false); });
+        }
+
+        function saveAssignment(event) {
+            event.preventDefault();
+            if (!selected) {
+                return;
+            }
+            setSaving(true);
+            wp.apiFetch({
+                path: '/wperh/v1/cases/' + selected.case_id + '/assignment',
+                method: 'POST',
+                data: { user_id: Number(assignee) }
+            }).then(function () {
+                setNotice(__('Case assignment saved.', 'wpessential-order-rescue-hub'));
+                openCase(selected.case_id);
+                loadCases();
+            }).catch(function (requestError) {
+                setError(requestError.message || __('Could not assign this case.', 'wpessential-order-rescue-hub'));
+            }).finally(function () { setSaving(false); });
+        }
+
+        function addWorkflowRule() {
+            var rules = (proSettings.rules || []).concat([{
+                id: 'rule-' + Date.now(), name: '', enabled: false, dry_run: true,
+                trigger: 'case.opened', reason: '', min_age_hours: 0,
+                action: 'admin_alert', value: '', version: 1
+            }]);
+            updatePro('rules', rules);
+        }
+
+        function removeWorkflowRule(index) {
+            updatePro('rules', (proSettings.rules || []).filter(function (_, i) { return i !== index; }));
+        }
+
+        function workflowRuleEditor(rule, index) {
+            return h('fieldset', { className: 'wperh-rule-card', key: rule.id || index },
+                h('legend', null, rule.name || __('New workflow rule', 'wpessential-order-rescue-hub')),
+                h('label', null, __('Rule name', 'wpessential-order-rescue-hub'),
+                    h('input', { type: 'text', maxLength: 80, value: rule.name, onChange: function (event) { updateRule(index, 'name', event.target.value); } })
+                ),
+                h('label', null, __('When', 'wpessential-order-rescue-hub'),
+                    h('select', { value: rule.trigger, onChange: function (event) { updateRule(index, 'trigger', event.target.value); } },
+                        h('option', { value: 'case.opened' }, __('A case opens', 'wpessential-order-rescue-hub')),
+                        h('option', { value: 'sla.warning' }, __('SLA is approaching', 'wpessential-order-rescue-hub')),
+                        h('option', { value: 'sla.breached' }, __('SLA is breached', 'wpessential-order-rescue-hub'))
+                    )
+                ),
+                h('label', null, __('Only for reason (optional)', 'wpessential-order-rescue-hub'),
+                    h('select', { value: rule.reason || '', onChange: function (event) { updateRule(index, 'reason', event.target.value); } },
+                        h('option', { value: '' }, __('Any reason', 'wpessential-order-rescue-hub')),
+                        ['pending_payment', 'failed_payment', 'missing_shipping', 'stock_discrepancy', 'processing_delay'].map(function (reason) {
+                            return h('option', { key: reason, value: reason }, labelForReason(reason));
+                        })
+                    )
+                ),
+                h('label', null, __('Minimum age (hours)', 'wpessential-order-rescue-hub'),
+                    h('input', { type: 'number', min: 0, max: 2160, value: rule.min_age_hours, onChange: function (event) { updateRule(index, 'min_age_hours', Number(event.target.value)); } })
+                ),
+                h('label', null, __('Then', 'wpessential-order-rescue-hub'),
+                    h('select', { value: rule.action, onChange: function (event) { updateRule(index, 'action', event.target.value); } },
+                        h('option', { value: 'admin_alert' }, __('Notify administrators', 'wpessential-order-rescue-hub')),
+                        h('option', { value: 'assign_case' }, __('Assign case', 'wpessential-order-rescue-hub')),
+                        h('option', { value: 'set_priority' }, __('Set case priority', 'wpessential-order-rescue-hub')),
+                        h('option', { value: 'set_case_state' }, __('Change case state', 'wpessential-order-rescue-hub'))
+                    )
+                ),
+                'assign_case' === rule.action ? h('label', null, __('Assign to', 'wpessential-order-rescue-hub'),
+                    h('select', { value: rule.value || '', onChange: function (event) { updateRule(index, 'value', event.target.value); } },
+                        h('option', { value: '' }, __('Choose a staff member', 'wpessential-order-rescue-hub')),
+                        team.map(function (member) { return h('option', { key: member.id, value: String(member.id) }, member.name); })
+                    )
+                ) : 'set_priority' === rule.action ? h('label', null, __('Priority (1 to 100)', 'wpessential-order-rescue-hub'),
+                    h('input', { type: 'number', min: 1, max: 100, value: rule.value || 50, onChange: function (event) { updateRule(index, 'value', event.target.value); } })
+                ) : 'set_case_state' === rule.action ? h('label', null, __('Case state', 'wpessential-order-rescue-hub'),
+                    h('select', { value: rule.value || 'triaged', onChange: function (event) { updateRule(index, 'value', event.target.value); } },
+                        h('option', { value: 'open' }, __('Open', 'wpessential-order-rescue-hub')),
+                        h('option', { value: 'triaged' }, __('Triaged', 'wpessential-order-rescue-hub')),
+                        h('option', { value: 'waiting' }, __('Waiting', 'wpessential-order-rescue-hub'))
+                    )
+                ) : null,
+                h('label', { className: 'wperh-inline-check' },
+                    h('input', { type: 'checkbox', checked: !!rule.enabled, onChange: function (event) { updateRule(index, 'enabled', event.target.checked); } }),
+                    __('Enable this rule', 'wpessential-order-rescue-hub')
+                ),
+                h('label', { className: 'wperh-inline-check' },
+                    h('input', { type: 'checkbox', checked: !!rule.dry_run, onChange: function (event) { updateRule(index, 'dry_run', event.target.checked); } }),
+                    __('Dry run only (recommended)', 'wpessential-order-rescue-hub')
+                ),
+                h('button', { type: 'button', className: 'button-link-delete', onClick: function () { removeWorkflowRule(index); } }, __('Remove rule', 'wpessential-order-rescue-hub'))
+            );
         }
 
         function saveNote(event) {
@@ -169,6 +321,63 @@
             }, 250);
         }
 
+        var proPanel = window.wperhSettings && window.wperhSettings.isPro && proSettings ? h('section', { className: 'wperh-pro-panel', 'aria-labelledby': 'wperh-pro-settings-title' },
+            h('h2', { id: 'wperh-pro-settings-title' }, __('Pro settings', 'wpessential-order-rescue-hub')),
+            h('form', { onSubmit: saveProSettings },
+                h('fieldset', { className: 'wperh-settings-card' },
+                    h('legend', null, __('Admin alerts', 'wpessential-order-rescue-hub')),
+                    h('label', { className: 'wperh-inline-check' },
+                        h('input', { type: 'checkbox', checked: !!proSettings.alerts_enabled, onChange: function (event) { updatePro('alerts_enabled', event.target.checked); } }),
+                        __('Email administrators about new cases and SLA changes', 'wpessential-order-rescue-hub')
+                    ),
+                    h('label', null, __('Recipient email addresses (comma separated)', 'wpessential-order-rescue-hub'),
+                        h('input', { type: 'text', value: proSettings.recipients_text !== undefined ? proSettings.recipients_text : (proSettings.recipients || []).join(', '), onChange: function (event) { updatePro('recipients_text', event.target.value); } })
+                    ),
+                    h('button', { type: 'button', className: 'button', onClick: testAlert, disabled: saving }, __('Send test alert', 'wpessential-order-rescue-hub'))
+                ),
+                h('fieldset', { className: 'wperh-settings-card' },
+                    h('legend', null, __('SLA policy', 'wpessential-order-rescue-hub')),
+                    h('label', null, __('First response target (hours)', 'wpessential-order-rescue-hub'),
+                        h('input', { type: 'number', min: 1, max: 720, value: proSettings.response_hours, onChange: function (event) { updatePro('response_hours', Number(event.target.value)); } })
+                    ),
+                    h('label', null, __('Resolution target (hours)', 'wpessential-order-rescue-hub'),
+                        h('input', { type: 'number', min: 1, max: 2160, value: proSettings.resolution_hours, onChange: function (event) { updatePro('resolution_hours', Number(event.target.value)); } })
+                    ),
+                    h('label', null, __('Clock', 'wpessential-order-rescue-hub'),
+                        h('select', { value: proSettings.clock_mode, onChange: function (event) { updatePro('clock_mode', event.target.value); } },
+                            h('option', { value: 'calendar' }, __('Calendar hours', 'wpessential-order-rescue-hub')),
+                            h('option', { value: 'business' }, __('Business hours', 'wpessential-order-rescue-hub'))
+                        )
+                    ),
+                    'business' === proSettings.clock_mode ? h('div', { className: 'wperh-business-hours' },
+                        h('label', null, __('Workday starts', 'wpessential-order-rescue-hub'), h('input', { type: 'time', value: proSettings.work_start, onChange: function (event) { updatePro('work_start', event.target.value); } })),
+                        h('label', null, __('Workday ends', 'wpessential-order-rescue-hub'), h('input', { type: 'time', value: proSettings.work_end, onChange: function (event) { updatePro('work_end', event.target.value); } })),
+                        h('label', null, __('Timezone', 'wpessential-order-rescue-hub'), h('input', { type: 'text', value: proSettings.timezone, onChange: function (event) { updatePro('timezone', event.target.value); } })),
+                        h('fieldset', null,
+                            h('legend', null, __('Working days', 'wpessential-order-rescue-hub')),
+                            ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(function (day, index) {
+                                var dayNumber = index + 1;
+                                return h('label', { className: 'wperh-inline-check', key: day },
+                                    h('input', { type: 'checkbox', checked: (proSettings.workdays || []).indexOf(dayNumber) !== -1, onChange: function (event) {
+                                        var days = (proSettings.workdays || []).slice();
+                                        updatePro('workdays', event.target.checked ? days.concat([dayNumber]) : days.filter(function (value) { return value !== dayNumber; }));
+                                    } }),
+                                    day
+                                );
+                            })
+                        )
+                    ) : null
+                ),
+                h('div', { className: 'wperh-workflows-heading' },
+                    h('h3', null, __('Workflow rules', 'wpessential-order-rescue-hub')),
+                    h('p', null, __('Rules are limited to internal case actions and administrator notices. They never capture, refund, cancel, or change WooCommerce orders.', 'wpessential-order-rescue-hub'))
+                ),
+                (proSettings.rules || []).map(workflowRuleEditor),
+                h('button', { type: 'button', className: 'button', onClick: addWorkflowRule }, __('Add workflow rule', 'wpessential-order-rescue-hub')),
+                h('button', { type: 'submit', className: 'button button-primary', disabled: saving }, saving ? __('Saving…', 'wpessential-order-rescue-hub') : __('Save Pro settings', 'wpessential-order-rescue-hub'))
+            )
+        ) : null;
+
         var rows = cases.map(function (item) {
             var reasons = (item.reason_codes || []).map(labelForReason).join(', ');
             var age = item.first_detected_at ? formatDate(item.first_detected_at) : '—';
@@ -182,6 +391,7 @@
                 h('td', null, age),
                 h('td', null, h('span', { className: 'wperh-priority' }, item.priority <= 20 ? __('High', 'wpessential-order-rescue-hub') : __('Normal', 'wpessential-order-rescue-hub'))),
                 h('td', null, h('span', { className: 'wperh-state wperh-state-' + item.state }, labelForState(item.state))),
+                window.wperhSettings && window.wperhSettings.isPro ? h('td', null, h('span', { className: 'wperh-sla-state wperh-sla-' + (item.sla_state || 'running') }, item.sla_state || __('Starting', 'wpessential-order-rescue-hub'))) : null,
                 h('td', null, formatDate(item.updated_at)),
                 h('td', null, h('button', {
                     type: 'button',
@@ -203,6 +413,19 @@
                 ),
                 h('button', { type: 'button', className: 'button', onClick: function () { setSelected(null); }, 'aria-label': __('Close case details', 'wpessential-order-rescue-hub') }, '×')
             ),
+            window.wperhSettings && window.wperhSettings.isPro ? h('section', { className: 'wperh-pro-case-fields', 'aria-label': __('Pro case routing and SLA', 'wpessential-order-rescue-hub') },
+                h('p', null, h('strong', null, __('SLA status: ', 'wpessential-order-rescue-hub')), selected.sla_state || __('Starting', 'wpessential-order-rescue-hub')),
+                selected.sla_response_due_at ? h('p', null, __('First response due: ', 'wpessential-order-rescue-hub') + formatDate(selected.sla_response_due_at)) : null,
+                selected.sla_resolution_due_at ? h('p', null, __('Resolution due: ', 'wpessential-order-rescue-hub') + formatDate(selected.sla_resolution_due_at)) : null,
+                h('form', { onSubmit: saveAssignment },
+                    h('label', { htmlFor: 'wperh-assignee' }, __('Assign to staff member', 'wpessential-order-rescue-hub')),
+                    h('select', { id: 'wperh-assignee', value: assignee, onChange: function (event) { setAssignee(event.target.value); } },
+                        h('option', { value: '' }, __('Select a staff member', 'wpessential-order-rescue-hub')),
+                        team.map(function (member) { return h('option', { key: member.id, value: String(member.id) }, member.name); })
+                    ),
+                    h('button', { type: 'submit', className: 'button', disabled: saving || !assignee }, __('Save assignment', 'wpessential-order-rescue-hub'))
+                )
+            ) : null,
             selected.order ? h('section', { className: 'wperh-order-summary' },
                 h('h3', null, __('Order summary', 'wpessential-order-rescue-hub')),
                 h('dl', null,
@@ -310,12 +533,13 @@
                             h('th', { scope: 'col' }, __('First detected', 'wpessential-order-rescue-hub')),
                             h('th', { scope: 'col' }, __('Priority', 'wpessential-order-rescue-hub')),
                             h('th', { scope: 'col' }, __('Case state', 'wpessential-order-rescue-hub')),
+                            window.wperhSettings && window.wperhSettings.isPro ? h('th', { scope: 'col' }, __('SLA', 'wpessential-order-rescue-hub')) : null,
                             h('th', { scope: 'col' }, __('Last updated', 'wpessential-order-rescue-hub')),
                             h('th', { scope: 'col' }, __('Action', 'wpessential-order-rescue-hub'))
                         )),
                         h('tbody', null,
-                            loading ? h('tr', null, h('td', { colSpan: 7, className: 'wperh-loading' }, __('Loading cases…', 'wpessential-order-rescue-hub'))) :
-                            rows.length ? rows : h('tr', null, h('td', { colSpan: 7, className: 'wperh-empty' }, total ? __('No cases match these filters.', 'wpessential-order-rescue-hub') : __('No exceptions need attention. New qualifying order issues will appear here.', 'wpessential-order-rescue-hub')))
+                            loading ? h('tr', null, h('td', { colSpan: window.wperhSettings && window.wperhSettings.isPro ? 8 : 7, className: 'wperh-loading', __('Loading cases…', 'wpessential-order-rescue-hub'))) :
+                            rows.length ? rows : h('tr', null, h('td', { colSpan: window.wperhSettings && window.wperhSettings.isPro ? 8 : 7, className: 'wperh-empty', total ? __('No cases match these filters.', 'wpessential-order-rescue-hub') : __('No exceptions need attention. New qualifying order issues will appear here.', 'wpessential-order-rescue-hub')))
                         )
                     )
                 ),
@@ -323,7 +547,8 @@
                     h('button', { type: 'button', className: 'button', disabled: filters.page <= 1 || loading, onClick: function () { updateFilter('page', filters.page - 1); } }, __('Previous', 'wpessential-order-rescue-hub')),
                     h('span', { 'aria-live': 'polite' }, __('Page', 'wpessential-order-rescue-hub') + ' ' + filters.page + ' / ' + totalPages),
                     h('button', { type: 'button', className: 'button', disabled: filters.page >= totalPages || loading, onClick: function () { updateFilter('page', filters.page + 1); } }, __('Next', 'wpessential-order-rescue-hub'))
-                )
+                ),
+                proPanel
             ),
             detail
         );
