@@ -341,6 +341,7 @@
                 h('fieldset', { className: 'wperh-settings-card' },
                     h('legend', null, __('SLA policy', 'wpessential-order-rescue-hub')),
                     h('p', null, __('Store timezone: ', 'wpessential-order-rescue-hub') + proSettings.timezone),
+                    h('p', null, __('Store timezone: ', 'wpessential-order-rescue-hub') + proSettings.timezone),
                     h('label', null, __('First response target (hours)', 'wpessential-order-rescue-hub'),
                         h('input', { type: 'number', min: 1, max: 720, value: proSettings.response_hours, onChange: function (event) { updatePro('response_hours', Number(event.target.value)); } })
                     ),
@@ -372,6 +373,10 @@
                             })
                         )
                     ) : null
+                ),
+                h('div', { className: 'wperh-approval-policy' },
+                    h('strong', null, __('Order action safety', 'wpessential-order-rescue-hub')),
+                    h('p', null, __('Payment capture, refunds, cancellations, and payment-related order status changes remain disabled. If introduced in a later release, each action must require explicit human approval and a fresh order-state check.', 'wpessential-order-rescue-hub'))
                 ),
                 h('div', { className: 'wperh-approval-policy' },
                     h('strong', null, __('Order action safety', 'wpessential-order-rescue-hub')),
@@ -424,6 +429,7 @@
             ),
             window.wperhSettings && window.wperhSettings.isPro ? h('section', { className: 'wperh-pro-case-fields', 'aria-label': __('Pro case routing and SLA', 'wpessential-order-rescue-hub') },
                 h('p', null, h('strong', null, __('SLA status: ', 'wpessential-order-rescue-hub')), selected.sla_state || __('Starting', 'wpessential-order-rescue-hub')),
+                h('p', null, h('strong', null, __('Assigned to: ', 'wpessential-order-rescue-hub')), team.filter(function (member) { return Number(member.id) === Number(selected.assignee_id); }).map(function (member) { return member.name; })[0] || __('Unassigned', 'wpessential-order-rescue-hub')),
                 h('p', null, h('strong', null, __('Assigned to: ', 'wpessential-order-rescue-hub')), team.filter(function (member) { return Number(member.id) === Number(selected.assignee_id); }).map(function (member) { return member.name; })[0] || __('Unassigned', 'wpessential-order-rescue-hub')),
                 selected.sla_response_due_at ? h('p', null, __('First response due: ', 'wpessential-order-rescue-hub') + formatDate(selected.sla_response_due_at)) : null,
                 selected.sla_resolution_due_at ? h('p', null, __('Resolution due: ', 'wpessential-order-rescue-hub') + formatDate(selected.sla_resolution_due_at)) : null,
