@@ -17,7 +17,7 @@
             return value;
         }
         var zone = window.wperhSettings && window.wperhSettings.timezone;
-        if (zone && /^[+-]\\d{2}:\\d{2}$/.test(zone)) {
+        if (zone && /^[+-]\d{2}:\d{2}$/.test(zone)) {
             var sign = '-' === zone.charAt(0) ? -1 : 1;
             var parts = zone.slice(1).split(':').map(Number);
             var shifted = new Date(date.getTime() + sign * (parts[0] * 60 + parts[1]) * 60000);
@@ -173,7 +173,7 @@
             setError('');
             var data = Object.assign({}, proSettings);
             data.recipients = String(proSettings.recipients_text || (proSettings.recipients || []).join(',')).split(/[,;]+/).map(function (email) { return email.trim(); }).filter(Boolean);
-            data.holidays = String(proSettings.holidays_text || (proSettings.holidays || []).join(',')).split(/[;,\\n]+/).map(function (date) { return date.trim(); }).filter(Boolean);
+            data.holidays = String(proSettings.holidays_text || (proSettings.holidays || []).join(',')).split(/[;,\n]+/).map(function (date) { return date.trim(); }).filter(Boolean);
             delete data.recipients_text;
             delete data.holidays_text;
             wp.apiFetch({ path: '/wperh/v1/pro/settings', method: 'POST', data: data })
