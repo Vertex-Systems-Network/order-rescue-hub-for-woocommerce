@@ -4,5 +4,5 @@
 $baseDir = dirname(__DIR__, 2);
 
 return array(
-    'WPEssential\\\\OrderRescueHub\\\\' => array($baseDir . '/includes'),
+    'WPEssential\\OrderRescueHub\\' => array($baseDir . '/includes'),
 );
