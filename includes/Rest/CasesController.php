@@ -172,6 +172,7 @@ final class CasesController
             'total_label' => get_woocommerce_currency_symbol($order->get_currency()) . wc_format_localized_price($order->get_total()),
             'currency' => sanitize_text_field($order->get_currency()),
             'shipping_missing' => $shipping_missing,
+            'admin_url' => esc_url_raw(admin_url('admin.php?page=wc-orders&action=edit&id=' . $order_id)),
             'items' => $items,
         );
     }
