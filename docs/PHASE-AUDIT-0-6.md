@@ -23,7 +23,7 @@
 4. **Pro schema lacked durable clock/owner state:** Added schema version 1.1.0 fields and indexes for assignment, response/resolution deadlines, response completion, SLA state and pause tracking.
 5. **SLA edge cases:** Added first-response completion on an internal staff note, business-hours-only pause shifting, resolution/response breach determination at close, and protection against starting clocks on closed historical cases.
 6. **Workflow/alert safeguards:** Added idempotent run records, dry-run defaults, validated internal action allowlist, bounded retries, event deduplication, opt-in recipient email and deactivation cleanup. High-impact WooCommerce order actions remain absent.
-7. **Phase 6 was not started:** Added the Pro backend, REST endpoints, queue/settings UI and style layer against existing canonical option keys; documented the paid build gate and limitations.
+7. **Phase 6 had no implementation at audit start:** Added the Pro backend, REST endpoints, queue/settings UI and style layer against existing canonical option keys; documented the paid build gate and limitations.
 
 ## Cross-phase consistency review
 
