@@ -1,6 +1,6 @@
 # Platform and compatibility baseline
 
-**Snapshot date:** 2026-11-06. This Phase 4 baseline supersedes the Phase 1 snapshot. Refresh the version numbers before the first release and each submission; compatibility claims require executed tests.
+**Snapshot date:** 2026-11-06. This Phase 4 baseline supersedes the Phase 1 snapshot. Phase 7 started 2026-11-07; source-level fixes are recorded in `docs/PHASE-7-QUALITY-REPORT.md`, but the matrix below remains a target, not completed test evidence. Refresh versions before release/submission; compatibility claims require executed tests.
 
 ## Planned minimums and test targets
 
