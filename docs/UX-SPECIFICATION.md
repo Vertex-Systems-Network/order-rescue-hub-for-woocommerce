@@ -1,7 +1,7 @@
 # Product and UX specification
 
 **Status:** Phase 2 complete — specification approved for architecture handoff (2026-11-06).  
-**Scope:** Product behavior and interface specification only. This document does not claim that the React UI or plugin has been implemented.
+**Scope:** Product behavior and interface specification only. This document does not claim that the React UI or plugin was implemented during Phase 2; Phases 5–6 implementation status and limitations are recorded in the implementation reports.
 
 ## 1. Product promise and users
 
