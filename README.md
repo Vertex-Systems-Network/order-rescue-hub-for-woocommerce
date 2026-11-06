@@ -123,7 +123,7 @@ Each capability has one canonical key. Filter controls, rule logic and delivery 
 ### Systems bank (separate from settings)
 
 1. **Detection:** WooCommerce order events plus bounded age checks; explain reason/evidence and avoid false positives.
-2. **Idempotency:** One active case per order/reason/rule identity; repeated events/retries do not duplicate cases or alerts.
+2. **Idempotency:** One case row per order merges current reason codes; detection and workflow event keys suppress duplicate history/alerts for the same episode and retry.
 3. **Case lifecycle:** State transitions with actor, source and timestamps; keep case state separate from order status.
 4. **Queue/query:** WooCommerce order CRUD/query APIs, pagination and bounded queries; no direct order-table reads.
 5. **Priority:** Deterministic, explainable scoring from reason, age and SLA.
