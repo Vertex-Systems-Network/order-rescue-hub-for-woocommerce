@@ -77,3 +77,14 @@
 - **Verification:** Re-read current repository files, checked official source pages, and verified GitHub documentation writes. Documentation/research verification only; no source implementation, test execution, package build, live-store test, or submission was performed.
 - **Evidence:** `docs/PRE-DEVELOPMENT-PLAN.md`, refreshed `docs/PLATFORM-BASELINE.md`, README phase table, `docs/AI-PLAN.md`, `docs/ARCHITECTURE-DATA-FLOW.md`, `docs/ARCHITECTURE-DECISIONS.md` and `AGENTS.md`.
 - **Phase 5 is next:** Free MVP implementation according to PRE-01 through PRE-09; no implementation was started as part of this documentation phase.
+
+
+## 2026-11-06 — Phase 5 Free MVP implementation completed
+
+- **Phase:** 5 — Free MVP implementation (**Complete, 100%**). Phase 6 remains planned.
+- **Completed:** Added the WooCommerce admin exception inbox and case details; reason/state/age/order-ID filters and pagination; private notes and case audit events; WooCommerce order detection hooks and bounded scheduled age sweep; Hub-owned schema; REST read/write routes with capabilities and order access checks; Composer PSR-4 runtime mapped to `includes/`; plugin bootstrap, assets, `readme.txt`, and GPL licensing notice.
+- **Safety:** Free MVP records internal triage only. It does not capture payments, issue refunds, cancel orders, change WooCommerce order statuses, or send customer messages. Case records store allowlisted evidence rather than customer email/address data.
+- **Review fixes:** Repaired malformed escaped line breaks in PHP sources, fixed the Assets namespace import, corrected `$wpdb->update()` format mapping for priority/evidence, fixed pagination state updates, and aligned search/currency labels with implementation.
+- **Verification:** Reviewed repository source and metadata; Node syntax check passed for `assets/admin.js`. PHP parsing/runtime, WordPress/WooCommerce installation, HPOS, multilingual, accessibility, security, and performance validation were not run and remain Phase 7/release gates. The local environment did not provide a PHP runtime. No CLI backlog item was added.
+- **Package status:** Development package metadata is 0.1.0. This is not a production release and does not claim directory/Marketplace acceptance or compatibility certification.
+- **Phase evidence:** `docs/IMPLEMENTATION-FREE-MVP.md`; README phase table updated to 100%.
