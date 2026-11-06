@@ -64,10 +64,13 @@ final class Controller
 
     public function users()
     {
-        $users = get_users(array('capability' => 'manage_woocommerce', 'number' => 100, 'orderby' => 'display_name', 'order' => 'ASC', 'fields' => array('ID', 'display_name')));
+        $users = get_users(array('capability' => 'manage_woocommerce', 'number' => 100, 'orderby' => 'display_name', 'order' => 'ASC'));
+        $eligible = array_filter($users, static function ($user): bool {
+            return user_can($user, 'edit_shop_orders');
+        });
         $items = array_map(static function ($user): array {
             return array('id' => (int) $user->ID, 'name' => sanitize_text_field($user->display_name));
-        }, $users);
+        }, $eligible);
         return rest_ensure_response($items);
     }
 
