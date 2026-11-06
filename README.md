@@ -36,7 +36,7 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 | 1. Market and requirements | Competitor map, canonical option/system banks, product gap, version baseline and distribution requirements | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 2. Product and UX specification | Jobs-to-be-done, information architecture, React admin UI flows, accessibility requirements | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 3. Architecture and data flow | Case/event schema, detection flow, REST permissions, retention, failure handling, Composer PSR-4 autoloader design | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
-| 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Planned | `░░░░░ 0%` | 2026-11-20 | 2026-11-23 |
+| 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled Composer PSR-4 autoloader | Not started | `░░░░░ 0%` | 2026-11-24 | 2026-12-08 |
 | 6. Pro capabilities | Alerts, workflow rules, assignment, SLA controls, approvals | Not started | `░░░░░ 0%` | 2026-12-09 | 2026-12-22 |
 | 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | Not started | `░░░░░ 0%` | 2026-12-23 | 2027-01-08 |
@@ -73,7 +73,7 @@ Research is based on published listings and documentation, not hands-on plugin t
 
 **Status: complete (100%, 2026-11-06).** The case/event storage decision, WooCommerce detection and data flow, REST permission model, retention/privacy behavior, failure handling and Composer PSR-4 mapping are documented in [docs/ARCHITECTURE-DATA-FLOW.md](docs/ARCHITECTURE-DATA-FLOW.md) and [docs/ARCHITECTURE-DECISIONS.md](docs/ARCHITECTURE-DECISIONS.md). Phase 4 remains planned. No plugin code or runtime components have been built.
 
-## Unified options bank
+## Phase 4: pre-development package\n\n**Status: complete (100%, 2026-11-06).** Implementation contracts, ordered Free MVP work packages, Definition of Done, threat review, dated PHP/WP/WooCommerce/HPOS/database/WPML/Polylang test matrix, and release gates are recorded in [docs/PRE-DEVELOPMENT-PLAN.md](docs/PRE-DEVELOPMENT-PLAN.md). Phase 5 remains planned. No implementation or tests have been run.\n\n## Unified options bank
 
 Each capability has one canonical key. Filter controls, rule logic and delivery behavior belong inside the owning capability; they are not duplicate settings.
 
