@@ -66,6 +66,17 @@ final class CaseService
 
         $changes = array('state' => $target);
         $payload = array('from' => $case['state'], 'to' => $target);
+        if ('closed' === $case['state'] && 'open' === $target) {
+            $changes['episode'] = (int) $case['episode'] + 1;
+            $changes['first_detected_at'] = gmdate('Y-m-d H:i:s');
+            $changes['outcome'] = '';
+            $changes['sla_response_due_at'] = null;
+            $changes['sla_response_met_at'] = null;
+            $changes['sla_resolution_due_at'] = null;
+            $changes['sla_state'] = '';
+            $changes['sla_paused_at'] = null;
+            $payload['episode'] = $changes['episode'];
+        }
 
         if ('closed' === $target) {
             $changes['closed_at'] = gmdate('Y-m-d H:i:s');
