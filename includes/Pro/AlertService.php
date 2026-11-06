@@ -75,7 +75,15 @@ final class AlertService
         }
         $lock_key = 'wperh_mail_lock_' . substr($key, 0, 32);
         if (!add_option($lock_key, time(), '', false)) {
-            return;
+            $locked_at = (int) get_option($lock_key, 0);
+            if ($locked_at && time() - $locked_at > 600) {
+                delete_option($lock_key);
+                if (!add_option($lock_key, time(), '', false)) {
+                    return;
+                }
+            } else {
+                return;
+            }
         }
 
         $url = admin_url('admin.php?page=wperh-order-rescue-hub');
