@@ -152,7 +152,7 @@ Recovery remains available in WordPress admin; no CLI-only recovery or merchant 
 ## 8. Composer PSR-4 autoloader
 
 **Required namespace prefix:** WPEssential\OrderRescueHub\  
-**Required mapping:** WPEssential\OrderRescueHub\ maps to src/.
+**Required mapping:** WPEssential\OrderRescueHub\ maps to includes/.
 
 Declare this mapping in the project Composer manifest and ship the Composer-generated runtime loader (vendor/autoload.php and required generated metadata) in the production package. The plugin bootstrap loads it from the plugin directory after a direct-access guard and before initializing namespaced services. The merchant runtime must not require Composer to be installed or invoke a command. Keep development-only packages out of the release artifact and review shipped package licenses.
 
