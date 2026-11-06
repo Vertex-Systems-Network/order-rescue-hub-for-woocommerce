@@ -36,6 +36,7 @@ final class Assets
             'apiRoot' => esc_url_raw(rest_url('wperh/v1/')),
             'pageSize' => 25,
             'isPro' => defined('WPERH_PRO_EDITION') && true === WPERH_PRO_EDITION,
+            'canManageSettings' => current_user_can('manage_woocommerce'),
             'timezone' => wp_timezone_string(),
         ));
     }
