@@ -65,6 +65,8 @@ final class Settings
             'workdays' => $workdays ?: $defaults['workdays'],
             'holidays' => array_slice($holidays, 0, 100),
             'pause_states' => $pause_states,
+            'require_approval_for_order_actions' => true,
+            'order_action_execution_enabled' => false,
             'rules' => self::sanitize_rules((array) ($input['rules'] ?? array())),
         );
 
