@@ -39,12 +39,12 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 | 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled Composer PSR-4 autoloader | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 6. Pro capabilities | Admin email alerts, bounded workflows, team assignment, SLA clocks and approval boundary | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
-| 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | In progress — static audit and fixes; runtime gates pending | `██░░░ 35%` | 2026-11-07 | 2027-01-08 |
+| 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | In progress — static fixes committed; staging activation exposed a Composer collision, fix re-test and other gates pending | `██░░░ 35%` | 2026-11-07 | 2027-01-08 |
 | 8. WordPress.org Free submission | GPL-compatible Free package, readme/assets, directory review submission and SVN release preparation | Not started | `░░░░░ 0%` | 2027-01-09 | 2027-01-22 |
 | 9. WooCommerce.com Pro submission | Vendor application, paid Pro package, QIT/UX evidence, Marketplace review and feedback fixes | Not started | `░░░░░ 0%` | 2027-01-23 | 2027-02-05 |
 | 10. Release and maintenance readiness | Approval-dependent launch checklist, versioned releases, support and update process | Not started | `░░░░░ 0%` | 2027-02-06 | 2027-02-12 |
 
-**Overall:** Phases 0–6 are complete for product framing, requirements, specifications, architecture, pre-development, Free implementation, and Pro capability source. Phase 7 static source audit has started; runtime compatibility and release validation remain open. See [the Phase 7 quality report](docs/PHASE-7-QUALITY-REPORT.md). The Pro source is gated for paid packaging; no license or Marketplace approval is claimed. Dates are provisional, not delivery commitments.
+**Overall:** Phases 0–6 are complete for product framing, requirements, specifications, architecture, pre-development, Free implementation, and Pro capability source. Phase 7 source fixes are in progress. The first staging activation exposed a Composer class collision; a fix is committed, but runtime re-test and compatibility/release gates remain open. See [the Phase 7 quality report](docs/PHASE-7-QUALITY-REPORT.md). The Pro source is gated for paid packaging; no license or Marketplace approval is claimed. Dates are provisional, not delivery commitments.
 
 ## Phase 5: Free MVP implementation
 
