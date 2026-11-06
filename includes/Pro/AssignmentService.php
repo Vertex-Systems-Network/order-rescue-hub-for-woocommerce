@@ -21,6 +21,18 @@ final class AssignmentService
             return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub'), array('status' => 404));
         }
 
+        if (0 === $user_id) {
+            if (empty($case['assignee_id'])) {
+                return $case;
+            }
+            $old = $case['assignee_id'];
+            $state = 'assigned' === $case['state'] ? 'open' : $case['state'];
+            if (!$this->repository->update_case($case, array('assignee_id' => null, 'state' => $state), 'case_unassigned', array('previous_user_id' => $old))) {
+                return new WP_Error('wperh_assignment_stale', __('This case changed. Refresh it and try again.', 'wpessential-order-rescue-hub'), array('status' => 409));
+            }
+            return $this->repository->find($case_id);
+        }
+
         $user = get_user_by('id', $user_id);
         if (!$user || !user_can($user, 'edit_shop_orders')) {
             return new WP_Error('wperh_assignee_invalid', __('Choose a staff member who can edit WooCommerce orders.', 'wpessential-order-rescue-hub'), array('status' => 400));
