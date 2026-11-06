@@ -3,6 +3,7 @@
 namespace WPEssential\OrderRescueHub;
 
 use WPEssential\OrderRescueHub\Admin\Screen;
+use WPEssential\OrderRescueHub\Admin\Assets;
 use WPEssential\OrderRescueHub\Database\Installer;
 use WPEssential\OrderRescueHub\Repository\CaseRepository;
 use WPEssential\OrderRescueHub\Rest\CasesController;
@@ -38,7 +39,8 @@ final class Plugin
         $repository = new CaseRepository();
         $service = new CaseService($repository);
 
-        (new Screen())->register();\n        (new Assets())->register();
+        (new Screen())->register();
+        (new Assets())->register();
         (new CasesController($repository, $service))->register();
         (new Detector($repository))->register();
 
