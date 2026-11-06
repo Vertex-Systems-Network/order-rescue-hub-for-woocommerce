@@ -13,8 +13,12 @@ All assistants must follow `AGENTS.md` and README first. The backlog is tool-agn
 | AI-05 | Threat review | Permission/action abuse analysis — Complete 2026-11-06 | `docs/PRE-DEVELOPMENT-PLAN.md`: capability/nonce/order-access matrix, payment-action boundary, privacy, logging and abuse controls |
 | AI-06 | Pre-development | MVP tickets and Definition of Done — Complete 2026-11-06 | `docs/PRE-DEVELOPMENT-PLAN.md`: ordered code work packages, dependencies, Definition of Done, threat review, compatibility and release test matrix; no CLI item |
 | AI-07 | Implementation | Free MVP, including bundled Composer PSR-4 runtime autoloader — Complete 2026-11-06 | `docs/IMPLEMENTATION-FREE-MVP.md`: case inbox, detection, notes/history, REST permissions, React UI, includes/ mapping and direct vendor/autoload.php load; Node syntax check and source review recorded; PHP/WP/WC compatibility validation deferred to Phase 7 |
-| AI-08 | Pro | Alerts, assignment, workflows, SLA | Opt-in controls, dry-run, audit, failure/retry and pricing validation |
+| AI-08 | Pro | Alerts, assignment, workflows, SLA and order-action approval boundary — Complete 2026-11-06 | `docs/PHASE-6-PRO-IMPLEMENTATION.md`: opt-in admin email, assignment without access grants, business/calendar SLA clock, bounded dry-run workflows and disabled high-impact actions; licensing/package/release validation remains in AI-09/Phase 7+ |
 | AI-09 | Release | WordPress.org Free submission package and WooCommerce.com paid Pro submission package, tracked as separate review gates | Directory ZIP/readme/GPL/security evidence; vendor approval, billing model, QIT/UX/accessibility/compatibility evidence; reviewer feedback closed for each channel |
+
+## Phase 6 completion note
+
+AI-08 Pro capability source is complete for the documented scope. Pro activation is a paid-build boundary only; it is not a license service. Payment capture, refunds, cancellations and payment-related status actions remain unavailable. Phase 7 and AI-09 own runtime, compatibility, packaging, licensing and submission validation.
 
 ## Phase 5 completion note
 
