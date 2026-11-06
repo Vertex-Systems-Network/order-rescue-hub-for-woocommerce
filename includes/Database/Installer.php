@@ -7,7 +7,7 @@ final class Installer
     public static function install(): void
     {
         self::upgrade_schema();
-        update_option('wperh_schema_version', '1.0.0', false);
+        update_option('wperh_schema_version', '1.1.0', false);
     }
 
     public static function maybe_upgrade(): void
