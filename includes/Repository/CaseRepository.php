@@ -175,15 +175,21 @@ final class CaseRepository
                 'reason_codes' => wp_json_encode($reason_codes ?: $existing['reason_codes']),
                 'priority' => $priority,
                 'evidence' => wp_json_encode($evidence),
+                'first_detected_at' => $was_closed && $reason_codes ? $now : $existing['first_detected_at'],
                 'last_detected_at' => $now,
                 'updated_at' => $now,
                 'closed_at' => $was_closed && $reason_codes ? null : $existing['closed_at'],
                 'outcome' => $was_closed && $reason_codes ? '' : $existing['outcome'],
+                'sla_response_due_at' => $was_closed && $reason_codes ? null : $existing['sla_response_due_at'],
+                'sla_response_met_at' => $was_closed && $reason_codes ? null : $existing['sla_response_met_at'],
+                'sla_resolution_due_at' => $was_closed && $reason_codes ? null : $existing['sla_resolution_due_at'],
+                'sla_state' => $was_closed && $reason_codes ? '' : $existing['sla_state'],
+                'sla_paused_at' => $was_closed && $reason_codes ? null : $existing['sla_paused_at'],
                 'episode' => $was_closed && $reason_codes ? (int) $existing['episode'] + 1 : (int) $existing['episode'],
                 'row_version' => (int) $existing['row_version'] + 1,
             ),
             array('case_id' => (int) $existing['case_id']),
-            array('%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d'),
+            array('%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d'),
             array('%d')
         );
 
