@@ -149,7 +149,9 @@
             setError('');
             var data = Object.assign({}, proSettings);
             data.recipients = String(proSettings.recipients_text || (proSettings.recipients || []).join(',')).split(/[;,\\n]+/).map(function (email) { return email.trim(); }).filter(Boolean);
+            data.holidays = String(proSettings.holidays_text || (proSettings.holidays || []).join(',')).split(/[;,\\n]+/).map(function (date) { return date.trim(); }).filter(Boolean);
             delete data.recipients_text;
+            delete data.holidays_text;
             wp.apiFetch({ path: '/wperh/v1/pro/settings', method: 'POST', data: data })
                 .then(function (saved) {
                     setProSettings(saved);
@@ -210,7 +212,8 @@
                 h('label', null, __('When', 'wpessential-order-rescue-hub'),
                     h('select', { value: rule.trigger, onChange: function (event) { updateRule(index, 'trigger', event.target.value); } },
                         h('option', { value: 'case.opened' }, __('A case opens', 'wpessential-order-rescue-hub')),
-                        h('option', { value: 'sla.warning' }, __('SLA is approaching', 'wpessential-order-rescue-hub')),
+                        h('option', { value: 'case.age_check' }, __('Scheduled age check', 'wpessential-order-rescue-hub')),
+                h('option', { value: 'sla.warning' }, __('SLA is approaching', 'wpessential-order-rescue-hub')),
                         h('option', { value: 'sla.breached' }, __('SLA is breached', 'wpessential-order-rescue-hub'))
                     )
                 ),
@@ -337,6 +340,7 @@
                 ),
                 h('fieldset', { className: 'wperh-settings-card' },
                     h('legend', null, __('SLA policy', 'wpessential-order-rescue-hub')),
+                    h('p', null, __('Store timezone: ', 'wpessential-order-rescue-hub') + proSettings.timezone),
                     h('label', null, __('First response target (hours)', 'wpessential-order-rescue-hub'),
                         h('input', { type: 'number', min: 1, max: 720, value: proSettings.response_hours, onChange: function (event) { updatePro('response_hours', Number(event.target.value)); } })
                     ),
@@ -352,7 +356,8 @@
                     'business' === proSettings.clock_mode ? h('div', { className: 'wperh-business-hours' },
                         h('label', null, __('Workday starts', 'wpessential-order-rescue-hub'), h('input', { type: 'time', value: proSettings.work_start, onChange: function (event) { updatePro('work_start', event.target.value); } })),
                         h('label', null, __('Workday ends', 'wpessential-order-rescue-hub'), h('input', { type: 'time', value: proSettings.work_end, onChange: function (event) { updatePro('work_end', event.target.value); } })),
-                        h('label', null, __('Timezone', 'wpessential-order-rescue-hub'), h('input', { type: 'text', value: proSettings.timezone, onChange: function (event) { updatePro('timezone', event.target.value); } })),
+                        h('label', null, __('Timezone (IANA, e.g. Europe/London)', 'wpessential-order-rescue-hub'), h('input', { type: 'text', value: proSettings.timezone, onChange: function (event) { updatePro('timezone', event.target.value); } })),
+                        h('label', null, __('Holidays (YYYY-MM-DD, comma separated)', 'wpessential-order-rescue-hub'), h('input', { type: 'text', value: proSettings.holidays_text !== undefined ? proSettings.holidays_text : (proSettings.holidays || []).join(', '), onChange: function (event) { updatePro('holidays_text', event.target.value); } })),
                         h('fieldset', null,
                             h('legend', null, __('Working days', 'wpessential-order-rescue-hub')),
                             ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(function (day, index) {
@@ -367,6 +372,10 @@
                             })
                         )
                     ) : null
+                ),
+                h('div', { className: 'wperh-approval-policy' },
+                    h('strong', null, __('Order action safety', 'wpessential-order-rescue-hub')),
+                    h('p', null, __('Payment capture, refunds, cancellations, and payment-related order status changes remain disabled. If introduced in a later release, each action must require explicit human approval and a fresh order-state check.', 'wpessential-order-rescue-hub'))
                 ),
                 h('div', { className: 'wperh-workflows-heading' },
                     h('h3', null, __('Workflow rules', 'wpessential-order-rescue-hub')),
@@ -415,15 +424,16 @@
             ),
             window.wperhSettings && window.wperhSettings.isPro ? h('section', { className: 'wperh-pro-case-fields', 'aria-label': __('Pro case routing and SLA', 'wpessential-order-rescue-hub') },
                 h('p', null, h('strong', null, __('SLA status: ', 'wpessential-order-rescue-hub')), selected.sla_state || __('Starting', 'wpessential-order-rescue-hub')),
+                h('p', null, h('strong', null, __('Assigned to: ', 'wpessential-order-rescue-hub')), team.filter(function (member) { return Number(member.id) === Number(selected.assignee_id); }).map(function (member) { return member.name; })[0] || __('Unassigned', 'wpessential-order-rescue-hub')),
                 selected.sla_response_due_at ? h('p', null, __('First response due: ', 'wpessential-order-rescue-hub') + formatDate(selected.sla_response_due_at)) : null,
                 selected.sla_resolution_due_at ? h('p', null, __('Resolution due: ', 'wpessential-order-rescue-hub') + formatDate(selected.sla_resolution_due_at)) : null,
                 h('form', { onSubmit: saveAssignment },
                     h('label', { htmlFor: 'wperh-assignee' }, __('Assign to staff member', 'wpessential-order-rescue-hub')),
                     h('select', { id: 'wperh-assignee', value: assignee, onChange: function (event) { setAssignee(event.target.value); } },
-                        h('option', { value: '' }, __('Select a staff member', 'wpessential-order-rescue-hub')),
+                        h('option', { value: '' }, __('Unassign case', 'wpessential-order-rescue-hub')),
                         team.map(function (member) { return h('option', { key: member.id, value: String(member.id) }, member.name); })
                     ),
-                    h('button', { type: 'submit', className: 'button', disabled: saving || !assignee }, __('Save assignment', 'wpessential-order-rescue-hub'))
+                    h('button', { type: 'submit', className: 'button', disabled: saving }, __('Save assignment', 'wpessential-order-rescue-hub'))
                 )
             ) : null,
             selected.order ? h('section', { className: 'wperh-order-summary' },
