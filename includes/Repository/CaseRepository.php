@@ -181,7 +181,11 @@ final class CaseRepository
             'detect:' . $order_id . ':' . hash('sha256', wp_json_encode($reason_codes) . gmdate('YmdH'))
         );
 
-        return $this->find((int) $existing['case_id']);
+        $updated = $this->find((int) $existing['case_id']);
+        if ($updated && $was_closed && $reason_codes) {
+            do_action('wperh_case_detected', $updated);
+        }
+        return $updated;
     }
 
     public function update_case(array $case, array $changes, string $event_type, array $payload): bool
