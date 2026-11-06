@@ -43,10 +43,17 @@ final class Installer
             outcome varchar(32) NOT NULL DEFAULT '',
             episode int(10) unsigned NOT NULL DEFAULT 1,
             row_version int(10) unsigned NOT NULL DEFAULT 1,
+            assignee_id bigint(20) unsigned NULL,
+            sla_response_due_at datetime NULL,
+            sla_resolution_due_at datetime NULL,
+            sla_state varchar(16) NOT NULL DEFAULT '',
+            sla_paused_at datetime NULL,
             PRIMARY KEY  (case_id),
             UNIQUE KEY order_id (order_id),
             KEY state_updated (state, updated_at),
-            KEY priority_age (priority, first_detected_at)
+            KEY priority_age (priority, first_detected_at),
+            KEY assignee_state (assignee_id, state),
+            KEY sla_due_state (sla_state, sla_resolution_due_at)
         ) {$charset_collate};";
 
         $events_sql = "CREATE TABLE {$events} (
