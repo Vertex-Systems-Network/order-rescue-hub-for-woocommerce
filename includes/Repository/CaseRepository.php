@@ -48,6 +48,16 @@ final class CaseRepository
             $values[] = $filters['state'];
         }
 
+        if (isset($filters['assignee_id']) && '' !== (string) $filters['assignee_id']) {
+            $where[] = 'assignee_id = %d';
+            $values[] = absint($filters['assignee_id']);
+        }
+
+        if (!empty($filters['sla_state']) && 'all' !== $filters['sla_state']) {
+            $where[] = 'sla_state = %s';
+            $values[] = sanitize_key($filters['sla_state']);
+        }
+
         if (!empty($filters['reason'])) {
             $where[] = 'reason_codes LIKE %s';
             $values[] = '%' . $wpdb->esc_like('"' . $filters['reason'] . '"') . '%';
