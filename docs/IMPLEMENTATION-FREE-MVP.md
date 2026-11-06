@@ -22,7 +22,7 @@
 - Corrected Composer PSR-4 Asset class import.
 - Corrected the case database update format sequence so numeric priority and JSON evidence are stored with matching formats.
 - Fixed pagination so moving pages does not reset the page to 1.
-- Changed the search label to “order ID” to match the implemented query; formatted order total using the store currency symbol.
+- Changed the search label to “order ID” to match the implemented query; added a priority filter and direct native-order link; formatted order total using the store currency symbol.
 
 ## Verification completed
 
