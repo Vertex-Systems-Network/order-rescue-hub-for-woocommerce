@@ -42,7 +42,7 @@
     function App() {
         var _a = useState([]), cases = _a[0], setCases = _a[1];
         var _b = useState(null), selected = _b[0], setSelected = _b[1];
-        var _c = useState({ state: 'open', reason: '', search: '', older_than_hours: '', page: 1 }), filters = _c[0], setFilters = _c[1];
+        var _c = useState({ state: 'open', reason: '', search: '', older_than_hours: '', assignee_id: '', sla_state: '', page: 1 }), filters = _c[0], setFilters = _c[1];
         var _d = useState(1), totalPages = _d[0], setTotalPages = _d[1];
         var _e = useState(0), total = _e[0], setTotal = _e[1];
         var _f = useState(false), loading = _f[0], setLoading = _f[1];
@@ -82,7 +82,7 @@
 
         useEffect(function () {
             loadCases();
-        }, [filters.state, filters.reason, filters.search, filters.older_than_hours, filters.page]);
+        }, [filters.state, filters.reason, filters.search, filters.older_than_hours, filters.assignee_id, filters.sla_state, filters.page]);
 
         useEffect(function () {
             if (!(window.wperhSettings && window.wperhSettings.isPro)) {
@@ -404,7 +404,11 @@
                 h('td', null, age),
                 h('td', null, h('span', { className: 'wperh-priority' }, item.priority <= 20 ? __('High', 'wpessential-order-rescue-hub') : __('Normal', 'wpessential-order-rescue-hub'))),
                 h('td', null, h('span', { className: 'wperh-state wperh-state-' + item.state }, labelForState(item.state))),
-                window.wperhSettings && window.wperhSettings.isPro ? h('td', null, h('span', { className: 'wperh-sla-state wperh-sla-' + (item.sla_state || 'running') }, item.sla_state || __('Starting', 'wpessential-order-rescue-hub'))) : null,
+                window.wperhSettings && window.wperhSettings.isPro ? h('td', null,
+                    h('span', { className: 'wperh-sla-state wperh-sla-' + (item.sla_state || 'running') }, item.sla_state || __('Starting', 'wpessential-order-rescue-hub')),
+                    item.sla_resolution_due_at ? h('small', null, formatDate(item.sla_resolution_due_at)) : null
+                ) : null,
+                window.wperhSettings && window.wperhSettings.isPro ? h('td', null, team.filter(function (member) { return Number(member.id) === Number(item.assignee_id); }).map(function (member) { return member.name; })[0] || __('Unassigned', 'wpessential-order-rescue-hub')) : null,
                 h('td', null, formatDate(item.updated_at)),
                 h('td', null, h('button', {
                     type: 'button',
@@ -540,6 +544,18 @@
                         h('option', { value: '168' }, __('Older than 7 days', 'wpessential-order-rescue-hub'))
                     )
                 ),
+                window.wperhSettings && window.wperhSettings.isPro ? h('div', { className: 'wperh-pro-filters' },
+                    h('label', { htmlFor: 'wperh-owner-filter' }, __('Assigned owner', 'wpessential-order-rescue-hub')),
+                    h('select', { id: 'wperh-owner-filter', value: filters.assignee_id, onChange: function (event) { updateFilter('assignee_id', event.target.value); } },
+                        h('option', { value: '' }, __('All owners', 'wpessential-order-rescue-hub')),
+                        team.map(function (member) { return h('option', { key: member.id, value: String(member.id) }, member.name); })
+                    ),
+                    h('label', { htmlFor: 'wperh-sla-filter' }, __('SLA state', 'wpessential-order-rescue-hub')),
+                    h('select', { id: 'wperh-sla-filter', value: filters.sla_state, onChange: function (event) { updateFilter('sla_state', event.target.value); } },
+                        h('option', { value: '' }, __('All SLA states', 'wpessential-order-rescue-hub')),
+                        ['running', 'warning', 'breached', 'paused', 'met'].map(function (state) { return h('option', { key: state, value: state }, state); })
+                    )
+                ) : null,
                 h('div', { className: 'wperh-table-wrap' },
                     h('table', { className: 'widefat striped wperh-table' },
                         h('thead', null, h('tr', null,
@@ -549,11 +565,12 @@
                             h('th', { scope: 'col' }, __('Priority', 'wpessential-order-rescue-hub')),
                             h('th', { scope: 'col' }, __('Case state', 'wpessential-order-rescue-hub')),
                             window.wperhSettings && window.wperhSettings.isPro ? h('th', { scope: 'col' }, __('SLA', 'wpessential-order-rescue-hub')) : null,
+                            window.wperhSettings && window.wperhSettings.isPro ? h('th', { scope: 'col' }, __('Assigned to', 'wpessential-order-rescue-hub')) : null,
                             h('th', { scope: 'col' }, __('Last updated', 'wpessential-order-rescue-hub')),
                             h('th', { scope: 'col' }, __('Action', 'wpessential-order-rescue-hub'))
                         )),
                         h('tbody', null,
-                            loading ? h('tr', null, h('td', { colSpan: window.wperhSettings && window.wperhSettings.isPro ? 8 : 7, className: 'wperh-loading', __('Loading cases…', 'wpessential-order-rescue-hub'))) :
+                            loading ? h('tr', null, h('td', { colSpan: window.wperhSettings && window.wperhSettings.isPro ? 9 : 7, className: 'wperh-loading', __('Loading cases…', 'wpessential-order-rescue-hub'))) :
                             rows.length ? rows : h('tr', null, h('td', { colSpan: window.wperhSettings && window.wperhSettings.isPro ? 8 : 7, className: 'wperh-empty', total ? __('No cases match these filters.', 'wpessential-order-rescue-hub') : __('No exceptions need attention. New qualifying order issues will appear here.', 'wpessential-order-rescue-hub')))
                         )
                     )
