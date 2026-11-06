@@ -19,3 +19,9 @@ Default behavior is non-executing. If an action executor is approved later, sepa
 
 **Status:** Open.  
 Phase 3 must compare order metadata versus dedicated plugin tables for case lifecycle, assignment, SLA timestamps, and audit events. Select based on query scale, HPOS compatibility, retention, migration, and uninstall behavior. Never duplicate WooCommerce order fields unnecessarily.
+
+
+## AD-005 — PSR-4 PHP autoloading
+
+**Status:** Required; namespace and mapping details to be finalized in Phase 3.  
+All plugin PHP classes must use a single documented namespace root and predictable PSR-4 directory mapping. The final plugin package must include a runtime autoloader so class loading does not depend on merchant-run commands. Phase 3 selects the namespace root, source layout and loader approach; Phase 5 implements and verifies class-to-file resolution. Do not create a CLI work item for this requirement.
