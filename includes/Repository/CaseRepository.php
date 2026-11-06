@@ -58,6 +58,11 @@ final class CaseRepository
             $values[] = sanitize_key($filters['sla_state']);
         }
 
+        if (isset($filters['priority']) && in_array($filters['priority'], array('high', 'normal'), true)) {
+            $where[] = 'high' === $filters['priority'] ? 'priority <= %d' : 'priority > %d';
+            $values[] = 20;
+        }
+
         if (!empty($filters['reason'])) {
             $where[] = 'reason_codes LIKE %s';
             $values[] = '%' . $wpdb->esc_like('"' . $filters['reason'] . '"') . '%';
