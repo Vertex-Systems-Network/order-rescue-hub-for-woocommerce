@@ -40,7 +40,9 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 | 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI | Not started | `░░░░░ 0%` | 2026-11-24 | 2026-12-08 |
 | 6. Pro capabilities | Alerts, workflow rules, assignment, SLA controls, approvals | Not started | `░░░░░ 0%` | 2026-12-09 | 2026-12-22 |
 | 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | Not started | `░░░░░ 0%` | 2026-12-23 | 2027-01-08 |
-| 8. Release readiness | Documentation, licensing decision, packaging, support and submission checklist | Not started | `░░░░░ 0%` | 2027-01-09 | 2027-01-15 |
+| 8. WordPress.org Free submission | GPL-compatible Free package, readme/assets, directory review submission and SVN release preparation | Not started | `░░░░░ 0%` | 2027-01-09 | 2027-01-22 |
+| 9. WooCommerce.com Pro submission | Vendor application, paid Pro package, QIT/UX evidence, Marketplace review and feedback fixes | Not started | `░░░░░ 0%` | 2027-01-23 | 2027-02-05 |
+| 10. Release and maintenance readiness | Approval-dependent launch checklist, versioned releases, support and update process | Not started | `░░░░░ 0%` | 2027-02-06 | 2027-02-12 |
 
 **Overall:** Planning only; no plugin code or release build exists. Dates are provisional, not delivery commitments.
 
@@ -104,7 +106,7 @@ Each capability has one canonical key to prevent duplicates across Free and Pro.
 - **No product CLI:** No WP-CLI commands, shell interface, or CLI-only setup will be added before the plugin is final. Build tooling used privately by developers is a separate implementation detail and must not become a user-facing requirement without an explicit decision.
 - **Supported versions:** Exact minimum PHP, WordPress, WooCommerce, browser, and database versions remain **TBD** until market, hosting, and test-matrix review. Phase 1 must record a proposed baseline and the evidence for it. Do not advertise compatibility until verified.
 - **Multilingual:** English source strings, translation-ready text domain, plural/context support. Validate WPML integration (including `wpml-config.xml` only if plugin-owned translatable settings require it) and Polylang behavior. No claim of official certification without the vendor process.
-- **Licensing:** Pro licensing/delivery architecture is not selected. Keep the core plugin functional independently and do not assume an external licensing service until a decision is documented.
+- **Licensing and distribution:** Target WordPress.org for the Free edition and WooCommerce.com Marketplace for paid Pro. The exact Pro listing model, billing, vendor account, GPL-compatible license, trademark checks, package split and submission evidence are tracked in `docs/DISTRIBUTION-PLAN.md`; do not imply approval before both review processes finish.
 
 ## AI collaboration instructions
 
@@ -136,6 +138,24 @@ Initial desk research checked WooCommerce official order management/status/workf
 - Polylang for WooCommerce: https://polylang.pro/documentation/support/guides/polylang-wc-installation/
 - Adjacent products: https://wordpress.org/plugins/stale-order-alerts-for-woocommerce/ ; https://wordpress.org/plugins/failed-order-rescue-for-woocommerce/ ; https://woocommerce.com/products/order-priority/
 
-## License and distribution
+## Distribution strategy
 
-To be decided. Do not add a license or distribution claim until the WordPress.org and paid distribution strategy is approved.
+The product is planned for two separate submission tracks: **Free edition to the WordPress.org Plugin Directory** and **paid Pro edition to the WooCommerce.com Marketplace**. This is a release target, not an assertion of approval. Both listings depend on independent review and any reviewer feedback. Keep one canonical codebase/option bank, with clearly separated packages and no duplicated feature settings.
+
+| Track | Package and submission plan | Required release gates |
+|---|---|---|
+| WordPress.org — Free | Complete, installable production ZIP with the Free feature set, directory readme/assets and support details; submit through the official plugin submission process; after approval publish the approved release through the assigned SVN repository | GPL-compatible license (GPL v2 or later); detailed guideline, security, trademark and privacy review; no placeholders/dev artifacts; test on the supported version matrix; document any external service; prepare support and update ownership |
+| WooCommerce.com — Pro (paid) | Submit a production-ready Pro extension/package for a paid Marketplace listing; confirm with Marketplace review whether it should be listed as a paid standalone extension depending on the WordPress.org Free base, or through the Marketplace freemium model | Approved vendor/partner application; product/business and revenue-share review; trademark-compliant name; supported two latest major WordPress and WooCommerce versions; PHP 7.4 minimum stated by current submission guidance (target a newer secure baseline, with PHP 8.3+ strongly recommended); WordPress accessibility standards; security/UX/documentation review; QIT evidence for API, E2E, activation, security, PHP compatibility, malware and validation; pricing parity across sales channels |
+
+The Pro price of **$99/year remains a proposal**. Confirm its billing/licensing fit with Woo Marketplace before finalizing it. Woo Marketplace may require its own license/billing and revenue-share terms; document the selected listing and support model before implementation is packaged. The free WordPress.org build must provide substantive standalone value and follow the full directory rules; upgrade messaging must stay compliant and non-intrusive.
+
+**Submission is not guaranteed.** Do not mark either route complete until the package has passed internal checks, been submitted, reviewer feedback has been addressed, and approval/listing is verifiably granted. Submission and reviewer turnaround dates are estimates; external review can extend the schedule. No CLI interface will be shipped as a plugin feature. Internal release/test workflows must be documented separately and must not become a merchant requirement.
+
+Official references checked 2026-11-06:
+
+- WordPress.org directory overview and license requirements: https://developer.wordpress.org/plugins/wordpress-org/
+- WordPress.org submission and SVN publishing flow: https://developer.wordpress.org/plugins/wordpress-org/planning-submitting-and-maintaining-plugins/
+- WordPress.org detailed plugin guidelines: https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/
+- Woo Marketplace product submission checklist: https://developer.woocommerce.com/docs/woo-marketplace/submitting-your-product
+- Woo Marketplace getting started and vendor review flow: https://developer.woocommerce.com/docs/woo-marketplace/getting-started/
+- Woo Marketplace monetization expectations, including paid and freemium options: https://developer.woocommerce.com/docs/woo-marketplace/monetization-expectations
