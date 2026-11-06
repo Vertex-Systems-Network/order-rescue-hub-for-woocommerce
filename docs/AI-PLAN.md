@@ -18,7 +18,7 @@ All assistants must follow `AGENTS.md` and README first. The backlog is tool-agn
 
 ## Standard handoff prompt
 
-> Work on the WPEssential Order Rescue Hub for WooCommerce repository. Read `AGENTS.md`, `README.md`, `docs/STATUS.md`, and the relevant specification before changing anything. Report the active phase and scope. Preserve canonical option keys and architecture decisions. Do not add a product CLI, execute payment/refund/cancel actions, send customer communications, add telemetry, or introduce dependencies unless the documented approval gate for that decision is satisfied. Make only the deliverable for the active phase, record what changed and what was actually verified in `docs/STATUS.md`, and update the README phase table only when evidence justifies it. Do not claim tests or compatibility checks that were not run.
+> Work on the WPEssential Order Rescue Hub for WooCommerce repository. Read `AGENTS.md`, `README.md`, `docs/STATUS.md`, and the relevant specification before changing anything. Report the active phase and scope. Preserve canonical option keys and architecture decisions. Do not create, schedule, implement, or run any CLI-related task before the plugin is final. Do not execute payment/refund/cancel actions, send customer communications, add telemetry, or introduce dependencies unless the documented approval gate is satisfied. Make only the deliverable for the active phase, record what changed and what was actually verified in `docs/STATUS.md`, and update the README phase table only when evidence justifies it. Do not claim tests or compatibility checks that were not run.
 
 ## Model-specific repository entry points
 
