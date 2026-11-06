@@ -2,7 +2,7 @@
 
 **Repository slug:** `wpessential-order-rescue-hub-woocommerce`  
 **Product type:** WPEssential add-on for WooCommerce  
-**Development status:** Free MVP implementation complete; release validation pending  
+**Development status:** Free MVP and Pro capability source complete; package and release validation pending  
 **Current release:** 0.1.0 development package (not a production release)
 
 > A focused workspace for finding, prioritizing, assigning, and resolving WooCommerce order exceptions.
@@ -38,17 +38,21 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 | 3. Architecture and data flow | Case/event schema, detection flow, REST permissions, retention, failure handling, Composer PSR-4 autoloader design | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled Composer PSR-4 autoloader | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
-| 6. Pro capabilities | Alerts, workflow rules, assignment, SLA controls, approvals | Not started | `░░░░░ 0%` | 2026-12-09 | 2026-12-22 |
+| 6. Pro capabilities | Admin email alerts, bounded workflows, team assignment, SLA clocks and approval boundary | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | Not started | `░░░░░ 0%` | 2026-12-23 | 2027-01-08 |
 | 8. WordPress.org Free submission | GPL-compatible Free package, readme/assets, directory review submission and SVN release preparation | Not started | `░░░░░ 0%` | 2027-01-09 | 2027-01-22 |
 | 9. WooCommerce.com Pro submission | Vendor application, paid Pro package, QIT/UX evidence, Marketplace review and feedback fixes | Not started | `░░░░░ 0%` | 2027-01-23 | 2027-02-05 |
 | 10. Release and maintenance readiness | Approval-dependent launch checklist, versioned releases, support and update process | Not started | `░░░░░ 0%` | 2027-02-06 | 2027-02-12 |
 
-**Overall:** Phase 5 Free MVP implementation is complete. Release readiness, PHP/WP/WooCommerce compatibility, accessibility, performance, security, and marketplace checks remain in later phases. Dates are provisional and are not delivery commitments.
+**Overall:** Phases 0–6 are complete for product framing, requirements, specifications, architecture, pre-development, Free implementation, and Pro capability source. Phase 7 compatibility and release validation remains open. The Pro source is gated for paid packaging; no license or Marketplace approval is claimed. Dates are provisional, not delivery commitments.
 
 ## Phase 5: Free MVP implementation
 
 **Status: complete (100%, 2026-11-06).** The Free implementation, React admin inbox, REST endpoints, case/event storage, Composer PSR-4 runtime, and developer package notes are recorded in [docs/IMPLEMENTATION-FREE-MVP.md](docs/IMPLEMENTATION-FREE-MVP.md). JavaScript syntax was checked with Node. PHP parsing/runtime, WordPress/WooCommerce install, HPOS, multilingual behavior, security, accessibility, and performance validation have not been run; these remain Phase 7 release-validation gates. No CLI work item was added.
+
+## Phase 0: product framing
+
+**Status: complete (100%, 2026-11-06).** The target user, order-exception problem, WPEssential add-on positioning, Free/Pro hypothesis, payment-action safety boundary and product non-goals are recorded in [docs/PRODUCT-SCOPE.md](docs/PRODUCT-SCOPE.md) and this README.
 
 ## Phase 1: market scan and product gap
 
@@ -71,15 +75,21 @@ Research is based on published listings and documentation, not hands-on plugin t
 
 ## Phase 2: product and UX specification
 
-**Status: complete (100%, 2026-11-06).** The React admin information architecture, inbox and case detail behavior, Free/Pro boundaries, workflow/assignment/SLA interaction, accessibility/localization requirements and UI states are specified in [docs/UX-SPECIFICATION.md](docs/UX-SPECIFICATION.md). Phase 3 and Phase 4 are complete; Phase 5 remains planned. No UI or plugin code has been implemented.
+**Status: complete (100%, 2026-11-06).** The React admin information architecture, inbox and case detail behavior, Free/Pro boundaries, workflow/assignment/SLA interactions, accessibility/localization requirements and UI states are specified in [docs/UX-SPECIFICATION.md](docs/UX-SPECIFICATION.md). React-based WordPress admin screens are implemented in Phases 5–6; runtime and accessibility verification remains open.
 
 ## Phase 3: architecture and data flow
 
-**Status: complete (100%, 2026-11-06).** The case/event storage decision, WooCommerce detection and data flow, REST permission model, retention/privacy behavior, failure handling and Composer PSR-4 mapping are documented in [docs/ARCHITECTURE-DATA-FLOW.md](docs/ARCHITECTURE-DATA-FLOW.md) and [docs/ARCHITECTURE-DECISIONS.md](docs/ARCHITECTURE-DECISIONS.md). No plugin code or runtime components have been built.
+**Status: complete (100%, 2026-11-06).** The case/event storage decision, WooCommerce detection and data flow, REST permission model, retention/privacy behavior, failure handling and Composer PSR-4 mapping are documented in [docs/ARCHITECTURE-DATA-FLOW.md](docs/ARCHITECTURE-DATA-FLOW.md) and [docs/ARCHITECTURE-DECISIONS.md](docs/ARCHITECTURE-DECISIONS.md). Phases 5–6 implement the Free and Pro source layers; the compatibility and release matrix remains unverified.
 
 ## Phase 4: pre-development package
 
-**Status: complete (100%, 2026-11-06).** Implementation contracts, ordered Free MVP work packages, Definition of Done, threat review, dated PHP/WP/WooCommerce/HPOS/database/WPML/Polylang test matrix, and release gates are recorded in [docs/PRE-DEVELOPMENT-PLAN.md](docs/PRE-DEVELOPMENT-PLAN.md). Phase 5 remains planned. No implementation or tests have been run.
+**Status: complete (100%, 2026-11-06).** Implementation contracts, Free MVP acceptance, threat review, dated PHP/WP/WooCommerce/HPOS/database/WPML/Polylang test matrix, and release gates are recorded in [docs/PRE-DEVELOPMENT-PLAN.md](docs/PRE-DEVELOPMENT-PLAN.md). The plan was completed before implementation began; actual implementation evidence is recorded in the Phase 5 and Phase 6 reports.
+
+## Phase 6: Pro capability implementation
+
+**Status: complete (100%, 2026-11-06).** Added gated Pro source for opt-in administrator email alerts with deduplication and bounded retries; staff assignment without changing order permissions; calendar/business-hour SLA clocks, holidays, pause states, first-response marking, warnings and breach history; and versioned, bounded workflow rules with dry-run defaults, age/reason/state conditions, internal actions and run history. Pro queue filters, SLA visibility, assignment controls and settings are in the React admin UI. Payment capture, refunds, cancellation and payment-related order-status changes remain disabled; the UI and settings preserve that approval boundary. Details: [docs/PHASE-6-PRO-IMPLEMENTATION.md](docs/PHASE-6-PRO-IMPLEMENTATION.md).
+
+**Packaging gate:** Pro source is activated only in a Pro build that defines `WPERH_PRO_EDITION`; licensing, paid package creation, compatibility checks and Marketplace review remain later release work. The planned $99/year price is still a hypothesis.
 
 ## Unified options bank
 
@@ -91,21 +101,21 @@ Each capability has one canonical key. Filter controls, rule logic and delivery 
 | `exception.detection` | Detect pending/failed payment, missing shipping data, stock discrepancy and processing delay | Core rules | Configurable thresholds/rules | Don't misclassify legitimate offline/delayed payment |
 | `exception.reason` | Reason taxonomy and explainable evidence | Core reasons | Configurable tags | One case can carry more than one reason |
 | `exception.age_filters` | Staff-selected age buckets/date range | Yes | Yes | Separate from case-creation thresholds |
-| `exception.search` | Search by order number/customer fields where permitted | Yes | Yes | Respect existing capabilities and privacy |
+| `exception.search` | Search by WooCommerce order ID | Yes | Yes | Customer-field search is deferred pending privacy and permission review |
 | `exception.saved_views` | Save reusable queue filters | — | Yes | Not a duplicate settings profile |
 | `case.state` | Open, triaged, assigned, waiting, escalated, closed | Yes | Yes | Case lifecycle only; does not alter Woo order status |
 | `case.notes` | Private resolution notes | Yes | Templates | Internal only; never send as customer note/email |
-| `case.history` | Attributed case/rule/assignment/resolution event history | Basic | Extended + export | One audit trail, not separate duplicate activity logs |
+| `case.history` | Attributed case/rule/assignment/SLA/resolution event history | Basic | Extended in-case history | CSV export remains a later privacy/release decision |
 | `resolution.outcome` | Resolved, dismissed, duplicate, waiting, escalated + reason | Yes | Yes | Terminal/decision reason distinct from current case state |
 | `triage.priority` | Explainable priority from age/reason/SLA | Basic | Configurable rules | No standalone label-only workflow |
 | `queue.bulk_tools` | Safe case-only bulk assignment/priority/outcome updates | — | Candidate | Never bulk-capture, refund or cancel orders |
-| `alerts.channels` | Admin in-app/email alerts, test delivery, throttling and deduplication | — | Configurable | No customer emails or external service by default |
+| `alerts.channels` | Opt-in administrator email alerts, test delivery, bounded retries and event deduplication | — | Configurable recipients | No in-app alert center, customer email, or external service in this phase |
 | `team.assignment` | Assign/reassign case to a staff member | — | Yes | No implicit order access/permission changes |
 | `sla.policy` | Due times, timezone/business-hours choice, pause/breach tracking | — | Yes | Exact calendar/business-hour behavior specified in Phase 2 |
-| `workflow.rules` | Bounded exception triage/assignment/admin-notification rules | — | Configurable | AND/OR logic, priority, pause, dry-run, versions and run history |
-| `action.approval` | Per-order approval and fresh state check for any approved high-impact action | Guardrail | Policy controls | Explicit approval, idempotency and audit required |
+| `workflow.rules` | Bounded exception triage/assignment/admin-notification rules | — | Configurable | AND conditions (reason/state/age); dry-run default, pause by disable, versioned run events, max 3 attempts; no payment/order actions |
+| `action.approval` | Approval boundary for future high-impact actions | Guardrail | Required policy; action execution disabled | No capture/refund/cancel/status-action endpoint is shipped; any future execution needs separate review |
 | `action.execution` | Capture/refund/cancel/payment-implying status changes | Not in MVP | Future gated capability | Disabled by default; no silent execution; marketplace/gateway safety review first |
-| `reporting.metrics` | Open/resolved count, resolution time, SLA/reason trends | Basic counts | Trends/export | Aggregate; minimize personal data |
+| `reporting.metrics` | Open case count and queue totals | Basic | Trends are a later phase | Export and aggregate reporting require separate privacy/performance review |
 | `data.retention` | Retain/purge Hub-owned case data | Safe defaults | Configurable | Never delete WooCommerce order records |
 | `privacy.data_rights` | Export/erase Hub-owned personal data where applicable | Yes | Yes | Separate from order deletion or WooCommerce record ownership |
 | `integrations.multilingual` | Translation-ready admin UI and order-language context | Yes | Yes | WPML/Polylang are optional and must be tested |
@@ -132,7 +142,7 @@ No CLI tasks or CLI work items are included before the plugin is final.
 ## Technical direction and constraints
 
 - **Admin UI:** React-based WordPress admin application, using WordPress-provided packages (`@wordpress/element`, `@wordpress/components` and related packages) and WordPress/WooCommerce design conventions. Ship compiled assets; do not load React from a public CDN. The React/WordPress design direction is specified in Phases 2–4; exact package versions and build integration are verified during implementation.
-- **PHP structure:** Use Composer PSR-4 mapping `WPEssential\OrderRescueHub\` to `includes/`. The production package must include Composer's generated `vendor/autoload.php` and required runtime metadata; merchants must not need Composer installed. This requirement is architecture in Phase 3 and implementation acceptance in Phase 5. No CLI task is added before plugin finalization.
+- **PHP structure:** Use Composer PSR-4 mapping `WPEssential\OrderRescueHub\` to `includes/`. The source ships Composer's ClassLoader runtime, PSR-4 map to `includes/`, and directly loaded `vendor/autoload.php`; the final production artifact must be regenerated/reconciled with Composer metadata after the no-CLI development window closes. This requirement is architecture in Phase 3 and implementation acceptance in Phase 5. No CLI task is added before plugin finalization.
 - **Order access:** Use WooCommerce order CRUD/query APIs (`WC_Order`, `wc_get_order`, `wc_get_orders` / `WC_Order_Query`) and declare HPOS compatibility only after tests. Do not directly query or mutate `posts`, `postmeta`, or WooCommerce order tables for order data.
 - **Integration boundary:** The add-on should detect WooCommerce availability, fail gracefully when dependencies are missing, and keep the WPEssential suite relationship optional unless a concrete shared-core dependency is justified.
 - **CLI deferral:** Do not create, schedule, implement, or run any CLI-related task before the plugin is final. Do not add WP-CLI commands or CLI-only merchant setup. Revisit CLI work only after finalization.
