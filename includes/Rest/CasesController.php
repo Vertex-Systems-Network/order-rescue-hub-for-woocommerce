@@ -58,7 +58,7 @@ final class CasesController
 
     public function can_manage(): bool
     {
-        return current_user_can('manage_woocommerce') || current_user_can('edit_shop_orders');
+        return current_user_can('manage_woocommerce');
     }
 
     public function list_cases(WP_REST_Request $request)
