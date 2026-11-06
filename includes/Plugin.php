@@ -38,7 +38,7 @@ final class Plugin
         $repository = new CaseRepository();
         $service = new CaseService($repository);
 
-        (new Screen())->register();
+        (new Screen())->register();\n        (new Assets())->register();
         (new CasesController($repository, $service))->register();
         (new Detector($repository))->register();
 
