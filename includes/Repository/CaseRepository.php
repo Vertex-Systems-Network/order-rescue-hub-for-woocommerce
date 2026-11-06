@@ -164,7 +164,7 @@ final class CaseRepository
                 'row_version' => (int) $existing['row_version'] + 1,
             ),
             array('case_id' => (int) $existing['case_id']),
-            array('%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d'),
+            array('%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d'),
             array('%d')
         );
 
