@@ -1,9 +1,9 @@
 # WPEssential Order Rescue Hub for WooCommerce
 
 **Repository slug:** `wpessential-order-rescue-hub-woocommerce`  
-**Product type:** WPEssential add-on for WooCommerce (planned)  
-**Development status:** Pre-development planning  
-**Current release:** None
+**Product type:** WPEssential add-on for WooCommerce  
+**Development status:** Free MVP implementation complete; release validation pending  
+**Current release:** 0.1.0 development package (not a production release)
 
 > A focused workspace for finding, prioritizing, assigning, and resolving WooCommerce order exceptions.
 
@@ -37,14 +37,18 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 | 2. Product and UX specification | Jobs-to-be-done, information architecture, React admin UI flows, accessibility requirements | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 3. Architecture and data flow | Case/event schema, detection flow, REST permissions, retention, failure handling, Composer PSR-4 autoloader design | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
-| 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled Composer PSR-4 autoloader | Not started | `░░░░░ 0%` | 2026-11-24 | 2026-12-08 |
+| 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled Composer PSR-4 autoloader | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 6. Pro capabilities | Alerts, workflow rules, assignment, SLA controls, approvals | Not started | `░░░░░ 0%` | 2026-12-09 | 2026-12-22 |
 | 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | Not started | `░░░░░ 0%` | 2026-12-23 | 2027-01-08 |
 | 8. WordPress.org Free submission | GPL-compatible Free package, readme/assets, directory review submission and SVN release preparation | Not started | `░░░░░ 0%` | 2027-01-09 | 2027-01-22 |
 | 9. WooCommerce.com Pro submission | Vendor application, paid Pro package, QIT/UX evidence, Marketplace review and feedback fixes | Not started | `░░░░░ 0%` | 2027-01-23 | 2027-02-05 |
 | 10. Release and maintenance readiness | Approval-dependent launch checklist, versioned releases, support and update process | Not started | `░░░░░ 0%` | 2027-02-06 | 2027-02-12 |
 
-**Overall:** Planning only; no plugin code or release build exists. Dates are provisional, not delivery commitments.
+**Overall:** Phase 5 Free MVP implementation is complete. Release readiness, PHP/WP/WooCommerce compatibility, accessibility, performance, security, and marketplace checks remain in later phases. Dates are provisional and are not delivery commitments.
+
+## Phase 5: Free MVP implementation
+
+**Status: complete (100%, 2026-11-06).** The Free implementation, React admin inbox, REST endpoints, case/event storage, Composer PSR-4 runtime, and developer package notes are recorded in [docs/IMPLEMENTATION-FREE-MVP.md](docs/IMPLEMENTATION-FREE-MVP.md). JavaScript syntax was checked with Node. PHP parsing/runtime, WordPress/WooCommerce install, HPOS, multilingual behavior, security, accessibility, and performance validation have not been run; these remain Phase 7 release-validation gates. No CLI work item was added.
 
 ## Phase 1: market scan and product gap
 
