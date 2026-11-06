@@ -21,6 +21,10 @@ final class AssignmentService
             return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub'), array('status' => 404));
         }
 
+        if ('closed' === $case['state']) {
+            return new WP_Error('wperh_case_closed', __('Closed cases cannot be reassigned.', 'wpessential-order-rescue-hub'), array('status' => 409));
+        }
+
         if (0 === $user_id) {
             if (empty($case['assignee_id'])) {
                 return $case;
