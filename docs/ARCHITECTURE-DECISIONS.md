@@ -4,7 +4,7 @@ Phase 3 decisions are based on the product/UX requirements and the WooCommerce, 
 
 ## AD-001 — React-based WordPress admin
 
-**Status:** Accepted direction; concrete component versions and implementation details are Phase 4.  
+**Status:** Accepted direction; concrete component versions and implementation details are Phase 5.  
 Use React with WordPress-provided packages and WordPress/WooCommerce admin patterns. Bundle production assets locally; do not load React from a CDN. The React interface serves the exception queue and case workflow; full order management stays in the native WooCommerce order screen.
 
 ## AD-002 — WooCommerce CRUD and query APIs
@@ -29,17 +29,17 @@ Use Composer mapping WPEssential\OrderRescueHub\ to includes/. Ship Composer's g
 
 ## AD-006 — Event-driven detection with bounded catch-up
 
-**Status:** Accepted direction; exact hooks and cadence are Phase 4.  
+**Status:** Accepted direction; exact hooks and cadence are defined in implementation and verified in Phase 7.  
 Use lightweight WooCommerce signals to mark candidates, re-fetch current state via CRUD APIs, and evaluate exceptions in bounded work. Use a paginated, locked WordPress scheduled sweep as eventual catch-up for age-based rules and missed signals. It is not a real-time SLA guarantee; show actual observation/last-run times.
 
 ## AD-007 — REST contract and capability checks
 
-**Status:** Accepted direction; endpoint/capability matrix details are Phase 4.  
+**Status:** Accepted direction; endpoint/capability matrix details are implemented in Phase 5 and tested in Phase 7.  
 Expose only explicit, versioned routes for queue, case details/history, notes, transitions, and Pro settings/assignment. Authenticate admin requests; check nonce and the relevant capability on each request; check per-order access before exposing protected details. Nonce is CSRF protection, not authorization.
 
 ## AD-008 — Data minimization and retention
 
-**Status:** Proposed policy for Phase 4 validation.  
+**Status:** Accepted pre-development baseline; reconfirm before public release.  
 Do not persist full order/customer/payment snapshots. Keep reason codes and allow-listed evidence only. Open cases are not time-purged. Proposed closed-case/event retention is 12 months. Keep Hub tables on plugin deletion by default; expose a clearly labeled explicit purge choice, off by default. Integrate applicable WordPress privacy exporter/eraser behavior.
 
 ## AD-009 — Pro rules and activity records
@@ -50,4 +50,4 @@ Store small, validated rule definitions in versioned WordPress options. Store ru
 ## AD-010 — Multisite boundary
 
 **Status:** Accepted for initial release.  
-Use per-site options and per-site prefixed tables. Network-wide settings/reporting are out of initial scope unless Phase 4 documents a validated need.
+Use per-site options and per-site prefixed tables. Network-wide settings/reporting are out of initial scope unless a validated need is documented before implementation.
