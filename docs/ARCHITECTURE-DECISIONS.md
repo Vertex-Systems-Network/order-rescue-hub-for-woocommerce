@@ -1,6 +1,6 @@
 # Architecture decisions
 
-Phase 3 decisions are based on the product/UX requirements and the WooCommerce, WordPress, and Composer references recorded in [ARCHITECTURE-DATA-FLOW.md](ARCHITECTURE-DATA-FLOW.md).
+Phase 3 decisions are based on the product/UX requirements and the WooCommerce, WordPress, and Composer references recorded in [ARCHITECTURE-DATA-FLOW.md](ARCHITECTURE-DATA-FLOW.md). Phases 5–6 added implementation source against these decisions; `docs/PHASE-AUDIT-0-6.md` records deviations and remaining verification.
 
 ## AD-001 — React-based WordPress admin
 
