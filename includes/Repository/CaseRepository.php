@@ -144,7 +144,7 @@ final class CaseRepository
             return $this->find($case_id);
         }
 
-        $was_closed = 'closed' === $existing['state'];
+        $was_closed = 'closed' === $existing['state'];\n        if (!$was_closed && $reason_codes === $existing['reason_codes'] && $evidence === $existing['evidence']) {\n            return $existing;\n        }
         $wpdb->update(
             $this->cases,
             array(
