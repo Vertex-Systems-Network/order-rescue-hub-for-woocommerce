@@ -105,7 +105,7 @@ Each capability has one canonical key. Filter controls, rule logic and delivery 
 | `exception.saved_views` | Save reusable queue filters | — | Yes | Not a duplicate settings profile |
 | `case.state` | Open, triaged, assigned, waiting, escalated, closed | Yes | Yes | Case lifecycle only; does not alter Woo order status |
 | `case.notes` | Private resolution notes | Yes | Templates | Internal only; never send as customer note/email |
-| `case.history` | Attributed case/rule/assignment/SLA/resolution event history | Basic | Extended in-case history | CSV export remains a later privacy/release decision |
+| `case.history` | Attributed case/rule/assignment/SLA/resolution event history | Basic | Pro adds workflow, assignment, SLA and delivery events | CSV export remains a later privacy/release decision |
 | `resolution.outcome` | Resolved, dismissed, duplicate, waiting, escalated + reason | Yes | Yes | Terminal/decision reason distinct from current case state |
 | `triage.priority` | Explainable priority from age/reason/SLA | Basic | Configurable rules | No standalone label-only workflow |
 | `queue.bulk_tools` | Safe case-only bulk assignment/priority/outcome updates | — | Candidate | Never bulk-capture, refund or cancel orders |
