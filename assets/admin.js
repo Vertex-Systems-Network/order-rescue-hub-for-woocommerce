@@ -587,8 +587,8 @@
                             h('th', { scope: 'col' }, __('Action', 'wpessential-order-rescue-hub'))
                         )),
                         h('tbody', null,
-                            loading ? h('tr', null, h('td', { colSpan: window.wperhSettings && window.wperhSettings.isPro ? 9 : 7, className: 'wperh-loading', __('Loading cases…', 'wpessential-order-rescue-hub'))) :
-                            rows.length ? rows : h('tr', null, h('td', { colSpan: window.wperhSettings && window.wperhSettings.isPro ? 8 : 7, className: 'wperh-empty', total ? __('No cases match these filters.', 'wpessential-order-rescue-hub') : __('No exceptions need attention. New qualifying order issues will appear here.', 'wpessential-order-rescue-hub')))
+                            loading ? h('tr', null, h('td', { colSpan: window.wperhSettings && window.wperhSettings.isPro ? 9 : 7, className: 'wperh-loading' }, __('Loading cases…', 'wpessential-order-rescue-hub'))) :
+                            rows.length ? rows : h('tr', null, h('td', { colSpan: window.wperhSettings && window.wperhSettings.isPro ? 9 : 7, className: 'wperh-empty' }, total ? __('No cases match these filters.', 'wpessential-order-rescue-hub') : __('No exceptions need attention. New qualifying order issues will appear here.', 'wpessential-order-rescue-hub')))
                         )
                     )
                 ),
