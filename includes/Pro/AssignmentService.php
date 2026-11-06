@@ -34,7 +34,9 @@ final class AssignmentService
             if (!$this->repository->update_case($case, array('assignee_id' => null, 'state' => $state), 'case_unassigned', array('previous_user_id' => $old))) {
                 return new WP_Error('wperh_assignment_stale', __('This case changed. Refresh it and try again.', 'wpessential-order-rescue-hub'), array('status' => 409));
             }
-            return $this->repository->find($case_id);
+            $updated = $this->repository->find($case_id);
+            do_action('wperh_case_assigned', $updated, $old, null);
+            return $updated;
         }
 
         $user = get_user_by('id', $user_id);
