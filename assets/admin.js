@@ -79,7 +79,7 @@
 
         useEffect(function () {
             loadCases();
-        }, [filters.state, filters.reason, filters.older_than_hours, filters.page]);
+        }, [filters.state, filters.reason, filters.search, filters.older_than_hours, filters.page]);
 
         function updateFilter(key, value) {
             setFilters(function (current) {
