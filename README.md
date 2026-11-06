@@ -33,7 +33,7 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 | Phase | Deliverable | Status | Progress | Start | Target end |
 |---|---|---:|---|---|---|
 | 0. Product framing | Problem, audience, boundaries, free/pro hypothesis | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
-| 1. Market and requirements | Competitor map, option bank, gap statement, version matrix | In progress | `██░░░ 35%` | 2026-11-06 | 2026-11-10 |
+| 1. Market and requirements | Competitor map, canonical option/system banks, product gap, version baseline and distribution requirements | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 2. Product and UX specification | Jobs-to-be-done, information architecture, React admin UI flows, accessibility requirements | Planned | `░░░░░ 0%` | 2026-11-11 | 2026-11-14 |
 | 3. Architecture and data flow | Storage model, event lifecycle, permissions, retention, failure handling | Planned | `░░░░░ 0%` | 2026-11-15 | 2026-11-19 |
 | 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Planned | `░░░░░ 0%` | 2026-11-20 | 2026-11-23 |
@@ -48,62 +48,77 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 
 ## Phase 1: market scan and product gap
 
-The initial scan shows adjacent products already cover custom order statuses and transitions, trigger/action workflows, stale-order notifications, and failed-payment follow-up. WooCommerce core also exposes order status, order notes, hold-stock behavior, and order troubleshooting information.
+**Status: complete (100%, 2026-11-06).** The source-backed competitor comparison, canonical options/systems, version baseline, distribution gates and deferred decisions are recorded in [docs/MARKET-AND-OPTIONS.md](docs/MARKET-AND-OPTIONS.md), [docs/PLATFORM-BASELINE.md](docs/PLATFORM-BASELINE.md) and [docs/DISTRIBUTION-PLAN.md](docs/DISTRIBUTION-PLAN.md).
 
-| Adjacent solution | Existing strength | Product implication |
+| Adjacent product | Publicly documented overlap | Product decision |
 |---|---|---|
-| WooCommerce core order management and troubleshooting | Order lists, statuses, order details/notes, stock hold behavior, troubleshooting guidance | Integrate with core order APIs; do not duplicate the order editor or payment gateway troubleshooting UI |
-| WooCommerce Order Workflows | Custom statuses, transition rules, notifications, automation and transition log | Do not compete as another status/workflow engine; focus on exception detection, ownership, SLA and resolution evidence |
-| Stale Order Alerts for WooCommerce | Age/SLA based alerts for long-running statuses | Alerts alone are not differentiation; connect alerts to a queue, assignment and resolution lifecycle |
-| Failed Order Rescue for WooCommerce | Follow-up for failed, pending or cancelled checkout orders | Keep recovery messaging as one optional exception type; support broader operational exceptions |
-| Order Priority for WooCommerce | Rule-based priority labels and filters | Priority can be an input to triage, but the hub must represent reason, age, owner, next action and outcome |
-| Laqi Order Status Workflows / general automation plugins | Rules, status changes, email/webhook actions and activity records | Avoid broad condition/action sprawl; workflows must be bounded, explainable and approval-aware |
+| WooCommerce core Orders | Order list/detail, statuses, notes, payment/stock state | Use core APIs; don't replace the order editor or treat all Pending/On hold as failures |
+| Order Workflows | Custom statuses, condition-based transitions, notifications, transition log and export | Keep exception cases separate from order statuses |
+| Stale Order Alerts | Age-based checks, admin/email alerts, manual recheck | Connect alerts to actionable cases, owners and outcomes |
+| Failed Order Rescue | Failed/pending queue, manual payment-link follow-up and recovery tracking | Keep recovery as one possible exception path; no default customer email in MVP |
+| Order Priority | Rule-based priority, badges, filters, bulk priority updates and audit notes | Make priority explainable within the exception queue |
+| Assign Orders | Manual/rule-based assignment, emails and assigned-order access controls; Marketplace lists $79/year | Add case ownership without changing existing order permissions |
+| Universal Workflow Automation | Broad triggers, conditions, actions, retry/history/dry-run and templates | Avoid a general workflow builder; restrict Hub rules to exception triage and low-risk internal actions |
+| Out The Door | Order-linked tasks, priorities, due dates, Kanban/calendar and statuses | Cases must represent detected order exceptions with reason/evidence, not generic tasks |
 
-**Provisional differentiation:** One operational exception case per order/reason, with age, evidence, next step, owner, SLA and resolution outcome visible together. Competitor overlap must be rechecked before feature lock and pricing.
+**Product gap:** Exception resolution in one queue: order + reason + evidence + age + next step + owner/SLA + resolution outcome. Adjacent products cover pieces of this workflow, so the product must win on clarity and connected resolution tracking, not the number of automations.
+
+Research is based on published listings and documentation, not hands-on plugin testing. The proposed $99/year remains unvalidated with customers.
 
 ## Unified options bank
 
-Each capability has one canonical key to prevent duplicates across Free and Pro. Edition differences are permissions/limits on the same capability, not duplicate settings.
+Each capability has one canonical key. Filter controls, rule logic and delivery behavior belong inside the owning capability; they are not duplicate settings.
 
-| Key | Capability | Free | Pro | Notes |
+| Key | Capability | Free | Pro | Boundary/notes |
 |---|---|---|---|---|
-| `exception.inbox` | Central queue with order, detected reason, age, status and next action | Yes | Yes | Primary screen |
-| `exception.reason` | Payment, shipping data, stock, processing delay, and configurable reason taxonomy | Core reasons | Configurable rules | A case may have multiple reason tags |
-| `exception.age_filters` | Age buckets and date range | Yes | Yes | Stable deterministic filters |
-| `exception.search` | Search by order number/customer where permitted | Yes | Yes | Respect capabilities and privacy |
-| `case.notes` | Internal resolution notes | Manual | Manual + templates | Never expose internal notes to customers |
-| `case.history` | Case creation, assignment, rule and resolution audit events | Basic | Extended/export | No duplicate “activity log” setting |
-| `triage.priority` | Priority score/label | Basic age-derived | Configurable criteria | Explain why priority was assigned |
-| `alerts.channels` | Admin in-app/email alerts | — | Configurable | Rate limits and deduplication |
-| `workflow.rules` | If/then exception triage and notification rules | — | Configurable | Dry run, pause, version and event history |
-| `team.assignment` | Assign/reassign case to a user | — | Yes | Capability-aware; unassigned queue remains available |
-| `sla.policy` | Due time, breach state, pause/resume and breach reporting | — | Yes | Store timezone-aware timestamps; clarify calendar/business hours |
-| `resolution.outcome` | Resolved, dismissed, duplicate, waiting, escalated + reason | Yes | Yes | Consistent outcome model |
-| `action.approval` | Approval gate for risky order actions | Guardrail | Configurable policies | Required for any future action execution |
-| `action.execution` | Execute capture/refund/cancel/status operations | No | Disabled by default | Only if safe APIs and gateway semantics permit; otherwise link to native order action |
-| `reporting.metrics` | Open cases, time-to-resolution, SLA breaches, reason trends | Basic counts | Trends/export | Aggregate without unnecessary customer data |
-| `data.retention` | Retention and purge controls for plugin-owned data | Defaults | Configurable | Never delete WooCommerce order records |
-| `integrations.multilingual` | Translatable plugin strings and locale-aware UI | Yes | Yes | WPML/Polylang compatibility is a test target, not an assumed certification |
+| `exception.inbox` | Paginated central exception queue, sort, reason/state filters and next action | Yes | Yes | Primary workspace; order remains in WooCommerce |
+| `exception.detection` | Detect pending/failed payment, missing shipping data, stock discrepancy and processing delay | Core rules | Configurable thresholds/rules | Don't misclassify legitimate offline/delayed payment |
+| `exception.reason` | Reason taxonomy and explainable evidence | Core reasons | Configurable tags | One case can carry more than one reason |
+| `exception.age_filters` | Staff-selected age buckets/date range | Yes | Yes | Separate from case-creation thresholds |
+| `exception.search` | Search by order number/customer fields where permitted | Yes | Yes | Respect existing capabilities and privacy |
+| `exception.saved_views` | Save reusable queue filters | — | Yes | Not a duplicate settings profile |
+| `case.state` | Open, triaged, assigned, waiting, escalated, closed | Yes | Yes | Case lifecycle only; does not alter Woo order status |
+| `case.notes` | Private resolution notes | Yes | Templates | Internal only; never send as customer note/email |
+| `case.history` | Attributed case/rule/assignment/resolution event history | Basic | Extended + export | One audit trail, not separate duplicate activity logs |
+| `resolution.outcome` | Resolved, dismissed, duplicate, waiting, escalated + reason | Yes | Yes | Terminal/decision reason distinct from current case state |
+| `triage.priority` | Explainable priority from age/reason/SLA | Basic | Configurable rules | No standalone label-only workflow |
+| `queue.bulk_tools` | Safe case-only bulk assignment/priority/outcome updates | — | Candidate | Never bulk-capture, refund or cancel orders |
+| `alerts.channels` | Admin in-app/email alerts, test delivery, throttling and deduplication | — | Configurable | No customer emails or external service by default |
+| `team.assignment` | Assign/reassign case to a staff member | — | Yes | No implicit order access/permission changes |
+| `sla.policy` | Due times, timezone/business-hours choice, pause/breach tracking | — | Yes | Exact calendar/business-hour behavior specified in Phase 2 |
+| `workflow.rules` | Bounded exception triage/assignment/admin-notification rules | — | Configurable | AND/OR logic, priority, pause, dry-run, versions and run history |
+| `action.approval` | Per-order approval and fresh state check for any approved high-impact action | Guardrail | Policy controls | Explicit approval, idempotency and audit required |
+| `action.execution` | Capture/refund/cancel/payment-implying status changes | Not in MVP | Future gated capability | Disabled by default; no silent execution; marketplace/gateway safety review first |
+| `reporting.metrics` | Open/resolved count, resolution time, SLA/reason trends | Basic counts | Trends/export | Aggregate; minimize personal data |
+| `data.retention` | Retain/purge Hub-owned case data | Safe defaults | Configurable | Never delete WooCommerce order records |
+| `privacy.data_rights` | Export/erase Hub-owned personal data where applicable | Yes | Yes | Separate from order deletion or WooCommerce record ownership |
+| `integrations.multilingual` | Translation-ready admin UI and order-language context | Yes | Yes | WPML/Polylang are optional and must be tested |
 
-### Systems bank (distinct from settings)
+### Systems bank (separate from settings)
 
-1. **Detection:** Map WooCommerce order states/events to explicit exception rules; avoid direct table reads and avoid labeling a normal delayed/offline payment as failure without evidence.
-2. **Case lifecycle:** Open → triaged → assigned/waiting/escalated → resolved/dismissed. Persist transitions and actor/source.
-3. **Queue/query:** Paginate and filter through WooCommerce-supported order query APIs; index plugin-owned case metadata and measure query cost on large stores.
-4. **Rules engine:** Deterministic, versioned rules; preview/dry-run; bounded action set; retries with backoff; deduplicate repeated events.
-5. **Notifications:** Channel preferences, throttling, quiet hours if validated, and delivery outcome. Do not make external network calls by default.
-6. **Approval and execution:** Separate proposal from execution, re-check order/payment state immediately before action, use idempotency and capability/nonce validation, record success/failure.
-7. **Access control:** WordPress capabilities, least privilege, nonces, sanitization/escaping, audit attribution, and customer-data minimization.
-8. **Persistence and retention:** Store case/assignment/SLA data separately from WooCommerce order data; define schema versioning, uninstall behavior, retention and export/delete obligations.
-9. **Multilingual:** Use WordPress translation APIs and stable text domain; test admin UI and notices with WPML and Polylang without coupling core behavior to either product.
-10. **Observability:** Admin-visible rule run result and actionable error; no customer/order payloads in routine logs; redact secrets and payment data.
+1. **Detection:** WooCommerce order events plus bounded age checks; explain reason/evidence and avoid false positives.
+2. **Idempotency:** One active case per order/reason/rule identity; repeated events/retries do not duplicate cases or alerts.
+3. **Case lifecycle:** State transitions with actor, source and timestamps; keep case state separate from order status.
+4. **Queue/query:** WooCommerce order CRUD/query APIs, pagination and bounded queries; no direct order-table reads.
+5. **Priority:** Deterministic, explainable scoring from reason, age and SLA.
+6. **Assignment:** Owner and reassignment history without expanding user capabilities.
+7. **SLA clock:** Timezone, business/calendar hours, pause and breach behavior.
+8. **Notifications:** Admin channels, deduplication, throttling and delivery result.
+9. **Rule engine:** Versioned bounded rules, dry-run, pause, retry limits and visible run history.
+10. **Approval/action:** Proposal and execution separated; require fresh state, nonce/capability checks, human approval, idempotency and audit record.
+11. **Storage/migration:** Hub case records separate from WooCommerce truth; schema upgrades, retention and uninstall behavior.
+12. **Privacy/access:** Least privilege, data minimization, redacted logs and export/erase handling.
+13. **Localization/compatibility:** WordPress i18n, HPOS plus supported legacy storage, WPML and Polylang verification.
+14. **Performance/observability:** Measured query cost, cache invalidation and actionable errors without customer/payment payloads.
+
+No CLI tasks or CLI work items are included before the plugin is final.
 
 ## Technical direction and constraints
 
 - **Admin UI:** React-based WordPress admin application, using WordPress-provided packages (`@wordpress/element` and related packages) and WordPress design conventions. Ship compiled assets; do not load React from a public CDN. Final component and build approach is an architecture decision in Phase 3.
 - **Order access:** Use WooCommerce order CRUD/query APIs (`WC_Order`, `wc_get_order`, `wc_get_orders` / `WC_Order_Query`) and declare HPOS compatibility only after tests. Do not directly query or mutate `posts`, `postmeta`, or WooCommerce order tables for order data.
 - **Integration boundary:** The add-on should detect WooCommerce availability, fail gracefully when dependencies are missing, and keep the WPEssential suite relationship optional unless a concrete shared-core dependency is justified.
-- **No product CLI:** No WP-CLI commands, shell interface, or CLI-only setup will be added before the plugin is final. Build tooling used privately by developers is a separate implementation detail and must not become a user-facing requirement without an explicit decision.
+- **CLI deferral:** Do not create, schedule, implement, or run any CLI-related task before the plugin is final. Do not add WP-CLI commands or CLI-only merchant setup. Revisit CLI work only after finalization.
 - **Supported versions:** Exact minimum PHP, WordPress, WooCommerce, browser, and database versions remain **TBD** until market, hosting, and test-matrix review. Phase 1 must record a proposed baseline and the evidence for it. Do not advertise compatibility until verified.
 - **Multilingual:** English source strings, translation-ready text domain, plural/context support. Validate WPML integration (including `wpml-config.xml` only if plugin-owned translatable settings require it) and Polylang behavior. No claim of official certification without the vendor process.
 - **Licensing and distribution:** Target WordPress.org for the Free edition and WooCommerce.com Marketplace for paid Pro. The exact Pro listing model, billing, vendor account, GPL-compatible license, trademark checks, package split and submission evidence are tracked in `docs/DISTRIBUTION-PLAN.md`; do not imply approval before both review processes finish.
@@ -117,7 +132,7 @@ AI tools must:
 1. Start by stating the current phase and the exact deliverable being changed.
 2. Inspect existing files and preserve decisions; do not invent completed work or report unrun verification as passing.
 3. Keep the option bank canonical: propose a new capability key only after checking for an equivalent existing key.
-4. Ask before adding CLI commands, payment/refund/cancel execution, external telemetry, dependencies, licensing services, or customer-facing communication features.
+4. Do not add, schedule, implement, or run a CLI-related task before the plugin is final. Payment/refund/cancel execution, external telemetry, dependencies, licensing services, and customer-facing communication remain separately gated.
 5. Keep implementation within the approved phase; for UI work, use React and WordPress admin conventions, and do not alter unrelated product behavior.
 6. Update the phase table only when evidence supports a status/progress change. Add a dated entry to `docs/STATUS.md` for every meaningful update, including completed work, blockers, and verification performed.
 7. Include security, HPOS, multilingual, accessibility, performance, and failure-mode implications in relevant decisions.
@@ -126,7 +141,7 @@ AI tools must:
 
 ## Source notes
 
-Initial desk research checked WooCommerce official order management/status/workflow and HPOS documentation, WordPress plugin/React documentation, WordPress.org product pages for adjacent plugins, and WPML/Polylang documentation. This is a directional scan, not an exhaustive market or commercial validation. Revisit before Phase 1 is marked complete.
+Phase 1 market and platform review completed 2026-11-06 using official WooCommerce/WordPress documentation and marketplace/directory listings. The scan is documented in `docs/MARKET-AND-OPTIONS.md` and `docs/PLATFORM-BASELINE.md`; it is not hands-on product testing or customer willingness-to-pay research.
 
 - WooCommerce order troubleshooting: https://woocommerce.com/document/managing-orders/troubleshooting-orders/
 - WooCommerce order statuses: https://woocommerce.com/document/managing-orders/order-statuses/
@@ -136,7 +151,9 @@ Initial desk research checked WooCommerce official order management/status/workf
 - WordPress React element package: https://developer.wordpress.org/block-editor/reference-guides/packages/packages-element/
 - WPML WooCommerce translation: https://wpml.org/documentation/translating-your-contents/translate-woocommerce/
 - Polylang for WooCommerce: https://polylang.pro/documentation/support/guides/polylang-wc-installation/
-- Adjacent products: https://wordpress.org/plugins/stale-order-alerts-for-woocommerce/ ; https://wordpress.org/plugins/failed-order-rescue-for-woocommerce/ ; https://woocommerce.com/products/order-priority/
+- Market comparison: `docs/MARKET-AND-OPTIONS.md`.
+- Platform requirements: `docs/PLATFORM-BASELINE.md`.
+- PHP/WordPress/WooCommerce/WPML/Polylang and Marketplace source links are listed in those documents.
 
 ## Distribution strategy
 
