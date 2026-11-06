@@ -24,12 +24,12 @@ Within one workspace, a staff member can understand why an order needs attention
 5. Support keyboard navigation, visible focus, readable contrast, responsive admin layouts, and screen-reader labels.
 6. Make automation inspectable: show rule, matched condition, proposed action, run status, and retry outcome.
 
-## MVP acceptance criteria (to refine in Phase 2)
+## MVP acceptance criteria (specified in Phase 2; implementation status in Phases 5–6)
 
 - Staff with the right capabilities can view a paginated exception queue and filter by reason, age, case state, priority, and assignee where available.
 - Each queue row links to the native order and explains the exception using accessible text.
 - Staff can add an internal note and record a resolution outcome with actor and timestamp.
-- Queue data remains accurate with HPOS enabled and does not read order records via direct SQL or WordPress post-meta APIs.
+- Order reads use WooCommerce CRUD/query APIs and do not query order storage directly. HPOS behavior remains unverified until Phase 7.
 - Repeated order events do not create duplicate cases or duplicate notifications.
 - No payment or irreversible action is executed by the MVP.
 - No customer-facing content is sent by the MVP.
