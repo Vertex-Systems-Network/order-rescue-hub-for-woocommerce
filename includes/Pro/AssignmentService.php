@@ -36,6 +36,9 @@ final class AssignmentService
             }
             $updated = $this->repository->find($case_id);
             do_action('wperh_case_assigned', $updated, $old, null);
+            if ($updated && $state !== $case['state']) {
+                do_action('wperh_case_transitioned', $case_id, $state);
+            }
             return $updated;
         }
 
@@ -61,6 +64,9 @@ final class AssignmentService
 
         $updated = $this->repository->find($case_id);
         do_action('wperh_case_assigned', $updated, $old, $user_id);
+        if ($updated && 'assigned' !== $case['state']) {
+            do_action('wperh_case_transitioned', $case_id, 'assigned');
+        }
         return $updated;
     }
 }
