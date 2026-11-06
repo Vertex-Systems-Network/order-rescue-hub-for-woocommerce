@@ -111,7 +111,7 @@ final class CaseRepository
         $now = gmdate('Y-m-d H:i:s');
         $reason_codes = array_values(array_unique(array_map('sanitize_key', $reasons)));
         sort($reason_codes);
-        $evidence = $this->redact_evidence($evidence);
+        $evidence = $this->redact_evidence($evidence);\n        $priority = in_array('failed_payment', $reason_codes, true) ? 10 : (in_array('pending_payment', $reason_codes, true) ? 20 : (array_intersect($reason_codes, array('missing_shipping', 'stock_discrepancy')) ? 30 : 40));
         $existing = $this->find_by_order($order_id);
 
         if (!$existing && !$reason_codes) {
@@ -126,7 +126,7 @@ final class CaseRepository
                     'state' => 'open',
                     'reason_codes' => wp_json_encode($reason_codes),
                     'evidence' => wp_json_encode($evidence),
-                    'priority' => 20,
+                    'priority' => $priority,
                     'first_detected_at' => $now,
                     'last_detected_at' => $now,
                     'created_at' => $now,
@@ -149,7 +149,7 @@ final class CaseRepository
             $this->cases,
             array(
                 'state' => $was_closed && $reason_codes ? 'open' : $existing['state'],
-                'reason_codes' => wp_json_encode($reason_codes ?: $existing['reason_codes']),
+                'reason_codes' => wp_json_encode($reason_codes ?: $existing['reason_codes']),\n                'priority' => $priority,
                 'evidence' => wp_json_encode($evidence),
                 'last_detected_at' => $now,
                 'updated_at' => $now,
@@ -159,7 +159,7 @@ final class CaseRepository
                 'row_version' => (int) $existing['row_version'] + 1,
             ),
             array('case_id' => (int) $existing['case_id']),
-            array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d'),
+            array('%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d'),
             array('%d')
         );
 
