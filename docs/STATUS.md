@@ -32,3 +32,10 @@
 - **CLI constraint:** No CLI task/work item was added. README, AGENTS.md and AI-PLAN now defer all CLI-related work until after the plugin is final.
 - **Verification:** Re-read the current GitHub README and planning files; verified official source pages for platform releases, PHP lifecycle, multilingual plugin versions, Marketplace submission rules and competitor feature claims. Documentation/research verification only; no code, tests, installation, performance run or compatibility suite has been executed.
 - **Deferred decisions (not blockers for Phase 1):** Customer willingness-to-pay for $99/year; Marketplace paid-standalone vs freemium packaging; final version refresh and Marketplace PHP-policy confirmation at submission time.
+
+
+## 2026-11-06 — Phase 1 documentation refinement
+
+- Clarified the WooCommerce trademark naming rule: keep WPEssential Order Rescue Hub distinctive and use “for WooCommerce” only as a compatibility descriptor; retain the requested repository slug separately.
+- Updated the README Marketplace row to show the PHP 7.4 policy conflict alongside the PHP 8.3+ product target, so the release gate is visible in the phase summary.
+- **Phase status remains:** Complete, 100%. No CLI work item was added. No code or tests were run.
