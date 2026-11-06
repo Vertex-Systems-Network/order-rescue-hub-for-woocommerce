@@ -45,6 +45,7 @@ final class Installer
             row_version int(10) unsigned NOT NULL DEFAULT 1,
             assignee_id bigint(20) unsigned NULL,
             sla_response_due_at datetime NULL,
+            sla_response_met_at datetime NULL,
             sla_resolution_due_at datetime NULL,
             sla_state varchar(16) NOT NULL DEFAULT '',
             sla_paused_at datetime NULL,
