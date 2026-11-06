@@ -137,6 +137,8 @@ final class Detector
 
         if ($reasons) {
             $this->repository->detect($order_id, $reasons, $evidence);
+        } else {
+            $this->repository->resolve_if_clear($order_id);
         }
     }
 
