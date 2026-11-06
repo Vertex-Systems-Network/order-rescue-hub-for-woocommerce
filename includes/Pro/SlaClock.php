@@ -58,14 +58,22 @@ final class SlaClock
 
     public function evaluate_all(): void
     {
-        $page = 1;
-        do {
-            $batch = $this->repository->list(array('state' => 'all', 'page' => $page, 'per_page' => 100));
+        $first = $this->repository->list(array('state' => 'all', 'page' => 1, 'per_page' => 100));
+        $total_pages = max(1, (int) $first['total_pages']);
+        $page = min(max(1, absint(get_option('wperh_sla_sweep_page', 1))), $total_pages);
+        $batches = min($total_pages, 10);
+
+        for ($index = 0; $index < $batches; $index++) {
+            $batch = 1 === $page
+                ? $first
+                : $this->repository->list(array('state' => 'all', 'page' => $page, 'per_page' => 100));
             foreach ($batch['items'] as $case) {
                 $this->evaluate($case);
             }
-            $page++;
-        } while ($page <= min((int) $batch['total_pages'], 10));
+            $page = $page >= $total_pages ? 1 : $page + 1;
+        }
+
+        update_option('wperh_sla_sweep_page', $page, false);
     }
 
     public function evaluate(array $case): void
