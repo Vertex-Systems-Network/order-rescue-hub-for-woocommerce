@@ -56,7 +56,7 @@
     function App() {
         var _a = useState([]), cases = _a[0], setCases = _a[1];
         var _b = useState(null), selected = _b[0], setSelected = _b[1];
-        var _c = useState({ state: 'open', reason: '', search: '', older_than_hours: '', assignee_id: '', sla_state: '', page: 1 }), filters = _c[0], setFilters = _c[1];
+        var _c = useState({ state: 'open', reason: '', search: '', older_than_hours: '', priority: '', assignee_id: '', sla_state: '', page: 1 }), filters = _c[0], setFilters = _c[1];
         var _d = useState(1), totalPages = _d[0], setTotalPages = _d[1];
         var _e = useState(0), total = _e[0], setTotal = _e[1];
         var _f = useState(false), loading = _f[0], setLoading = _f[1];
@@ -96,7 +96,7 @@
 
         useEffect(function () {
             loadCases();
-        }, [filters.state, filters.reason, filters.search, filters.older_than_hours, filters.assignee_id, filters.sla_state, filters.page]);
+        }, [filters.state, filters.reason, filters.search, filters.older_than_hours, filters.priority, filters.assignee_id, filters.sla_state, filters.page]);
 
         useEffect(function () {
             if (!(window.wperhSettings && window.wperhSettings.isPro)) {
@@ -430,7 +430,8 @@
                     type: 'button',
                     className: 'wperh-link-button',
                     onClick: function () { openCase(item.case_id); }
-                }, '#' + item.order_id)),
+                }, '#' + item.order_id),
+                window.wperhSettings && window.wperhSettings.orderEditUrlPrefix ? h('a', { href: window.wperhSettings.orderEditUrlPrefix + item.order_id }, __('Open order', 'wpessential-order-rescue-hub')) : null),
                 h('td', null, h('strong', null, reasons || __('Review case details', 'wpessential-order-rescue-hub'))),
                 h('td', null, age),
                 h('td', null, h('span', { className: 'wperh-priority' }, item.priority <= 20 ? __('High', 'wpessential-order-rescue-hub') : __('Normal', 'wpessential-order-rescue-hub'))),
@@ -569,7 +570,13 @@
                             return h('option', { key: reason, value: reason }, labelForReason(reason));
                         })
                     ),
-                    h('label', { htmlFor: 'wperh-age-filter' }, __('Minimum age', 'wpessential-order-rescue-hub')),
+                    h('label', { htmlFor: 'wperh-priority-filter' }, __('Priority', 'wpessential-order-rescue-hub')),
+                h('select', { id: 'wperh-priority-filter', value: filters.priority, onChange: function (event) { updateFilter('priority', event.target.value); } },
+                    h('option', { value: '' }, __('All priorities', 'wpessential-order-rescue-hub')),
+                    h('option', { value: 'high' }, __('High', 'wpessential-order-rescue-hub')),
+                    h('option', { value: 'normal' }, __('Normal', 'wpessential-order-rescue-hub'))
+                ),
+                h('label', { htmlFor: 'wperh-age-filter' }, __('Minimum age', 'wpessential-order-rescue-hub')),
                     h('select', { id: 'wperh-age-filter', value: filters.older_than_hours, onChange: function (event) { updateFilter('older_than_hours', event.target.value); } },
                         h('option', { value: '' }, __('Any age', 'wpessential-order-rescue-hub')),
                         h('option', { value: '24' }, __('Older than 24 hours', 'wpessential-order-rescue-hub')),
