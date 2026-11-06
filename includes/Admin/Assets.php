@@ -34,7 +34,9 @@ final class Assets
 
         wp_localize_script('wperh-admin', 'wperhSettings', array(
             'apiRoot' => esc_url_raw(rest_url('wperh/v1/')),
-            'pageSize' => 25,\n            'timezone' => wp_timezone_string(),\n            'timezone' => wp_timezone_string(),
+            'pageSize' => 25,
+            'timezone' => wp_timezone_string(),
+            'timezone' => wp_timezone_string(),
         ));
     }
 }
