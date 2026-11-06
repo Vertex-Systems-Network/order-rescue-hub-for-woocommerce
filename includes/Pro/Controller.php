@@ -45,7 +45,7 @@ final class Controller
 
     public function can_manage_cases(): bool
     {
-        return current_user_can('manage_woocommerce') || current_user_can('edit_shop_orders');
+        return current_user_can('manage_woocommerce');
     }
 
     public function get_settings()
@@ -64,7 +64,7 @@ final class Controller
 
     public function users()
     {
-        $users = get_users(array('capability' => 'edit_shop_orders', 'number' => 100, 'orderby' => 'display_name', 'order' => 'ASC', 'fields' => array('ID', 'display_name')));
+        $users = get_users(array('capability' => 'manage_woocommerce', 'number' => 100, 'orderby' => 'display_name', 'order' => 'ASC', 'fields' => array('ID', 'display_name')));
         $items = array_map(static function ($user): array {
             return array('id' => (int) $user->ID, 'name' => sanitize_text_field($user->display_name));
         }, $users);
