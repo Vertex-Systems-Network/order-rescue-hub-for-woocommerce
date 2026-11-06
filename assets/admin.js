@@ -88,12 +88,15 @@
             if (!(window.wperhSettings && window.wperhSettings.isPro)) {
                 return;
             }
-            Promise.all([
-                wp.apiFetch({ path: '/wperh/v1/pro/settings' }),
-                wp.apiFetch({ path: '/wperh/v1/pro/users' })
-            ]).then(function (result) {
-                setProSettings(result[0]);
-                setTeam(result[1] || []);
+            var requests = [wp.apiFetch({ path: '/wperh/v1/pro/users' })];
+            if (window.wperhSettings.canManageSettings) {
+                requests.push(wp.apiFetch({ path: '/wperh/v1/pro/settings' }));
+            }
+            Promise.all(requests).then(function (result) {
+                setTeam(result[0] || []);
+                if (result[1]) {
+                    setProSettings(result[1]);
+                }
             }).catch(function (requestError) {
                 setError(requestError.message || __('Could not load Pro settings.', 'wpessential-order-rescue-hub'));
             });
@@ -148,7 +151,7 @@
             setSaving(true);
             setError('');
             var data = Object.assign({}, proSettings);
-            data.recipients = String(proSettings.recipients_text || (proSettings.recipients || []).join(',')).split(/[;,\\n]+/).map(function (email) { return email.trim(); }).filter(Boolean);
+            data.recipients = String(proSettings.recipients_text || (proSettings.recipients || []).join(',')).split(/[,;]+/).map(function (email) { return email.trim(); }).filter(Boolean);
             data.holidays = String(proSettings.holidays_text || (proSettings.holidays || []).join(',')).split(/[;,\\n]+/).map(function (date) { return date.trim(); }).filter(Boolean);
             delete data.recipients_text;
             delete data.holidays_text;
@@ -324,7 +327,7 @@
             }, 250);
         }
 
-        var proPanel = window.wperhSettings && window.wperhSettings.isPro && proSettings ? h('section', { className: 'wperh-pro-panel', 'aria-labelledby': 'wperh-pro-settings-title' },
+        var proPanel = window.wperhSettings && window.wperhSettings.isPro && window.wperhSettings.canManageSettings && proSettings ? h('section', { className: 'wperh-pro-panel', 'aria-labelledby': 'wperh-pro-settings-title' },
             h('h2', { id: 'wperh-pro-settings-title' }, __('Pro settings', 'wpessential-order-rescue-hub')),
             h('form', { onSubmit: saveProSettings },
                 h('fieldset', { className: 'wperh-settings-card' },
@@ -373,10 +376,6 @@
                             })
                         )
                     ) : null
-                ),
-                h('div', { className: 'wperh-approval-policy' },
-                    h('strong', null, __('Order action safety', 'wpessential-order-rescue-hub')),
-                    h('p', null, __('Payment capture, refunds, cancellations, and payment-related order status changes remain disabled. If introduced in a later release, each action must require explicit human approval and a fresh order-state check.', 'wpessential-order-rescue-hub'))
                 ),
                 h('div', { className: 'wperh-approval-policy' },
                     h('strong', null, __('Order action safety', 'wpessential-order-rescue-hub')),
