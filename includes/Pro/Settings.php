@@ -113,6 +113,7 @@ final class Settings
     public static function sanitize_rules(array $rules): array
     {
         $clean = array();
+        $ids = array();
         $allowed_triggers = array('case.opened', 'case.age_check', 'sla.warning', 'sla.breached');
         $allowed_actions = array('set_priority', 'assign_case', 'set_case_state', 'admin_alert');
         foreach (array_slice($rules, 0, 20) as $rule) {
@@ -142,8 +143,13 @@ final class Settings
             if ('assign_case' === $action && (!is_scalar($rule['value'] ?? null) || absint($rule['value']) < 1)) {
                 continue;
             }
+            $id = is_scalar($rule['id'] ?? null) ? sanitize_key((string) $rule['id']) : '';
+            if ('' === $id || isset($ids[$id])) {
+                $id = sanitize_key(wp_generate_uuid4());
+            }
+            $ids[$id] = true;
             $clean[] = array(
-                'id' => is_scalar($rule['id'] ?? null) ? sanitize_key((string) $rule['id']) : sanitize_key(wp_generate_uuid4()),
+                'id' => $id,
                 'name' => $name,
                 'enabled' => !empty($rule['enabled']),
                 'dry_run' => !array_key_exists('dry_run', $rule) || !empty($rule['dry_run']),
