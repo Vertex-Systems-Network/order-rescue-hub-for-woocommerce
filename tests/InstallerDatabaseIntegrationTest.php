@@ -150,30 +150,32 @@ if ($controller->can_manage()) {
     fwrite(STDERR, "A subscriber unexpectedly passed the WooCommerce manager capability check.\n");
     exit(1);
 }
-$fake_repository = new class extends \WPEssential\OrderRescueHub\Repository\CaseRepository {
-    public function find(int $case_id): ?array
-    {
-        return array('case_id' => $case_id, 'order_id' => 424242, 'state' => 'open', 'row_version' => 1);
-    }
-
-    public function events(int $case_id, int $limit = 100): array
-    {
-        return array();
-    }
-};
-$guarded = new \WPEssential\OrderRescueHub\Rest\CasesController(
-    $fake_repository,
-    new \WPEssential\OrderRescueHub\Service\CaseService($fake_repository)
-);
-$request = new WP_REST_Request('GET', '/wperh/v1/cases/1');
-$request->set_url_params(array('id' => 1));
+$wpdb->insert($cases, array(
+    'order_id' => 424242,
+    'state' => 'open',
+    'reason_codes' => '["pending_payment"]',
+    'evidence' => '{}',
+    'priority' => 20,
+    'first_detected_at' => gmdate('Y-m-d H:i:s'),
+    'last_detected_at' => gmdate('Y-m-d H:i:s'),
+    'created_at' => gmdate('Y-m-d H:i:s'),
+    'updated_at' => gmdate('Y-m-d H:i:s'),
+));
+$protected_case_id = (int) $wpdb->insert_id;
+if (!$protected_case_id) {
+    fwrite(STDERR, "Could not create the isolated case-access security fixture.\\n");
+    exit(1);
+}
+$guarded = $controller;
+$request = new WP_REST_Request('GET', '/wperh/v1/cases/' . $protected_case_id);
+$request->set_url_params(array('id' => $protected_case_id));
 $denied_detail = $guarded->get_case($request);
 if (!is_wp_error($denied_detail) || 403 !== $denied_detail->get_error_data()['status']) {
     fwrite(STDERR, "A subscriber was not denied access to the case detail for an inaccessible order.\n");
     exit(1);
 }
-$request = new WP_REST_Request('POST', '/wperh/v1/cases/1/transition');
-$request->set_url_params(array('id' => 1));
+$request = new WP_REST_Request('POST', '/wperh/v1/cases/' . $protected_case_id . '/transition');
+$request->set_url_params(array('id' => $protected_case_id));
 $request->set_param('state', 'closed');
 $denied_transition = $guarded->transition($request);
 if (!is_wp_error($denied_transition) || 403 !== $denied_transition->get_error_data()['status']) {
