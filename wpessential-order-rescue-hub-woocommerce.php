@@ -20,6 +20,25 @@ define('WPERH_FILE', __FILE__);
 define('WPERH_PATH', plugin_dir_path(__FILE__));
 define('WPERH_URL', plugin_dir_url(__FILE__));
 
+$wperh_build_info = is_readable(WPERH_PATH . 'build-info.php') ? require WPERH_PATH . 'build-info.php' : array();
+$wperh_build_info = is_array($wperh_build_info) ? $wperh_build_info : array();
+define('WPERH_BUILD_ID', sanitize_key((string) ($wperh_build_info['id'] ?? 'local')) ?: 'local');
+define('WPERH_BUILD_COMMIT', sanitize_text_field((string) ($wperh_build_info['commit'] ?? 'local')) ?: 'local');
+
+add_filter('plugin_row_meta', static function (array $links, string $file): array {
+    if (plugin_basename(WPERH_FILE) !== $file) {
+        return $links;
+    }
+
+    $links[] = sprintf(
+        esc_html__('Build %1$s · %2$s', 'wpessential-order-rescue-hub'),
+        WPERH_BUILD_ID,
+        WPERH_BUILD_COMMIT
+    );
+
+    return $links;
+}, 10, 2);
+
 $wperh_autoloader = WPERH_PATH . 'vendor/autoload.php';
 if (is_readable($wperh_autoloader)) {
     require_once $wperh_autoloader;
