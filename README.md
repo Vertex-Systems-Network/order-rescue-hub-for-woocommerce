@@ -48,7 +48,7 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 
 ## Build a staging test package
 
-A GitHub Actions workflow builds a clean WordPress-installable ZIP when runtime files change on `main`, or when you start it manually. It checks the Composer PSR-4 mapping, confirms the Composer class-collision guard is present, verifies the single plugin header, and checks ZIP integrity and its canonical folder structure.
+A GitHub Actions workflow builds a clean WordPress-installable ZIP when runtime files change on `main`, or when you start it manually. It checks the Composer PSR-4 mapping, confirms the Composer class-collision guard is present, verifies the single plugin header, and checks ZIP integrity and its canonical folder structure. Every run stamps a unique `build-<run number>-<attempt>` ID plus the source commit into the package. The installed plugin displays `Build <ID> · <short commit>` in its Plugins row, and the CSS/JavaScript cache keys use the build ID so updated assets are fetched after each build.
 
 To build and download:
 
