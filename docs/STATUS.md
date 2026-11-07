@@ -202,3 +202,12 @@
 
 - **Source scan:** Searched plugin files for direct `$wpdb->posts`, `$wpdb->postmeta`, `get_post_meta()` and `get_posts()` access; no matches found. Order reads use `wc_get_order()` and candidate sweeps use `wc_get_orders()`.
 - **Status:** Source-level legacy-storage compatibility check passed. No order-storage mode switch was made on the staging site; legacy authoritative runtime testing remains open.
+
+## 2026-11-07 — Phase 7 PHP matrix and latest staging artifact
+
+- **Phase:** 7 — Compatibility and quality (in progress; 74% estimate). The estimate reflects completed verification work; it is not a claim that all release gates passed.
+- **CI:** Workflow run `42381219334`, job `128429043504`, commit `86e99f0065a069786672896da7918193a50e5f65` passed PHP 8.3, 8.4, and 8.5 lint plus detector, installer-gate, and case-service smoke checks on each version; package validation and ZIP build passed. Artifact `13577333807` has digest `sha256:10c2e5cbf46f9bbb451a40b079929e503b10c918c89a15112629e5ad66d80848`.
+- **Staging:** Installed the latest artifact through WordPress Add Plugins. WordPress reported “Plugin updated successfully.” The Order Rescue Hub inbox rendered the existing case #49 as Open after update; no order or payment record was changed. Inner ZIP SHA-256: `e02f5b5a548460e7f95b61fe2f274c38789d510b9a6f708f421e2128a1134982`.
+- **Environment notice:** WordPress upload rendered repeated `ob_end_flush()` notices from core `wp-includes/functions.php:5581`. No plugin-specific fatal was shown during the verified flow.
+- **Still open:** Real DB/dbDelta migration and cron/retry fixtures; runtime legacy-storage mode; low-privilege/cross-order security matrix; complete screen-reader/contrast/reduced-motion audit; representative performance benchmarks; Free/Pro release package and directory/Marketplace submission readiness. WPML/Polylang dry-run remains complete for the requested scope, without vendor runtime certification.
+- **Boundary:** No merchant-facing CLI command or work item added. No production order, payment, refund, customer, or stock data changed. Phase 7 is not complete while the listed gates remain open.
