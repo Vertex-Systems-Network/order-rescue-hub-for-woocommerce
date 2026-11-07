@@ -172,3 +172,11 @@
 - **Staging:** Artifact `13575723255` from commit `09eff0649bddf81d671251c8d2ea7c584eea544c` replaced the existing plugin successfully. WordPress reported “Plugin updated successfully”; the Order Rescue Hub admin inbox loaded and displayed the existing open sample case #49 afterward.
 - **Multilingual:** WPML/Polylang remain a static dry-run only, as requested; no runtime add-ons are available on the site.
 - **Phase 7:** Progress estimate updated to 66%; still incomplete. Legacy order storage, real migration/cron fixtures, broader security and accessibility reviews, representative performance benchmarks, and release package review remain open. No order/payment data was changed during this update, and no merchant CLI task was added.
+
+
+## 2026-11-07 — Phase 7 protected REST route check
+
+- **Check:** Opened the registered inbox REST endpoint directly without supplying a WordPress REST nonce. WordPress returned `401 rest_forbidden` and “Sorry, you are not allowed to do that”; no case data was returned.
+- **Interpretation:** Confirms the protected route does not expose inbox data to a nonce-less request in this staging session. It does not replace a separate low-privilege user, cross-order capability, or mutation-route security test.
+- **Staging restored:** Returned to the Order Rescue Hub admin inbox; existing case #49 remained Open. No mutation was sent by the REST check.
+- **Status:** Phase 7 progress estimate updated to 68%. Package/release row now points to latest artifact `13575723255`; no merchant CLI task was added.
