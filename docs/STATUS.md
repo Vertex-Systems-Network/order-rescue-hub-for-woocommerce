@@ -243,3 +243,12 @@
 - **UI correction:** Fixed the inbox case count to use WordPress pluralization (`1 case` / `2 cases`) and localized number formatting (commit `020a319e22015ef9214daff82dfa515e6465442d`). CI/package build run `42388177816` passed; artifact `13580500958`, digest `sha256:72ed73f1754952c4cfc9cde35c1dab2cfecb9bca9d3b1b7899fa4fc573fcf3a9`.
 - **Staging state:** The new artifact has not yet been installed on `/el-test`; current installed screen remains the previously verified package. HPOS remains restored and selected.
 - **Phase 7 estimate:** 83%, still incomplete. Real schema migration/cron, low-privilege permission checks, complete accessibility, representative-load performance and final package/release review remain open. No merchant-facing CLI feature/task was introduced.
+
+
+## 2026-11-07 — Phase 7 database, security and scale checks
+
+- **CI correction:** The first added subscriber test incorrectly attempted to extend the final CaseRepository; fixed it to use an isolated real repository row. A second run exposed fixture overlap in the pending-payment synthetic filter; changed the security fixture reason so it is excluded from the scale count.
+- **Latest CI:** Run 42389443743, job 128453719473, commit 2d2c28a3ddaa9a6a33935c38a44198aa4f0b9bea, completed successfully. WordPress 7.1.4/MySQL 8.0.46 migration from schema 1.0.0 to 1.1.0 passed with required columns/indexes and repeat-run idempotence. Subscriber list capability, cross-order case detail and transition denials passed. PHP 8.3/8.4/8.5 lint/smoke and package validation passed.
+- **Synthetic performance:** 10,000 isolated cases filtered to the expected 5,000 matches; first page contained 25 rows over 200 pages. Query completed in 6.6 ms in CI. This is a synthetic baseline, not production-host benchmark evidence.
+- **Artifact/staging:** CI produced a validated installable artifact. It has not yet been installed on `/el-test`; the existing staging install remains the previously tested build. HPOS is restored. No merchant CLI feature/task was added.
+- **Phase 7:** Updated estimate 88%, still in progress. Cron/retry, broader WP/Woo/PHP and security-role matrices, full accessibility/screen-reader checks, representative host performance, latest artifact live installation, and final release-package gates remain open. WPML/Polylang dry-run remains accepted for requested scope.
