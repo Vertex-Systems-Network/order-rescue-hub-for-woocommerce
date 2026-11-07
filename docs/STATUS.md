@@ -163,3 +163,12 @@
 - **Remaining gates:** Legacy order storage; actual WPML and Polylang plus their WooCommerce add-ons; real schema migration/idempotence/cron behavior; cross-user/nonce security tests; full accessibility review; representative performance measurements; Free/Pro release packaging and metadata.
 - **CLI constraint:** No merchant-facing CLI command or CLI task was added.
 - **Report:** See `docs/PHASE-7-QUALITY-REPORT.md` for the detailed evidence and remaining gates.
+
+
+## 2026-11-07 — Phase 7 detector regression fix and latest build verified
+
+- **Source fix:** Detector now excludes completed/cancelled/refunded terminal orders from newly generated exceptions, includes `on-hold` in scheduled sweeps, and ignores missing/deleted product records instead of reporting them as stock issues.
+- **Regression verification:** Added focused detector smoke checks for those conditions. PHP 8.3 lint, behavior smoke checks and canonical ZIP/package checks passed in GitHub Actions run `42377348447` (job `128417559778`). The test checks are engineering verification, not a merchant-facing CLI feature.
+- **Staging:** Artifact `13575723255` from commit `09eff0649bddf81d671251c8d2ea7c584eea544c` replaced the existing plugin successfully. WordPress reported “Plugin updated successfully”; the Order Rescue Hub admin inbox loaded and displayed the existing open sample case #49 afterward.
+- **Multilingual:** WPML/Polylang remain a static dry-run only, as requested; no runtime add-ons are available on the site.
+- **Phase 7:** Progress estimate updated to 66%; still incomplete. Legacy order storage, real migration/cron fixtures, broader security and accessibility reviews, representative performance benchmarks, and release package review remain open. No order/payment data was changed during this update, and no merchant CLI task was added.
