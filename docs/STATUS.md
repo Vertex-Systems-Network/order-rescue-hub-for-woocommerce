@@ -149,3 +149,17 @@
 - **Artifact:** Latest build run is [42373873838](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42373873838). The artifact expires 14 days after the run. The staging site is still running the earlier Composer-guard package; the updated Pro SLA syntax fix has not been uploaded there.
 - **Open gates:** Legacy order storage; WPML/Polylang translated order/admin context; real migration and cron/retry fixtures; REST/runtime security; full screen-reader/contrast review; representative performance measurements; release package contents and edition split.
 - **Release decision:** Phase 7 remains incomplete until the open gates above have evidence. The site reports environment type `production`; checks remained read-only and no order/payment records were changed.
+
+
+## 2026-11-07 — Phase 7 staging runtime verification expanded
+
+- **Phase:** 7 — Compatibility and quality (in progress, 62%).
+- **Latest build installed:** Downloaded workflow artifact `13573814951` from successful run `42373873838` (commit `d7f70def40cf06c59b3e98ba5a19f1835af46c99`) and updated the existing plugin through WordPress. WordPress reported successful update; the Order Rescue Hub admin screen loaded.
+- **HPOS runtime checks:** One existing pending sample order with incomplete shipping appeared as an exception. The order detail/history loaded. Read-only filters returned the expected results: pending payment 1, failed payment 0, high priority 1, normal priority 0, and older than 24 hours 0.
+- **Case lifecycle:** Exercised `open → triaged → open` through the REST-backed UI. Both saves returned “Case updated”; final case state is open. The two test transition events remain in the case audit history. WooCommerce order state and payment data were not changed.
+- **Log review:** Latest fatal log entries still originate from `wpessential-return-insights-prevention-woocommerce/includes/RestController.php:538`; no Order Rescue Hub fatal appeared after its update. The log view also shows an `ob_end_flush()` PHP notice from the site environment.
+- **WPML/Polylang dry-run:** Static review passed for optional-dependency behavior, WooCommerce CRUD-based order access, stable text domain and WordPress script translations, and order-ID-based case identity. Neither multilingual plugin is available for runtime testing; the planned admin order-language context is not implemented yet.
+- **Safety and boundary:** WooCommerce reports environment type `production`, while the user identifies `/el-test` as the testing site. No new order fixture was created and no order, payment, refund, customer, stock, or production setting changed. The sample case state was restored after the reversible test.
+- **Remaining gates:** Legacy order storage; actual WPML and Polylang plus their WooCommerce add-ons; real schema migration/idempotence/cron behavior; cross-user/nonce security tests; full accessibility review; representative performance measurements; Free/Pro release packaging and metadata.
+- **CLI constraint:** No merchant-facing CLI command or CLI task was added.
+- **Report:** See `docs/PHASE-7-QUALITY-REPORT.md` for the detailed evidence and remaining gates.
