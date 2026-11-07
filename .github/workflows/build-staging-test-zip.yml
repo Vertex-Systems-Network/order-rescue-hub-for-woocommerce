@@ -25,6 +25,21 @@ jobs:
   package:
     name: Build and verify installable ZIP
     runs-on: ubuntu-24.04
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wperh_test
+          MYSQL_USER: wperh
+          MYSQL_PASSWORD: wperh_test_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -p$MYSQL_ROOT_PASSWORD"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -33,6 +48,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          extensions: mysqli, pdo_mysql
           coverage: none
 
       - name: Lint plugin PHP sources
@@ -43,6 +59,19 @@ jobs:
             php -l "$file"
           done < <(find includes vendor -type f -name '*.php' -print0)
           php -l wpessential-order-rescue-hub-woocommerce.php
+
+      - name: Run database-backed schema migration test
+        env:
+          WPERH_WORDPRESS_ROOT: /tmp/wperh-wordpress/wordpress
+          WPERH_DB_NAME: wperh_test
+          WPERH_DB_USER: wperh
+          WPERH_DB_PASSWORD: wperh_test_password
+          WPERH_DB_HOST: 127.0.0.1
+        run: |
+          mkdir -p /tmp/wperh-wordpress
+          curl --fail --silent --show-error --location https://wordpress.org/wordpress-7.1.4.zip --output /tmp/wperh-wordpress.zip
+          unzip -q /tmp/wperh-wordpress.zip -d /tmp/wperh-wordpress
+          php tests/InstallerDatabaseIntegrationTest.php
 
       - name: Run detector behavior smoke tests
         run: php tests/DetectorSmokeTest.php
