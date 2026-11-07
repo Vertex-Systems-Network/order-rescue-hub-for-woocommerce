@@ -180,3 +180,12 @@
 - **Interpretation:** Confirms the protected route does not expose inbox data to a nonce-less request in this staging session. It does not replace a separate low-privilege user, cross-order capability, or mutation-route security test.
 - **Staging restored:** Returned to the Order Rescue Hub admin inbox; existing case #49 remained Open. No mutation was sent by the REST check.
 - **Status:** Phase 7 progress estimate updated to 68%. Package/release row now points to latest artifact `13575723255`; no merchant CLI task was added.
+
+
+## 2026-11-07 — Schema upgrade gate and latest artifact verified
+
+- **Test coverage:** Added `tests/InstallerSmokeTest.php` to verify that an older/missing schema version invokes both table installers and persists version `1.1.0`, then skips repeat installation for an already-current schema. This covers the version gate; a live database `dbDelta()` migration test remains open.
+- **CI:** Latest run `42379950258` succeeded (job `128425256480`): PHP 8.3 lint, detector smoke checks, installer gate smoke checks, and staging ZIP packaging all passed.
+- **Staging:** Downloaded artifact `13577117599` (commit `a4c8d92a0d7d7177e7c2581e67e8e30dfb46313e`) and replaced the existing plugin. WordPress reported “Plugin updated successfully.” Dashboard loaded after the update and showed the existing open case #49.
+- **Artifact hashes:** Inner plugin ZIP SHA-256 `e02f5b5a548460e7f95b61fe2f274c38789d510b9a6f708f421e2128a1134982`; workflow artifact digest `sha256:e9ead026d97757e8b8fee919f068917106d7df1cdf3f2028a68ab9e5fb6754d8`.
+- **Boundary:** No order/payment data changed; no merchant-facing CLI task added. Phase 7 estimate moves to 70%; legacy order storage, real DB migration/cron, low-privilege security, full accessibility/performance, and release package review remain outstanding.
