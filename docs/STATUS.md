@@ -138,3 +138,14 @@
 - **Result:** Run `42372895411` completed successfully. It produced a 26-file installable plugin ZIP, 41,539 bytes, inside a GitHub Actions artifact named `wperh-staging-test-acba26f4a3faa2ffbd3f51a7140ae4e9a9b05ad1`. Artifact expires 2026-11-21 UTC.
 - **Usage:** Download the artifact, extract the outer artifact ZIP, then upload the inner `wpessential-order-rescue-hub-woocommerce.zip` through WordPress **Plugins → Add Plugin → Upload Plugin**.
 - **Boundary:** This development ZIP workflow is not a production release or compatibility certification. It adds no merchant-facing CLI command. Phase 7 staging activation and other compatibility/security/accessibility/performance gates remain open.
+
+## 2026-11-07 — Staging activation and PHP lint
+
+- **Phase:** 7 — Compatibility and quality (in progress; 55% estimate).
+- **Staging:** WPEssential Order Rescue Hub 0.1.0 is active on WordPress 7.1.4 / WooCommerce 11.2.2 / PHP 8.3.36 / MySQL 8.0.46. Admin inbox rendered with 0 cases; case-state, reason, priority and age filters updated successfully. WooCommerce System Status reports HPOS enabled with `OrdersTableDataStore` and the plugin case/event tables present.
+- **Composer fix verification:** WooCommerce fatal log still contains two historical Composer collisions from 2026-11-06; its latest fatal log remains dated 2026-11-06. No new fatal-errors log was listed after the staging activation.
+- **Accessibility spot check:** Search and filter controls have associated labels; keyboard focus advances through the filter controls.
+- **Lint finding and fix:** PHP 8.3 lint run `42373801917` exposed a parse error in `includes/Pro/SlaClock.php` at the direct `new DateTimeImmutable(...)->modify()` call. Parenthesized the instantiation in commit `d7f70def40cf06c59b3e98ba5a19f1835af46c99`. Follow-up run `42373873838` passed PHP syntax lint across all 20 PHP files and rebuilt the 26-file installable staging ZIP (41,541 bytes).
+- **Artifact:** Latest build run is [42373873838](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42373873838). The artifact expires 14 days after the run. The staging site is still running the earlier Composer-guard package; the updated Pro SLA syntax fix has not been uploaded there.
+- **Open gates:** Legacy order storage; WPML/Polylang translated order/admin context; real migration and cron/retry fixtures; REST/runtime security; full screen-reader/contrast review; representative performance measurements; release package contents and edition split.
+- **Release decision:** Phase 7 remains incomplete until the open gates above have evidence. The site reports environment type `production`; checks remained read-only and no order/payment records were changed.
