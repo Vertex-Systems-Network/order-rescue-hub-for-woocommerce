@@ -235,3 +235,11 @@
 - **Mutation boundary:** No WooCommerce order, payment, refund, customer, inventory, or case state was changed by this check. No fixture was created. This is one-order runtime evidence, not a full version/fixture matrix.
 - **Observed site issue:** The admin pages emit repeated WordPress `ob_end_flush()` notices from `wp-includes/functions.php:5581`; no Order Rescue Hub fatal appeared in the tested screen.
 - **Phase 7 status:** 81% estimated, still in progress. Live multilingual integrations are unavailable and remain a requested dry-run; schema migration/cron fixtures, wider security role coverage, complete accessibility review, representative-volume performance measurement and final package/release review are still open. No CLI task was added. Full evidence is in `docs/PHASE-7-QUALITY-REPORT.md`.
+
+
+## 2026-11-07 — Phase 7 accessibility and UI verification
+
+- **Accessibility spot-check:** Search and all four filters have programmatic names; keyboard navigation reaches the filter controls, and the focused select displays a visible 2px focus ring. Sampled contrast: filter labels 10.03:1, table headings 12.82:1 and table actions 4.81–5.23:1. This is a focused check only, not a screen-reader or complete WCAG audit.
+- **UI correction:** Fixed the inbox case count to use WordPress pluralization (`1 case` / `2 cases`) and localized number formatting (commit `020a319e22015ef9214daff82dfa515e6465442d`). CI/package build run `42388177816` passed; artifact `13580500958`, digest `sha256:72ed73f1754952c4cfc9cde35c1dab2cfecb9bca9d3b1b7899fa4fc573fcf3a9`.
+- **Staging state:** The new artifact has not yet been installed on `/el-test`; current installed screen remains the previously verified package. HPOS remains restored and selected.
+- **Phase 7 estimate:** 83%, still incomplete. Real schema migration/cron, low-privilege permission checks, complete accessibility, representative-load performance and final package/release review remain open. No merchant-facing CLI feature/task was introduced.
