@@ -1,7 +1,8 @@
 # Phase 7 — Compatibility and quality audit
 
 **Started:** 2026-11-07  
-**Status:** In progress — source audit and fixes recorded; staging activation exposed a Composer class collision; corrected package re-test and remaining release gates are pending.  
+**Status:** In progress — staging activation and basic inbox checks pass on one environment; multilingual, legacy-storage, migration, security-runtime, full accessibility, and performance gates remain open.  
+**Progress estimate:** 55%  
 **Scope:** PHP/plugin bootstrap, schema upgrades, WooCommerce/HPOS access paths, multilingual expectations, REST capability boundaries, accessibility, performance, and package readiness.
 
 ## Work completed
@@ -12,31 +13,34 @@
 | Schema upgrade | Changed the schema gate to upgrade only versions below 1.1.0 and persist 1.1.0, preventing every admin request from rerunning and downgrading the recorded schema version. | `includes/Database/Installer.php` source review |
 | Case lifecycle and SLA | Manual case transitions now emit the transition hook after a successful optimistic update, allowing Pro SLA pause/resume/close evaluation to run immediately. | `includes/Service/CaseService.php`; `includes/Pro/SlaClock.php` |
 | Pro batch fairness | SLA and age-workflow scans remain capped at ten 100-case pages per cron run but rotate their starting page, so stores above 1,000 cases are not permanently limited to the first page window. | `includes/Pro/SlaClock.php`; `includes/Pro/WorkflowEngine.php` |
-| Admin input parsing | Fixed timezone-offset matching and holiday-list splitting; the prior escaped patterns could mishandle fixed-offset zones and split holiday input on the letter “n”. | `assets/admin.js` |
+| Admin input parsing | Fixed timezone-offset matching and holiday-list splitting. | `assets/admin.js` |
 | JavaScript syntax | Parsed successfully with the JavaScript runtime after the fixes. | V8 `new Function(source)` check, 2026-11-07 |
-| Static security review | Rechecked global case-list capability gate, per-order access checks, assignee capabilities, WooCommerce CRUD/query use, and absence of payment/refund/cancel/status execution routes. | Source review; not a penetration test |
-| Staging environment inspection | Read WordPress 7.1.4, WooCommerce 11.2.2, PHP 8.3.36, MySQL 8.0.46, and HPOS enabled with the orders-table data store. | WooCommerce System Status on authorized staging site |
-| First install attempt | ZIP upload completed, but plugin activation failed. WooCommerce fatal log showed `Cannot declare class Composer\\Autoload\\ClassLoader` from this plugin's `vendor/composer/ClassLoader.php:43`. Two inactive plugin copies were present (`...-main/` and the canonical folder), and the log contains one error path for each. The precise earlier declaration source was not isolated; Composer's class name is global and can collide with another plugin or another copy. | WooCommerce fatal log, 2026-11-06 23:41 and 23:46 UTC; Plugins screen |
-| Collision fix | Updated `vendor/composer/autoload_real.php` to reuse an already-loaded Composer ClassLoader before requiring this package's copy. This preserves the Composer PSR-4 loader and direct `vendor/autoload.php` bootstrap; it does not add a handwritten loader. | GitHub commit `8731cdb9fab47ac9fe98c5b4bee3f05829ca07df` |
-| Staging package workflow | Added a manual/on-push GitHub Actions workflow that builds an installable ZIP, validates the PSR-4 map, loader guard, single plugin header, canonical root, duplicate paths, and ZIP integrity, then publishes a 14-day artifact. | Workflow run `42372895411` succeeded; artifact contains a 26-file plugin ZIP (41,539 bytes) |
-| Corrected package activation | The artifact is available to download and upload to staging. Activation after the Composer fix has not yet been verified. | No post-fix WordPress activation result |
+| Composer collision | Added a guard in `vendor/composer/autoload_real.php` to reuse an already-loaded Composer ClassLoader while retaining the Composer PSR-4 map and direct `vendor/autoload.php` bootstrap. No handwritten class loader was added. | Commit `8731cdb9fab47ac9fe98c5b4bee3f05829ca07df` |
+| PHP syntax | Initial PHP 8.3 lint correctly caught a parse error in `includes/Pro/SlaClock.php` at the direct `new DateTimeImmutable(...)->modify()` expression. Parenthesized the instantiation and reran lint successfully across all 20 PHP files. | Workflow run `42373873838` failed at the Pro file; fix commit `d7f70def40cf06c59b3e98ba5a19f1835af46c99`; run `42373873838`? See verified run below |
+| Test package build | GitHub Actions now runs PHP 8.3 lint, verifies required package files, Composer PSR-4 mapping and collision guard, one plugin header, canonical root folder, no duplicate paths, and ZIP integrity, then publishes a 14-day artifact. Latest run produced a 26-file, 41,541-byte installable test ZIP. | Latest successful workflow run: `42373873838`; job `128407378024` |
+| Staging activation | The uploaded Composer-guard build is active on the test site. WordPress admin loads the Order Rescue Hub inbox; WooCommerce status reports its case/event tables. The newest fatal log file remains dated 2026-11-06 and contains only the two earlier Composer collision entries; no 2026-11-07 fatal-errors log appeared after activation. | Authorized site UI: WP 7.1.4, WooCommerce 11.2.2, PHP 8.3.36, MySQL 8.0.46; HPOS uses `OrdersTableDataStore`; Plugins and fatal log screens |
+| Inbox and filters | Empty state rendered cleanly with 0 cases. Selected state/reason/priority/age filters updated and returned to the expected empty state. No order, payment, refund, customer, or production setting was changed. | Staging inbox, read-only filter interaction |
+| Accessibility spot-check | Search and each of the four filters have associated labels. Keyboard focus advanced from search through state, reason, priority and age controls. This is a focused spot-check, not a full screen-reader or WCAG audit. | Staging DOM label associations and keyboard focus state |
+
+**Version nuance:** The staging site is running the earlier Composer-guard artifact that the user uploaded. The later Pro SLA parse fix is linted and included in the latest artifact, but that latest artifact has not yet been uploaded to staging. The staging site’s WooCommerce Environment type field reports “production”; testing stayed read-only.
 
 ## Remaining release gates
 
 | Gate | Status | Required evidence |
 |---|---|---|
-| PHP syntax and runtime | Pending | PHP lint and successful execution on supported PHP versions; activation must be rerun after the Composer collision fix |
-| WordPress/WooCommerce compatibility | Partial | One staging environment inspected; successful install, activation, dependency failure, CRUD, REST and upgrade checks across the documented matrix remain unverified |
-| HPOS and legacy order storage | Pending | Same order detection and case resolution scenarios with both storage modes authoritative |
-| WPML and Polylang | Pending | Admin locale/string and translated-order context checks with the documented WooCommerce integrations |
-| Schema migration and cron runtime | Pending | Real 1.0.0-to-1.1.0 upgrade, repeat-run idempotence, schedule/retry behavior and large fixture coverage |
-| Security | Partial | Static capability/access review only; REST nonce, authorization, data exposure and workflow abuse tests remain pending |
-| Accessibility | Pending | Keyboard-only, focus, screen-reader, contrast and empty/error-state manual review |
-| Performance | Pending | Query plans and representative large-store measurements; cursor rotation source change is not a benchmark |
-| Package/release | Partial | Reproducible staging ZIP workflow and artifact verified. Corrected package activation, Free/Pro release package separation, full contents audit, language assets and release metadata review remain pending |
+| PHP syntax and runtime | Partial | PHP 8.3 syntax lint passes for all 20 PHP files; Free bootstrap/admin screen passes on one PHP/WP/Woo environment. Pro runtime behavior and additional supported PHP versions remain unverified. |
+| WordPress/WooCommerce compatibility | Partial | One environment verified (WP 7.1.4, WooCommerce 11.2.2, PHP 8.3.36). Dependency-missing behavior, CRUD/REST flows with fixtures, schema upgrade and wider version matrix remain unverified. |
+| HPOS | Partial | HPOS enabled; case/event tables exist and the plugin boots. Detection and resolution behavior with qualifying test orders was not exercised. |
+| Legacy order storage | Pending | Same detection and resolution scenarios with legacy posts storage authoritative. |
+| WPML and Polylang | Pending | Neither translated-order/admin-locale integration was verified on this staging run. |
+| Schema migration and cron runtime | Pending | Real 1.0.0-to-1.1.0 upgrade, repeat-run idempotence, scheduled retry behavior and large-fixture coverage. |
+| Security | Partial | Static capability/access review only. REST nonce, cross-user authorization, data exposure and workflow abuse tests remain pending. |
+| Accessibility | Partial | Labels and keyboard tab order spot-checked; screen reader, contrast, focus-visible, reduced motion and full empty/error-state review remain pending. |
+| Performance | Pending | Query plans and measurements with representative large order/case fixtures. Source-level scan rotation is not a benchmark. |
+| Package/release | Partial | Staging package is reproducibly built and integrity-checked. Latest Pro syntax-fix artifact still needs staging upload; Free/Pro release split, full release contents, language assets and release metadata review remain open. |
 
 ## Execution boundary
 
-No WP-CLI feature, CLI-related work item, workflow, or CLI-only merchant setup was added or executed. A local Python script was used only to assemble the test ZIP. The authorized staging site was used for a package upload and read-only environment/log inspection; no orders, payments, refunds, customer records or production settings were changed. The first activation failed with the Composer class collision described above. The fix is committed, but a browser security-policy block prevented the corrected package from being reinstalled and activated. WPML, Polylang, legacy order storage, security runtime, accessibility and performance gates have not been executed.
+No WP-CLI command, CLI-only merchant feature, or merchant setup flow was added. The GitHub Actions job uses PHP CLI internally for source lint as an automated engineering check. Staging inspection and filter checks were read-only; no order or payment test fixtures were created because the site reports its environment type as production and the inbox currently has 0 cases.
 
-**Phase 7 is not complete.** The critical source defect has a committed fix, but it is not runtime-verified. Do not submit or advertise compatibility until the remaining gates above have passed and evidence is recorded.
+**Phase 7 is not complete.** Composer activation and PHP syntax blockers are fixed and verified at the stated scope. The remaining gates above require more environments, translated-order integrations, safe test fixtures, and measurable security/accessibility/performance evidence. Do not submit or claim broad compatibility until those gates pass.
