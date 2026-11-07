@@ -68,7 +68,7 @@ final class Detector
         try {
             $page = max(1, (int) get_option('wperh_sweep_page', 1));
             $order_ids = wc_get_orders(array(
-                'status' => array('pending', 'processing', 'failed'),
+                'status' => array('pending', 'on-hold', 'processing', 'failed'),
                 'date_created' => '<=' . ($now - HOUR_IN_SECONDS),
                 'limit' => 100,
                 'page' => $page,
@@ -100,6 +100,11 @@ final class Detector
         $created = $order->get_date_created();
         $age_hours = $created ? max(0, (int) floor(($now - $created->getTimestamp()) / HOUR_IN_SECONDS)) : 0;
         $status = $order->get_status();
+        if (in_array($status, array('completed', 'cancelled', 'refunded'), true)) {
+            $this->repository->resolve_if_clear($order_id);
+            return;
+        }
+
         $reasons = array();
         $evidence = array(
             'status' => sanitize_key($status),
@@ -159,7 +164,7 @@ final class Detector
         foreach ($order->get_items('line_item') as $item) {
             $product = $item->get_product();
             if (!$product) {
-                return true;
+                continue;
             }
 
             if ($product->managing_stock() && !$product->backorders_allowed()) {
