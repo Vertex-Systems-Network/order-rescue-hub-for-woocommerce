@@ -19,7 +19,7 @@ final class Assets
             'wperh-admin',
             WPERH_URL . 'assets/admin.css',
             array('wp-components'),
-            WPERH_VERSION
+            WPERH_BUILD_ID
         );
 
         wp_enqueue_script(
