@@ -630,6 +630,6 @@
 
     var root = document.getElementById('wperh-app');
     if (root) {
-        wp.element.render(wp.element.createElement(App), root);
+        wp.element.createRoot(root).render(wp.element.createElement(App));
     }
 }(window.wp));
