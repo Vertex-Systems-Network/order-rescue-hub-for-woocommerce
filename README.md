@@ -2,7 +2,7 @@
 
 **Repository slug:** `wpessential-order-rescue-hub-woocommerce`  
 **Product type:** WPEssential add-on for WooCommerce  
-**Development status:** Free MVP and Pro capability source complete; package and release validation pending  
+**Development status:** Free MVP and Pro capability source complete; Phase 7 compatibility and release validation in progress  
 **Current release:** 0.1.0 development package (not a production release)
 
 > A focused workspace for finding, prioritizing, assigning, and resolving WooCommerce order exceptions.
@@ -39,12 +39,12 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 | 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled Composer PSR-4 autoloader | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 6. Pro capabilities | Admin email alerts, bounded workflows, team assignment, SLA clocks and approval boundary | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
-| 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | In progress — latest artifact installed; sample HPOS case detection, detail, filters, and reversible state transition pass; multilingual dry-run complete; wider release gates pending | `███░░ 62%` | 2026-11-07 | 2027-01-08 |
+| 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance | In progress — latest regression build installed and inbox loads; detector smoke checks and sample HPOS case/filter/state checks pass; broader gates pending | `███░░ 66%` | 2026-11-07 | 2027-01-08 |
 | 8. WordPress.org Free submission | GPL-compatible Free package, readme/assets, directory review submission and SVN release preparation | Not started | `░░░░░ 0%` | 2027-01-09 | 2027-01-22 |
 | 9. WooCommerce.com Pro submission | Vendor application, paid Pro package, QIT/UX evidence, Marketplace review and feedback fixes | Not started | `░░░░░ 0%` | 2027-01-23 | 2027-02-05 |
 | 10. Release and maintenance readiness | Approval-dependent launch checklist, versioned releases, support and update process | Not started | `░░░░░ 0%` | 2027-02-06 | 2027-02-12 |
 
-**Overall:** Phases 0–6 are complete for product framing, requirements, specifications, architecture, pre-development, Free implementation, and Pro capability source. Phase 7 source fixes and staging verification are in progress. The latest artifact is installed; sample HPOS detection, detail, filters, and a reversible case transition passed, and PHP 8.3 lint passes across all plugin PHP files. WPML/Polylang source dry-run passed, while runtime integration, legacy storage, migration, full security/accessibility and performance gates remain open. See [the Phase 7 quality report](docs/PHASE-7-QUALITY-REPORT.md). The Pro source is gated for paid packaging; no license or Marketplace approval is claimed. Dates are provisional, not delivery commitments.
+**Overall:** Phases 0–6 are complete for product framing, requirements, specifications, architecture, pre-development, Free implementation, and Pro capability source. Phase 7 source fixes and staging verification are in progress. Latest regression artifact `13575723255` is installed; detector smoke tests, PHP 8.3 lint, sample HPOS detection, detail, filters, and a reversible case transition passed. WPML/Polylang source dry-run passed, while runtime integration, legacy storage, migration, full security/accessibility and performance gates remain open. See [the Phase 7 quality report](docs/PHASE-7-QUALITY-REPORT.md). The Pro source is gated for paid packaging; no license or Marketplace approval is claimed. Dates are provisional, not delivery commitments.
 
 ## Build a staging test package
 
@@ -221,4 +221,4 @@ Official references checked 2026-11-06:
 
 ## Phase 7: Compatibility and quality
 
-**Status: in progress (35%, started 2026-11-07).** Static source audit fixed the Pro bootstrap reference, schema-version gate, manual transition/SLA hook, admin timezone/holiday parsing, and rotating bounded Pro scan pages. JavaScript syntax parsing passed. PHP runtime/lint, WordPress/WooCommerce, HPOS, WPML/Polylang, security, accessibility, performance, and package gates are still pending; see [docs/PHASE-7-QUALITY-REPORT.md](docs/PHASE-7-QUALITY-REPORT.md). Compatibility is not certified yet.
+**Status: in progress (66%, started 2026-11-07).** Source audit fixes cover the Pro bootstrap, schema-version gate, transition/SLA hook, timezone/holiday parsing, bounded Pro scan rotation, terminal-order suppression, on-hold sweep inclusion, and missing-product stock handling. PHP 8.3 lint, detector regression smoke checks, staging package installation, and a focused HPOS sample-order workflow pass. Legacy storage, actual multilingual integration runtime, migration/cron fixtures, full security/accessibility/performance, and release package gates remain open; see [docs/PHASE-7-QUALITY-REPORT.md](docs/PHASE-7-QUALITY-REPORT.md). Compatibility is not certified yet.
