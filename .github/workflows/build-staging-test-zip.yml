@@ -10,6 +10,7 @@ on:
     paths:
       - 'assets/**'
       - 'includes/**'
+      - 'tests/**'
       - 'vendor/**'
       - 'composer.json'
       - 'readme.txt'
@@ -42,6 +43,9 @@ jobs:
             php -l "$file"
           done < <(find includes vendor -type f -name '*.php' -print0)
           php -l wpessential-order-rescue-hub-woocommerce.php
+
+      - name: Run detector behavior smoke tests
+        run: php tests/DetectorSmokeTest.php
 
       - name: Assemble and verify the WordPress plugin package
         run: |
