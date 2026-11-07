@@ -259,3 +259,10 @@
 - User reported uploading the latest build. Reopened `/el-test` and read the Order Rescue Hub inbox: it still displays `1 cases`, so the pluralization correction is not verified live. Plugins lists the active plugin at version 0.1.0, which is not sufficient to distinguish builds because the patch did not change the version header.
 - The latest CI artifact remains unverified on staging. This browser session blocked the install submission action under its URL security policy; no workaround was attempted. Existing order #49 remains shown as open with pending payment/missing-shipping reasons. No order/payment/inventory mutation occurred.
 - Phase 7 stays at 88%; the Phase 7 report records the current state. No merchant CLI task was added.
+
+
+## 2026-11-07 — Staging recheck after reported upload
+
+- Reopened and hard-refreshed the staging inbox after the user reported the package had been uploaded. The page rendered `1 cases` again, so the singular/plural correction is not confirmed live. Existing order #49 remains open and still shows pending payment/missing-shipping reasons.
+- The loaded JavaScript URL is versioned `ver=0.1.0`; the plugin patch kept the same version header, so the visible version alone cannot identify which artifact is installed. Browser installation submission is blocked by the Work Mode URL security policy; no alternate installation path was used.
+- **Phase 7:** remains in progress at the last audited estimate, 88%. Latest artifact runtime verification remains open. No merchant CLI task added.
