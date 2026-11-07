@@ -50,6 +50,9 @@ jobs:
       - name: Run schema installer smoke tests
         run: php tests/InstallerSmokeTest.php
 
+      - name: Run case service validation smoke tests
+        run: php tests/CaseServiceSmokeTest.php
+
       - name: Assemble and verify the WordPress plugin package
         run: |
           python3 - <<'PY'
