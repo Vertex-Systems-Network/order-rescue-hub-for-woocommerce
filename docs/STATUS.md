@@ -129,3 +129,12 @@
 - **Verification:** JavaScript syntax previously passed under V8. Corrected package was assembled, but the browser security policy blocked the staging re-upload action; activation after the fix is unverified. No PHP lint, WP-CLI feature/work item, payment action, order mutation, WPML/Polylang check, legacy-storage check, security runtime check, accessibility review, or performance benchmark was performed. A local Python script was used only to assemble the test ZIP.
 - **Open gates:** Reinstall/retest corrected package; PHP/runtime and CRUD/REST/upgrade checks; HPOS and legacy data-store scenarios; WPML/Polylang; security; accessibility; performance; package/edition review.
 - **Release decision:** Phase 7 is not complete. Do not claim compatibility or submit until the listed release gates pass.
+
+## 2026-11-07 — Staging ZIP build artifact
+
+- **Deliverable:** Added `.github/workflows/build-staging-test-zip.yml`.
+- **How it runs:** Automatically on relevant `main` source changes or manually from GitHub Actions using **Build staging test ZIP → Run workflow**.
+- **Build checks:** Required package files, Composer PSR-4 mapping, Composer collision guard, one plugin header, canonical plugin root, duplicate paths, and ZIP integrity.
+- **Result:** Run `42372895411` completed successfully. It produced a 26-file installable plugin ZIP, 41,539 bytes, inside a GitHub Actions artifact named `wperh-staging-test-acba26f4a3faa2ffbd3f51a7140ae4e9a9b05ad1`. Artifact expires 2026-11-21 UTC.
+- **Usage:** Download the artifact, extract the outer artifact ZIP, then upload the inner `wpessential-order-rescue-hub-woocommerce.zip` through WordPress **Plugins → Add Plugin → Upload Plugin**.
+- **Boundary:** This development ZIP workflow is not a production release or compatibility certification. It adds no merchant-facing CLI command. Phase 7 staging activation and other compatibility/security/accessibility/performance gates remain open.
