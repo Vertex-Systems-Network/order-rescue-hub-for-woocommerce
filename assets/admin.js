@@ -7,7 +7,7 @@
     var useState = wp.element.useState;
     var useEffect = wp.element.useEffect;
     var __ = wp.i18n ? wp.i18n.__ : function (text) { return text; };
-    var _n = wp.i18n ? wp.i18n._n : function (single, plural, number) { return 1 === number ? single : plural; };
+    var _n = wp.i18n && 'function' === typeof wp.i18n._n ? wp.i18n._n : function (single, plural, number) { return 1 === number ? single : plural; };
     var sprintf = wp.i18n ? wp.i18n.sprintf : function (format, number) { return format.replace('%d', number); };
 
     function formatDate(value) {
