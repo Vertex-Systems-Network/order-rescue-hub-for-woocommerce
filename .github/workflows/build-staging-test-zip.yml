@@ -28,6 +28,21 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Lint plugin PHP sources
+        shell: bash
+        run: |
+          php --version
+          while IFS= read -r -d '' file; do
+            php -l "$file"
+          done < <(find includes vendor -type f -name '*.php' -print0)
+          php -l wpessential-order-rescue-hub-woocommerce.php
+
       - name: Assemble and verify the WordPress plugin package
         run: |
           python3 - <<'PY'
