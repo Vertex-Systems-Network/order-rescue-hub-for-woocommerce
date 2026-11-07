@@ -218,3 +218,12 @@
 - **CI:** Run 42384516382, job 128438969037, passed PHP lint and detector, installer-gate, and case-service smoke tests on PHP 8.3, 8.4, and 8.5, plus package validation/build. Artifact 13578589096, digest sha256:1c3f85b87b52d96b3b7fb078496e24a9ea83cd0af86f97102218c45845a055da.
 - **Scope:** This adds service-level test coverage with a fake repository. It does not replace a real database/REST concurrency test or a staging upload. Plugin runtime source did not change in this test-only commit, so the already-installed runtime ZIP remains representative of the same plugin code.
 - **Phase 7:** Updated estimate to 75%. Migration, legacy storage runtime, low-privilege REST matrix, full accessibility, representative performance, and release submission gates remain open. No merchant CLI task added.
+
+## 2026-11-07 — CI runner and artifact build verification
+
+- **Workflow maintenance:** Pinned the runner to Ubuntu 24.04 and upgraded actions/checkout to v5 after GitHub warned that ubuntu-latest would migrate and checkout v4 was using the deprecated Node 20 runtime.
+- **Latest CI:** Run 42384803209, job 128439825083, commit 52241de89d3fa3292b5d6eda25efb11e89b50e13 completed successfully. PHP 8.3/8.4/8.5 lint, detector/installer/case-service smoke checks, and package integrity passed.
+- **Artifact:** 13579261738, digest sha256:9f924c0ed0e7f877d8e88a7d28d3fc55e747462b34540297c95245653b4b1b5d; expires 2026-11-21 UTC.
+- **Remaining workflow notice:** actions/upload-artifact@v4 still reports its Node 20 deprecation and was forced to Node 24. The action succeeded; no compatible newer major was used in this run.
+- **Staging relationship:** The commits since the last staging install changed tests, documentation, and workflow configuration only. The plugin runtime source packaged and installed on staging did not change.
+- **Phase 7:** 76% estimate. Real DB migration/cron, legacy storage runtime, broader security/accessibility/performance validation, and Free/Pro release/submission gates remain open.
