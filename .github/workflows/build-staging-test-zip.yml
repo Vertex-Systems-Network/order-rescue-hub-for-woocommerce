@@ -1,0 +1,109 @@
+name: Build staging test ZIP
+
+run-name: Build staging test ZIP (${{ github.ref_name }})
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'assets/**'
+      - 'includes/**'
+      - 'vendor/**'
+      - 'composer.json'
+      - 'readme.txt'
+      - 'LICENSE'
+      - 'wpessential-order-rescue-hub-woocommerce.php'
+      - '.github/workflows/build-staging-test-zip.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Build and verify installable ZIP
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Assemble and verify the WordPress plugin package
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+          from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
+
+          root = Path.cwd()
+          plugin_slug = "wpessential-order-rescue-hub-woocommerce"
+          package_root = Path("dist")
+          package_root.mkdir(exist_ok=True)
+          zip_path = package_root / f"{plugin_slug}.zip"
+
+          required = [
+              Path("LICENSE"),
+              Path("readme.txt"),
+              Path("composer.json"),
+              Path(f"{plugin_slug}.php"),
+              Path("vendor/autoload.php"),
+              Path("vendor/composer/ClassLoader.php"),
+              Path("vendor/composer/LICENSE"),
+              Path("vendor/composer/autoload_psr4.php"),
+              Path("vendor/composer/autoload_real.php"),
+          ]
+          missing = [str(path) for path in required if not (root / path).is_file()]
+          if missing:
+              raise SystemExit("Required package files are missing: " + ", ".join(missing))
+
+          composer = json.loads((root / "composer.json").read_text(encoding="utf-8"))
+          psr4 = composer.get("autoload", {}).get("psr-4", {})
+          if psr4.get("WPEssential\\OrderRescueHub\\") != "includes/":
+              raise SystemExit("Composer PSR-4 mapping is missing or incorrect.")
+
+          sources = list(required)
+          for directory in (Path("assets"), Path("includes")):
+              sources.extend(sorted(path.relative_to(root) for path in (root / directory).rglob("*") if path.is_file()))
+
+          autoload_source = (root / "vendor/composer/autoload_real.php").read_text(encoding="utf-8")
+          if "class_exists" not in autoload_source:
+              raise SystemExit("Composer collision guard is absent from autoload_real.php.")
+
+          php_files = [root / path for path in sources if path.suffix == ".php"]
+          plugin_headers = sum(
+              len(re.findall(r"^\s*\*?\s*Plugin Name:", path.read_text(encoding="utf-8"), re.MULTILINE))
+              for path in php_files
+          )
+          if plugin_headers != 1:
+              raise SystemExit(f"Expected one plugin header, found {plugin_headers}.")
+
+          timestamp = (2020, 1, 1, 0, 0, 0)
+          with ZipFile(zip_path, "w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
+              for path in sorted(set(sources), key=lambda item: item.as_posix()):
+                  info = ZipInfo(f"{plugin_slug}/{path.as_posix()}", date_time=timestamp)
+                  info.compress_type = ZIP_DEFLATED
+                  info.external_attr = 0o100644 << 16
+                  archive.writestr(info, (root / path).read_bytes())
+
+          with ZipFile(zip_path) as archive:
+              corrupt = archive.testzip()
+              names = archive.namelist()
+              if corrupt:
+                  raise SystemExit(f"ZIP integrity check failed at {corrupt}.")
+              if not names or any(not name.startswith(f"{plugin_slug}/") for name in names):
+                  raise SystemExit("ZIP must contain one canonical plugin root folder.")
+              if len(names) != len(set(names)):
+                  raise SystemExit("ZIP contains duplicate paths.")
+
+          print(f"Created {zip_path} with {len(names)} files ({zip_path.stat().st_size} bytes).")
+          PY
+
+      - name: Upload installable ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wperh-staging-test-${{ github.sha }}
+          path: dist/wpessential-order-rescue-hub-woocommerce.zip
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
