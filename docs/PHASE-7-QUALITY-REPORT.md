@@ -2,7 +2,7 @@
 
 **Started:** 2026-11-07  
 **Status:** In progress — latest regression artifact installed on staging; HPOS order detection, case detail, filters, and reversible state transition pass on one sample order. Legacy storage, live multilingual integrations, migration/cron, full security/accessibility, and performance gates remain open.  
-**Progress estimate:** 66%  
+**Progress estimate:** 68%  
 **Scope:** PHP/plugin bootstrap, schema upgrades, WooCommerce/HPOS access paths, multilingual expectations, REST capability boundaries, accessibility, performance, and package readiness.
 
 ## Work completed
@@ -36,10 +36,10 @@
 | Legacy order storage | Pending | Same detection and resolution scenarios with legacy posts storage authoritative. |
 | WPML and Polylang | Dry-run passed; runtime pending | Static review confirms no hard dependency or direct WPML/Polylang API calls; order access uses WooCommerce CRUD (`wc_get_order`, `WC_Order`) and UI strings use the plugin text domain plus WordPress script translations. Case identity remains keyed to WooCommerce order ID. The planned order-language context is not yet exposed, and actual translated-order/admin-locale tests require these plugins and WooCommerce add-ons. |
 | Schema migration and cron runtime | Pending | Real 1.0.0-to-1.1.0 upgrade, repeat-run idempotence, scheduled retry behavior and large-fixture coverage. |
-| Security | Partial | Static capability review plus authenticated manager REST-backed reads and case-state writes passed. Nonce/cross-user denial, data exposure and workflow abuse tests remain pending. |
+| Security | Partial | Static capability review plus authenticated manager REST-backed reads and case-state writes passed. A direct GET of the protected inbox REST route without a REST nonce returned WordPress `401 rest_forbidden` with no case data. Low-privilege cross-user access and mutation-route abuse tests remain pending. |
 | Accessibility | Partial | Labels and keyboard tab order spot-checked; screen reader, contrast, focus-visible, reduced motion and full empty/error-state review remain pending. |
 | Performance | Pending | Query plans and measurements with representative large order/case fixtures. Source-level scan rotation is not a benchmark. |
-| Package/release | Partial | Artifact `13573814951` was installed successfully on staging. Free/Pro release split, full release contents, language assets and release metadata review remain open. |
+| Package/release | Partial | Latest artifact `13575723255` was installed successfully on staging. Free/Pro release split, full release contents, language assets and release metadata review remain open. |
 
 ## Execution boundary
 
