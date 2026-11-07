@@ -128,4 +128,90 @@ if ($columns !== $columns_after_repeat) {
     exit(1);
 }
 
+
+require dirname(__DIR__) . '/includes/Repository/CaseRepository.php';
+require dirname(__DIR__) . '/includes/Service/CaseService.php';
+require dirname(__DIR__) . '/includes/Rest/CasesController.php';
+
+$repository = new \WPEssential\OrderRescueHub\Repository\CaseRepository();
+$case_service = new \WPEssential\OrderRescueHub\Service\CaseService($repository);
+$controller = new \WPEssential\OrderRescueHub\Rest\CasesController($repository, $case_service);
+$admin = get_role('administrator');
+if ($admin) {
+    $admin->add_cap('manage_woocommerce');
+}
+$subscriber_id = wp_create_user('wperh-readonly-test', 'temporary-subscriber-password', 'readonly@example.invalid');
+if (is_wp_error($subscriber_id)) {
+    fwrite(STDERR, "Could not create the isolated subscriber security fixture.\n");
+    exit(1);
+}
+wp_set_current_user((int) $subscriber_id);
+if ($controller->can_manage()) {
+    fwrite(STDERR, "A subscriber unexpectedly passed the WooCommerce manager capability check.\n");
+    exit(1);
+}
+$fake_repository = new class extends \WPEssential\OrderRescueHub\Repository\CaseRepository {
+    public function find(int $case_id): ?array
+    {
+        return array('case_id' => $case_id, 'order_id' => 424242, 'state' => 'open', 'row_version' => 1);
+    }
+
+    public function events(int $case_id, int $limit = 100): array
+    {
+        return array();
+    }
+};
+$guarded = new \WPEssential\OrderRescueHub\Rest\CasesController(
+    $fake_repository,
+    new \WPEssential\OrderRescueHub\Service\CaseService($fake_repository)
+);
+$request = new WP_REST_Request('GET', '/wperh/v1/cases/1');
+$request->set_url_params(array('id' => 1));
+$denied_detail = $guarded->get_case($request);
+if (!is_wp_error($denied_detail) || 403 !== $denied_detail->get_error_data()['status']) {
+    fwrite(STDERR, "A subscriber was not denied access to the case detail for an inaccessible order.\n");
+    exit(1);
+}
+$request = new WP_REST_Request('POST', '/wperh/v1/cases/1/transition');
+$request->set_url_params(array('id' => 1));
+$request->set_param('state', 'closed');
+$denied_transition = $guarded->transition($request);
+if (!is_wp_error($denied_transition) || 403 !== $denied_transition->get_error_data()['status']) {
+    fwrite(STDERR, "A subscriber was not denied the case transition mutation.\n");
+    exit(1);
+}
+wp_set_current_user(0);
+fwrite(STDOUT, "WordPress subscriber list/detail/mutation permission checks passed.\n");
+
+$fixture_count = 10000;
+$chunk_size = 250;
+for ($offset = 0; $offset < $fixture_count; $offset += $chunk_size) {
+    $tuples = array();
+    $end = min($fixture_count, $offset + $chunk_size);
+    for ($i = $offset; $i < $end; $i++) {
+        $order_id = 1000000 + $i;
+        $reason = 0 === $i % 2 ? '["pending_payment"]' : '["missing_shipping"]';
+        $priority = 0 === $i % 2 ? 20 : 30;
+        $detected_at = gmdate('Y-m-d H:i:s', time() - (($i % 168) * HOUR_IN_SECONDS));
+        $tuples[] = $wpdb->prepare('(%d, %s, %s, %s, %d, %s, %s, %s, %s)', $order_id, 'open', $reason, '{}', $priority, $detected_at, $detected_at, $detected_at, $detected_at);
+    }
+    $wpdb->query("INSERT INTO {$cases} (order_id, state, reason_codes, evidence, priority, first_detected_at, last_detected_at, created_at, updated_at) VALUES " . implode(',', $tuples));
+    if ($wpdb->last_error) {
+        fwrite(STDERR, "Could not seed the synthetic inbox performance fixture: " . $wpdb->last_error . "\n");
+        exit(1);
+    }
+}
+$started_at = microtime(true);
+$page = $repository->list(array('state' => 'all', 'reason' => 'pending_payment', 'page' => 1, 'per_page' => 25));
+$elapsed_ms = (microtime(true) - $started_at) * 1000;
+if (5000 !== $page['total'] || 25 !== count($page['items']) || 200 !== $page['total_pages']) {
+    fwrite(STDERR, "The 10,000-case synthetic filter/pagination result was incorrect.\n");
+    exit(1);
+}
+if ($elapsed_ms > 2000) {
+    fwrite(STDERR, sprintf("The synthetic 10,000-case inbox query exceeded the 2,000ms CI guard (%.1fms).\n", $elapsed_ms));
+    exit(1);
+}
+fwrite(STDOUT, sprintf("Synthetic 10,000-case filter and pagination check passed in %.1fms (CI-only baseline).\n", $elapsed_ms));
+
 fwrite(STDOUT, "WordPress/MySQL 1.0.0-to-1.1.0 migration and repeat-run checks passed.\n");
