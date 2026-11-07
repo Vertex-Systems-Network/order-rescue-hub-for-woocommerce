@@ -211,3 +211,10 @@
 - **Environment notice:** WordPress upload rendered repeated `ob_end_flush()` notices from core `wp-includes/functions.php:5581`. No plugin-specific fatal was shown during the verified flow.
 - **Still open:** Real DB/dbDelta migration and cron/retry fixtures; runtime legacy-storage mode; low-privilege/cross-order security matrix; complete screen-reader/contrast/reduced-motion audit; representative performance benchmarks; Free/Pro release package and directory/Marketplace submission readiness. WPML/Polylang dry-run remains complete for the requested scope, without vendor runtime certification.
 - **Boundary:** No merchant-facing CLI command or work item added. No production order, payment, refund, customer, or stock data changed. Phase 7 is not complete while the listed gates remain open.
+
+## 2026-11-07 — Case transition conflict and reopen regression coverage
+
+- **Coverage added:** tests/CaseServiceSmokeTest.php now checks a simulated optimistic update conflict returns an error without changing the case; valid closure retains state; reopening starts a new episode and clears stale closure, outcome, and SLA timestamps/state.
+- **CI:** Run 42384516382, job 128438969037, passed PHP lint and detector, installer-gate, and case-service smoke tests on PHP 8.3, 8.4, and 8.5, plus package validation/build. Artifact 13578589096, digest sha256:1c3f85b87b52d96b3b7fb078496e24a9ea83cd0af86f97102218c45845a055da.
+- **Scope:** This adds service-level test coverage with a fake repository. It does not replace a real database/REST concurrency test or a staging upload. Plugin runtime source did not change in this test-only commit, so the already-installed runtime ZIP remains representative of the same plugin code.
+- **Phase 7:** Updated estimate to 75%. Migration, legacy storage runtime, low-privilege REST matrix, full accessibility, representative performance, and release submission gates remain open. No merchant CLI task added.
