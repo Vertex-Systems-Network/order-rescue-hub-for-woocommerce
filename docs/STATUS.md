@@ -196,3 +196,9 @@
 - **User-directed scope:** WPML and Polylang are not installed on the test site; complete the requested compatibility dry-run from code paths and dependency behavior rather than waiting for the add-ons.
 - **Dry-run result:** No hard dependency or direct WPML/Polylang API call was found. Order reads use WooCommerce CRUD; admin strings use the plugin text domain and WordPress script translation path; case identity is keyed by WooCommerce order ID. Dry-run is recorded as complete for this requested scope.
 - **Boundary:** This does not claim vendor runtime certification. The planned order-language context is an implementation gap to track separately from the integration dry-run.
+
+
+## 2026-11-07 — Legacy storage source audit
+
+- **Source scan:** Searched plugin files for direct `$wpdb->posts`, `$wpdb->postmeta`, `get_post_meta()` and `get_posts()` access; no matches found. Order reads use `wc_get_order()` and candidate sweeps use `wc_get_orders()`.
+- **Status:** Source-level legacy-storage compatibility check passed. No order-storage mode switch was made on the staging site; legacy authoritative runtime testing remains open.
