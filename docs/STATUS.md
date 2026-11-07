@@ -252,3 +252,10 @@
 - **Synthetic performance:** 10,000 isolated cases filtered to the expected 5,000 matches; first page contained 25 rows over 200 pages. Query completed in 6.6 ms in CI. This is a synthetic baseline, not production-host benchmark evidence.
 - **Artifact/staging:** CI produced a validated installable artifact. It has not yet been installed on `/el-test`; the existing staging install remains the previously tested build. HPOS is restored. No merchant CLI feature/task was added.
 - **Phase 7:** Updated estimate 88%, still in progress. Cron/retry, broader WP/Woo/PHP and security-role matrices, full accessibility/screen-reader checks, representative host performance, latest artifact live installation, and final release-package gates remain open. WPML/Polylang dry-run remains accepted for requested scope.
+
+
+## 2026-11-07 — Latest staging artifact recheck
+
+- User reported uploading the latest build. Reopened `/el-test` and read the Order Rescue Hub inbox: it still displays `1 cases`, so the pluralization correction is not verified live. Plugins lists the active plugin at version 0.1.0, which is not sufficient to distinguish builds because the patch did not change the version header.
+- The latest CI artifact remains unverified on staging. This browser session blocked the install submission action under its URL security policy; no workaround was attempted. Existing order #49 remains shown as open with pending payment/missing-shipping reasons. No order/payment/inventory mutation occurred.
+- Phase 7 stays at 88%; the Phase 7 report records the current state. No merchant CLI task was added.
