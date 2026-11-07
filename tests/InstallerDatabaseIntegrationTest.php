@@ -153,7 +153,7 @@ if ($controller->can_manage()) {
 $wpdb->insert($cases, array(
     'order_id' => 424242,
     'state' => 'open',
-    'reason_codes' => '["pending_payment"]',
+    'reason_codes' => '["stock_discrepancy"]',
     'evidence' => '{}',
     'priority' => 20,
     'first_detected_at' => gmdate('Y-m-d H:i:s'),
