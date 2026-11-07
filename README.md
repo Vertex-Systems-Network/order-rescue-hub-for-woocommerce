@@ -46,6 +46,20 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 
 **Overall:** Phases 0–6 are complete for product framing, requirements, specifications, architecture, pre-development, Free implementation, and Pro capability source. Phase 7 source fixes are in progress. The first staging activation exposed a Composer class collision; a fix is committed, but runtime re-test and compatibility/release gates remain open. See [the Phase 7 quality report](docs/PHASE-7-QUALITY-REPORT.md). The Pro source is gated for paid packaging; no license or Marketplace approval is claimed. Dates are provisional, not delivery commitments.
 
+## Build a staging test package
+
+A GitHub Actions workflow builds a clean WordPress-installable ZIP when runtime files change on `main`, or when you start it manually. It checks the Composer PSR-4 mapping, confirms the Composer class-collision guard is present, verifies the single plugin header, and checks ZIP integrity and its canonical folder structure.
+
+To build and download:
+
+1. Open the repository's [Actions tab](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/workflows/build-staging-test-zip.yml).
+2. Select **Build staging test ZIP**, click **Run workflow**, and choose `main`.
+3. Open the completed run and download its `wperh-staging-test-...` artifact.
+4. Extract the downloaded artifact archive. Inside it is `wpessential-order-rescue-hub-woocommerce.zip`, the installable plugin package.
+5. In the staging WordPress admin, use **Plugins → Add Plugin → Upload Plugin** and select that inner ZIP.
+
+The Actions artifact expires after 14 days. This is a development/staging package, not a release package; it does not certify compatibility or Marketplace readiness. No merchant-facing CLI command or setup was added.
+
 ## Phase 5: Free MVP implementation
 
 **Status: complete (100%, 2026-11-06).** The Free implementation, React admin inbox, REST endpoints, case/event storage, Composer PSR-4 runtime, and developer package notes are recorded in [docs/IMPLEMENTATION-FREE-MVP.md](docs/IMPLEMENTATION-FREE-MVP.md). JavaScript syntax was checked with Node. PHP parsing/runtime, WordPress/WooCommerce install, HPOS, multilingual behavior, security, accessibility, and performance validation have not been run; these remain Phase 7 release-validation gates. No CLI work item was added.
