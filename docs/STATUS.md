@@ -189,3 +189,10 @@
 - **Staging:** Downloaded artifact `13577117599` (commit `a4c8d92a0d7d7177e7c2581e67e8e30dfb46313e`) and replaced the existing plugin. WordPress reported “Plugin updated successfully.” Dashboard loaded after the update and showed the existing open case #49.
 - **Artifact hashes:** Inner plugin ZIP SHA-256 `e02f5b5a548460e7f95b61fe2f274c38789d510b9a6f708f421e2128a1134982`; workflow artifact digest `sha256:e9ead026d97757e8b8fee919f068917106d7df1cdf3f2028a68ab9e5fb6754d8`.
 - **Boundary:** No order/payment data changed; no merchant-facing CLI task added. Phase 7 estimate moves to 70%; legacy order storage, real DB migration/cron, low-privilege security, full accessibility/performance, and release package review remain outstanding.
+
+
+## 2026-11-07 — Multilingual dry-run scope clarified
+
+- **User-directed scope:** WPML and Polylang are not installed on the test site; complete the requested compatibility dry-run from code paths and dependency behavior rather than waiting for the add-ons.
+- **Dry-run result:** No hard dependency or direct WPML/Polylang API call was found. Order reads use WooCommerce CRUD; admin strings use the plugin text domain and WordPress script translation path; case identity is keyed by WooCommerce order ID. Dry-run is recorded as complete for this requested scope.
+- **Boundary:** This does not claim vendor runtime certification. The planned order-language context is an implementation gap to track separately from the integration dry-run.
