@@ -7,7 +7,7 @@
     var useState = wp.element.useState;
     var useEffect = wp.element.useEffect;
     var __ = wp.i18n ? wp.i18n.__ : function (text) { return text; };
-    var _n = wp.i18n && 'function' === typeof wp.i18n._n ? wp.i18n._n : function (single, plural, number) { return 1 === number ? single : plural; };
+    var pluralize = wp.i18n && 'function' === typeof wp.i18n._n ? wp.i18n._n : function (single, plural, number) { return 1 === number ? single : plural; };
     var sprintf = wp.i18n ? wp.i18n.sprintf : function (format, number) { return format.replace('%d', number); };
 
     function formatDate(value) {
@@ -552,7 +552,7 @@
                         h('h2', null, __('Exceptions', 'wpessential-order-rescue-hub')),
                         h('p', null, __('Review order exceptions, understand why they were flagged, and record the resolution.', 'wpessential-order-rescue-hub'))
                     ),
-                    h('span', { className: 'wperh-count' }, sprintf(_n('%d case', '%d cases', total, 'wpessential-order-rescue-hub'), total))
+                    h('span', { className: 'wperh-count' }, sprintf(pluralize('%d case', '%d cases', total, 'wpessential-order-rescue-hub'), total))
                 ),
                 error ? h('div', { className: 'notice notice-error' }, h('p', null, error)) : null,
                 notice ? h('div', { className: 'notice notice-success' }, h('p', null, notice)) : null,
