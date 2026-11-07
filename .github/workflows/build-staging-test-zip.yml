@@ -47,6 +47,9 @@ jobs:
       - name: Run detector behavior smoke tests
         run: php tests/DetectorSmokeTest.php
 
+      - name: Run schema installer smoke tests
+        run: php tests/InstallerSmokeTest.php
+
       - name: Assemble and verify the WordPress plugin package
         run: |
           python3 - <<'PY'
