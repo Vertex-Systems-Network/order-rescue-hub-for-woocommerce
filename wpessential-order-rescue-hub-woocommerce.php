@@ -33,7 +33,7 @@ add_filter('plugin_row_meta', static function (array $links, string $file): arra
     $links[] = sprintf(
         esc_html__('Build %1$s · %2$s', 'wpessential-order-rescue-hub'),
         WPERH_BUILD_ID,
-        WPERH_BUILD_COMMIT
+        substr(WPERH_BUILD_COMMIT, 0, 12)
     );
 
     return $links;
