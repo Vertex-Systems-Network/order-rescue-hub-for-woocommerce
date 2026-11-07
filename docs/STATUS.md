@@ -227,3 +227,11 @@
 - **Remaining workflow notice:** actions/upload-artifact@v4 still reports its Node 20 deprecation and was forced to Node 24. The action succeeded; no compatible newer major was used in this run.
 - **Staging relationship:** The commits since the last staging install changed tests, documentation, and workflow configuration only. The plugin runtime source packaged and installed on staging did not change.
 - **Phase 7:** 76% estimate. Real DB migration/cron, legacy storage runtime, broader security/accessibility/performance validation, and Free/Pro release/submission gates remain open.
+
+
+## 2026-11-07 — Phase 7 staging compatibility extension
+
+- **Completed:** User clarified `/el-test` is the test website and authorized testing there. Completed WooCommerce's built-in HPOS-to-legacy compatibility sync from the admin UI; Action Scheduler recorded `wc_run_batch_process` as complete. Switched to legacy WordPress posts storage and verified the existing Order Rescue Hub inbox and case detail for order #49 (`pending`, incomplete shipping) rendered. Restored HPOS through WooCommerce settings and verified the HPOS radio is selected; the inbox again displays the same open case.
+- **Mutation boundary:** No WooCommerce order, payment, refund, customer, inventory, or case state was changed by this check. No fixture was created. This is one-order runtime evidence, not a full version/fixture matrix.
+- **Observed site issue:** The admin pages emit repeated WordPress `ob_end_flush()` notices from `wp-includes/functions.php:5581`; no Order Rescue Hub fatal appeared in the tested screen.
+- **Phase 7 status:** 81% estimated, still in progress. Live multilingual integrations are unavailable and remain a requested dry-run; schema migration/cron fixtures, wider security role coverage, complete accessibility review, representative-volume performance measurement and final package/release review are still open. No CLI task was added. Full evidence is in `docs/PHASE-7-QUALITY-REPORT.md`.
