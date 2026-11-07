@@ -44,6 +44,17 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v5
 
+      - name: Stamp unique build identity
+        shell: bash
+        run: |
+          cat > build-info.php <<'PHP'
+          <?php
+          return array(
+              'id' => 'build-${{ github.run_number }}-${{ github.run_attempt }}',
+              'commit' => '${{ github.sha }}',
+          );
+          PHP
+
       - name: Set up PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
@@ -59,6 +70,7 @@ jobs:
             php -l "$file"
           done < <(find includes vendor -type f -name '*.php' -print0)
           php -l wpessential-order-rescue-hub-woocommerce.php
+          php -l build-info.php
 
       - name: Run database-backed schema migration test
         env:
@@ -133,6 +145,7 @@ jobs:
               Path("readme.txt"),
               Path("composer.json"),
               Path(f"{plugin_slug}.php"),
+              Path("build-info.php"),
               Path("vendor/autoload.php"),
               Path("vendor/composer/ClassLoader.php"),
               Path("vendor/composer/LICENSE"),
@@ -142,6 +155,12 @@ jobs:
           missing = [str(path) for path in required if not (root / path).is_file()]
           if missing:
               raise SystemExit("Required package files are missing: " + ", ".join(missing))
+
+          build_info = (root / "build-info.php").read_text(encoding="utf-8")
+          if "build-${{ github.run_number }}-${{ github.run_attempt }}" not in build_info:
+              raise SystemExit("Unique workflow build identity was not stamped into the package.")
+          if "${{ github.sha }}" not in build_info:
+              raise SystemExit("Source commit SHA is missing from the package build identity.")
 
           composer = json.loads((root / "composer.json").read_text(encoding="utf-8"))
           psr4 = composer.get("autoload", {}).get("psr-4", {})
@@ -188,7 +207,7 @@ jobs:
       - name: Upload installable ZIP artifact
         uses: actions/upload-artifact@v4
         with:
-          name: wperh-staging-test-${{ github.sha }}
+          name: wperh-staging-test-${{ github.run_number }}-${{ github.run_attempt }}-${{ github.sha }}
           path: dist/wpessential-order-rescue-hub-woocommerce.zip
           if-no-files-found: error
           retention-days: 14
