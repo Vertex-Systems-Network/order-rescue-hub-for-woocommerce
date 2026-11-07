@@ -177,7 +177,7 @@ final class SlaClock
                     break;
                 }
             }
-            $date = new \DateTimeImmutable($date_key . ' 00:00:00', $date->getTimezone())->modify('+1 day');
+            $date = (new \DateTimeImmutable($date_key . ' 00:00:00', $date->getTimezone()))->modify('+1 day');
         }
 
         return $date;
