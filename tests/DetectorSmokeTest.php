@@ -1,6 +1,6 @@
 <?php
 
-namespace WPEssential\\OrderRescueHub\\Repository {
+namespace WPEssential\OrderRescueHub\Repository {
     final class CaseRepository
     {
         public array $detected = array();
@@ -137,7 +137,7 @@ namespace {
 
     function sanitize_key(string $value): string
     {
-        return strtolower((string) preg_replace('/[^a-z0-9_\\-]/', '', $value));
+        return strtolower((string) preg_replace('/[^a-z0-9_\-]/', '', $value));
     }
 
     function absint($value): int
@@ -180,8 +180,8 @@ namespace {
 
     require dirname(__DIR__) . '/includes/Service/Detector.php';
 
-    $repository = new \\WPEssential\\OrderRescueHub\\Repository\\CaseRepository();
-    $detector = new \\WPEssential\\OrderRescueHub\\Service\\Detector($repository);
+    $repository = new \WPEssential\OrderRescueHub\Repository\CaseRepository();
+    $detector = new \WPEssential\OrderRescueHub\Service\Detector($repository);
     $shipping_item = new DetectorSmokeItem(new DetectorSmokeProduct(true));
 
     foreach (array('completed', 'cancelled', 'refunded') as $index => $status) {
@@ -212,5 +212,5 @@ namespace {
         fail_test('The scheduled sweep must include on-hold orders.');
     }
 
-    fwrite(STDOUT, "Detector smoke checks passed.\\n");
+    fwrite(STDOUT, "Detector smoke checks passed.\n");
 }
