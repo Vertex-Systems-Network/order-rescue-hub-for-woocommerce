@@ -6,6 +6,7 @@ namespace WPEssential\OrderRescueHub\Repository {
         public array $case;
         public array $notes = array();
         public array $updates = array();
+        public bool $reject_next_update = false;
 
         public function __construct(array $case)
         {
@@ -26,6 +27,10 @@ namespace WPEssential\OrderRescueHub\Repository {
         public function update_case(array $case, array $changes, string $event_type, array $payload): bool
         {
             $this->updates[] = array($changes, $event_type, $payload);
+            if ($this->reject_next_update) {
+                $this->reject_next_update = false;
+                return false;
+            }
             $this->case = array_merge($this->case, $changes);
             $this->case['row_version'] = (int) $case['row_version'] + 1;
             return true;
@@ -86,6 +91,11 @@ namespace {
         'state' => 'open',
         'row_version' => 2,
         'episode' => 1,
+        'sla_response_due_at' => '2026-11-08 12:00:00',
+        'sla_response_met_at' => '2026-11-07 12:00:00',
+        'sla_resolution_due_at' => '2026-11-09 12:00:00',
+        'sla_state' => 'breached',
+        'sla_paused_at' => '2026-11-07 11:00:00',
     );
     $repository = new \WPEssential\OrderRescueHub\Repository\CaseRepository($base_case);
     $service = new \WPEssential\OrderRescueHub\Service\CaseService($repository);
@@ -121,9 +131,23 @@ namespace {
         fail_service_test('Closing a case must require a valid outcome.');
     }
 
+    $repository->reject_next_update = true;
+    $conflict = $service->transition(12, 'triaged', '', 2);
+    if (!$conflict instanceof WP_Error || 'wperh_case_conflict' !== $conflict->get_error_code() || 'open' !== $repository->case['state']) {
+        fail_service_test('A concurrent row-version conflict must not be reported as a successful transition.');
+    }
+
     $closed = $service->transition(12, 'closed', 'resolved', 2);
-    if (!$closed || 'closed' !== $closed['state'] || 'resolved' !== $closed['outcome'] || 1 !== count($repository->updates)) {
-        fail_service_test('A valid close transition with an outcome should persist once.');
+    if (!$closed || 'closed' !== $closed['state'] || 'resolved' !== $closed['outcome'] || 'breached' !== $closed['sla_state']) {
+        fail_service_test('A valid close transition with an outcome should persist once and preserve its audit state.');
+    }
+
+    $reopened = $service->transition(12, 'open', '', 3);
+    if (!$reopened || 'open' !== $reopened['state'] || 2 !== $reopened['episode'] || '' !== $reopened['sla_state']
+        || null !== $reopened['sla_response_due_at'] || null !== $reopened['sla_response_met_at']
+        || null !== $reopened['sla_resolution_due_at'] || null !== $reopened['sla_paused_at']
+        || '' !== $reopened['outcome'] || null !== $reopened['closed_at']) {
+        fail_service_test('Reopening must start a new episode and clear stale closure and SLA fields.');
     }
 
     fwrite(STDOUT, "Case service validation smoke checks passed.\n");
