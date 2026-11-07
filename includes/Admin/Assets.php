@@ -26,7 +26,7 @@ final class Assets
             'wperh-admin',
             WPERH_URL . 'assets/admin.js',
             array('wp-element', 'wp-api-fetch', 'wp-i18n'),
-            WPERH_VERSION,
+            WPERH_BUILD_ID,
             true
         );
 
