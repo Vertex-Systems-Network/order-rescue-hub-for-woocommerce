@@ -304,3 +304,11 @@
 - **Staging check:** WordPress Site Health reports the general test “Scheduled events are running” as passed; this shows site-level scheduled work is functioning generally. Site Health Info does not expose individual scheduled WP-Cron events, and the staging plugin list has no cron-inspection plugin. The earlier wperh search was in WooCommerce Action Scheduler, a separate queue, so its empty result cannot be used to infer the WP-Cron event is absent.
 - **Safety decision:** Did not request wp-cron.php; it can execute all due site events, including unrelated plugin actions. No scheduled event was triggered or changed.
 - **Status:** The general site-level scheduled-event test passes, but Free WP-Cron sweep execution and Pro cron/retry runtime still need a safe event-level observation or a dedicated isolated test. No CLI work item was added.
+
+## 2026-11-09 — QA case close/reopen lifecycle check
+
+- **Phase:** 7 — Compatibility and quality (in progress; 88%).
+- **Fixture:** Hub case for QA WooCommerce order #85 only.
+- **Check:** Closed the case using the required “No action required” outcome; UI confirmed “Case updated” and the case disappeared from the Open queue. Reopened it; UI confirmed the case returned to Open, the history lists both state changes, and its first-detected timestamp reset for the new episode, consistent with the architecture's reopen-as-new-episode behavior.
+- **Final state:** Case #85 is Open; WooCommerce order #85 remains pending with its same test item. No payment, refund, cancellation, order-status, inventory, or customer-data action was taken.
+- **Documentation:** Added evidence to docs/PHASE-7-QUALITY-REPORT.md. No CLI task was added.
