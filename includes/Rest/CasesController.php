@@ -170,7 +170,7 @@ final class CasesController
             'date' => $order->get_date_created() ? $order->get_date_created()->date_i18n('Y-m-d H:i') : '',
             'payment_method' => sanitize_text_field($order->get_payment_method_title()),
             'total' => (string) wc_format_localized_price($order->get_total()),
-            'total_label' => get_woocommerce_currency_symbol($order->get_currency()) . wc_format_localized_price($order->get_total()),
+            'total_label' => html_entity_decode(get_woocommerce_currency_symbol($order->get_currency()), ENT_QUOTES, 'UTF-8') . wc_format_localized_price($order->get_total()),
             'currency' => sanitize_text_field($order->get_currency()),
             'shipping_missing' => $shipping_missing,
             'admin_url' => esc_url_raw(admin_url('admin.php?page=wc-orders&action=edit&id=' . $order_id)),
