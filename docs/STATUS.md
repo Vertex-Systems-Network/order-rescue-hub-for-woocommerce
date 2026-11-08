@@ -292,7 +292,15 @@
 
 - **Phase:** 7 — Compatibility and quality (in progress; 88%).
 - **Checked:** Opened WordPress Site Health and WooCommerce/Action Scheduler on the authorized `/el-test` staging site. The site health checks completed with two critical and three recommended site-level findings; these findings concern visible PHP errors, missing shipping methods, inactive plugins/themes, and page cache, and are not attributed to Order Rescue Hub.
-- **Scheduler evidence:** Action Scheduler listed 61 site actions (47 complete, 14 pending). Historical WooCommerce/site actions included completion via WP Cron. A read-only search for `wperh` returned no matching scheduled jobs. Therefore this confirms the site's scheduler has executed some jobs, but does **not** verify Order Rescue Hub cron or Pro retry behavior; Pro runtime remains unverified in the staged Free build.
+- **Scheduler evidence:** Action Scheduler listed 61 site actions (47 complete, 14 pending). Historical WooCommerce/site actions included completion via WP Cron. A read-only Action Scheduler search for `wperh` returned no items. This queue is separate from WordPress Cron, so the result does not establish whether the Hub's WP-Cron event exists or runs. Source review confirms Detector::register() schedules wperh_exception_sweep every 15 minutes. Site Health Info has no event list and no cron viewer plugin is installed; triggering wp-cron.php could execute unrelated site jobs, so no trigger was sent. Free sweep runtime and Pro retry runtime remain unverified.
 - **Safety:** No actions were run, edited, deleted, or retried; no WooCommerce order, payment, inventory, or customer data was changed. The site-level `ob_end_flush()` notices remain visible in WordPress admin.
 - **Docs synchronized:** Updated the Phase 7 quality report and README to remove stale claims that build-26-1 had not been installed and to record the limited scheduler finding. The Phase 7 estimate remains 88%; remaining runtime, matrix, accessibility, performance, and production package gates are still open.
 - **No CLI task or feature was added.**
+
+## 2026-11-08 — WP-Cron evidence scope clarified
+
+- **Phase:** 7 — Compatibility and quality (in progress; 88%).
+- **Source check:** includes/Plugin.php registers the detector in the active Free bootstrap. includes/Service/Detector.php registers wperh_exception_sweep with wp_schedule_event() on a 15-minute interval when the event is absent.
+- **Staging check:** WordPress Site Health Info does not expose scheduled WP-Cron events, and the staging plugin list has no cron-inspection plugin. The earlier wperh search was in WooCommerce Action Scheduler, a separate queue, so its empty result cannot be used to infer the WP-Cron event is absent.
+- **Safety decision:** Did not request wp-cron.php; it can execute all due site events, including unrelated plugin actions. No scheduled event was triggered or changed.
+- **Status:** Free WP-Cron sweep execution and Pro cron/retry runtime need a safe event-level observation or a dedicated isolated test. No CLI work item was added.
