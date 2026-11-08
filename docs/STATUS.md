@@ -266,3 +266,15 @@
 - Reopened and hard-refreshed the staging inbox after the user reported the package had been uploaded. The page rendered `1 cases` again, so the singular/plural correction is not confirmed live. Existing order #49 remains open and still shows pending payment/missing-shipping reasons.
 - The loaded JavaScript URL is versioned `ver=0.1.0`; the plugin patch kept the same version header, so the visible version alone cannot identify which artifact is installed. Browser installation submission is blocked by the Work Mode URL security policy; no alternate installation path was used.
 - **Phase 7:** remains in progress at the last audited estimate, 88%. Latest artifact runtime verification remains open. No merchant CLI task added.
+
+
+## 2026-11-08 — Phase 7 latest staging QA
+
+- **Phase:** 7 — Compatibility and quality remains in progress; the overall estimate remains 88% pending the remaining independent release gates.
+- **Build identity:** Confirmed the active Plugins row reports `Build build-26-1 · 0f8d28e143e9` on `/el-test`; this closes the previous uncertainty about which staging artifact was installed.
+- **Runtime UI:** The React inbox rendered instead of the earlier blank screen associated with `_n is not a function`; the count is `1 case` for a single result.
+- **Case workflow:** Existing order #49 displayed pending-payment and missing-shipping reasons. The missing-shipping filter matched it. A Hub-private note persisted in case history; UI text explicitly states notes are not sent to the customer. State transition `Open → Triaged → Open` succeeded and the case was restored to Open. Default filters were restored and details drawer closed.
+- **Mutation boundary:** Reused the existing sample order. No order, payment, refund, customer, stock, or WooCommerce status was changed. The internal note and two case-state audit events remain recorded as a QA trace.
+- **Evidence updated:** `docs/PHASE-7-QUALITY-REPORT.md` and the README Phase 7 summary now identify build-26-1 as live-tested. Installable test ZIP SHA-256: `4a4fada9756878fb9a4bb3bc44d53914d61fca986b72a291e388d20e14aa803c`.
+- **Still open:** WP-Cron and Pro retry runtime, broader WordPress/WooCommerce/PHP and role matrix, full screen-reader/WCAG review, representative-host performance, Pro runtime/package separation, final Free/Pro production packages, and external directory/Marketplace submission gates. WPML/Polylang remains a static dry-run only, without vendor-runtime certification.
+- **CLI constraint:** No CLI work item, merchant CLI feature, or CLI-only setup was added. No release or marketplace approval is claimed.
