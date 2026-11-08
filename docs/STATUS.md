@@ -287,3 +287,12 @@
 - **Internal note:** Added a private Hub note labelling #85 as a QA-only fixture; the UI states these notes are not sent to customers. The order remains pending and its Hub case remains Open for review.
 - **Safety:** No customer contact data, payment method, payment capture, refund, cancellation, stock adjustment, customer message, or WooCommerce status transition was used. Existing order #49 was not altered. HPOS remains the selected storage mode.
 - **Phase 7:** The live order-to-case detection/detail/filter path is now covered on one current WooCommerce staging environment. The broader platform/security matrix, Pro cron/retry runtime, complete accessibility audit, merchant-host performance and final production packages remain unverified. No CLI task or feature was added.
+
+## 2026-11-08 — Phase 7 scheduled-action evidence
+
+- **Phase:** 7 — Compatibility and quality (in progress; 88%).
+- **Checked:** Opened WordPress Site Health and WooCommerce/Action Scheduler on the authorized `/el-test` staging site. The site health checks completed with two critical and three recommended site-level findings; these findings concern visible PHP errors, missing shipping methods, inactive plugins/themes, and page cache, and are not attributed to Order Rescue Hub.
+- **Scheduler evidence:** Action Scheduler listed 61 site actions (47 complete, 14 pending). Historical WooCommerce/site actions included completion via WP Cron. A read-only search for `wperh` returned no matching scheduled jobs. Therefore this confirms the site's scheduler has executed some jobs, but does **not** verify Order Rescue Hub cron or Pro retry behavior; Pro runtime remains unverified in the staged Free build.
+- **Safety:** No actions were run, edited, deleted, or retried; no WooCommerce order, payment, inventory, or customer data was changed. The site-level `ob_end_flush()` notices remain visible in WordPress admin.
+- **Docs synchronized:** Updated the Phase 7 quality report and README to remove stale claims that build-26-1 had not been installed and to record the limited scheduler finding. The Phase 7 estimate remains 88%; remaining runtime, matrix, accessibility, performance, and production package gates are still open.
+- **No CLI task or feature was added.**
