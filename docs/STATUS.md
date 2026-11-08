@@ -301,6 +301,6 @@
 
 - **Phase:** 7 — Compatibility and quality (in progress; 88%).
 - **Source check:** includes/Plugin.php registers the detector in the active Free bootstrap. includes/Service/Detector.php registers wperh_exception_sweep with wp_schedule_event() on a 15-minute interval when the event is absent.
-- **Staging check:** WordPress Site Health Info does not expose scheduled WP-Cron events, and the staging plugin list has no cron-inspection plugin. The earlier wperh search was in WooCommerce Action Scheduler, a separate queue, so its empty result cannot be used to infer the WP-Cron event is absent.
+- **Staging check:** WordPress Site Health reports the general test “Scheduled events are running” as passed; this shows site-level scheduled work is functioning generally. Site Health Info does not expose individual scheduled WP-Cron events, and the staging plugin list has no cron-inspection plugin. The earlier wperh search was in WooCommerce Action Scheduler, a separate queue, so its empty result cannot be used to infer the WP-Cron event is absent.
 - **Safety decision:** Did not request wp-cron.php; it can execute all due site events, including unrelated plugin actions. No scheduled event was triggered or changed.
-- **Status:** Free WP-Cron sweep execution and Pro cron/retry runtime need a safe event-level observation or a dedicated isolated test. No CLI work item was added.
+- **Status:** The general site-level scheduled-event test passes, but Free WP-Cron sweep execution and Pro cron/retry runtime still need a safe event-level observation or a dedicated isolated test. No CLI work item was added.
