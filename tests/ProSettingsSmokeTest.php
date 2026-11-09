@@ -31,7 +31,7 @@ namespace {
 namespace {
     require dirname(__DIR__) . '/includes/Pro/Settings.php';
 
-    $triggers = array('case.opened', 'case.age_check', 'sla.warning', 'sla.breached');
+    $triggers = array('case.opened', 'case.state_changed', 'case.reason_changed', 'case.age_check', 'sla.warning', 'sla.breached');
     $rules = array_map(static function (string $trigger): array {
         return array(
             'id' => str_replace('.', '-', $trigger),
