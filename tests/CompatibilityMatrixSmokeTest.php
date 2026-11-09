@@ -86,15 +86,15 @@ if ('1.1.0' !== get_option('wperh_schema_version')) {
 // claimed WordPress/WooCommerce combination.
 global $wpdb;
 $cases_table = $wpdb->prefix . 'wperh_cases';
-foreach (array('assignee_id', 'sla_response_due_at', 'sla_response_met_at', 'sla_resolution_due_at', 'sla_state', 'sla_paused_at') as $column) {
-    if (false === $wpdb->query("ALTER TABLE {$cases_table} DROP COLUMN {$column}")) {
-        fwrite(STDERR, 'Could not recreate the 1.0.0 schema (drop ' . $column . '): ' . $wpdb->last_error . "\n");
-        exit(1);
-    }
-}
 foreach (array('assignee_state', 'sla_due_state') as $index) {
     if (false === $wpdb->query("ALTER TABLE {$cases_table} DROP INDEX {$index}")) {
         fwrite(STDERR, 'Could not recreate the 1.0.0 schema (drop index ' . $index . '): ' . $wpdb->last_error . "\n");
+        exit(1);
+    }
+}
+foreach (array('assignee_id', 'sla_response_due_at', 'sla_response_met_at', 'sla_resolution_due_at', 'sla_state', 'sla_paused_at') as $column) {
+    if (false === $wpdb->query("ALTER TABLE {$cases_table} DROP COLUMN {$column}")) {
+        fwrite(STDERR, 'Could not recreate the 1.0.0 schema (drop ' . $column . '): ' . $wpdb->last_error . "\n");
         exit(1);
     }
 }
