@@ -45,7 +45,7 @@ require $wordpress_root . 'wp-load.php';
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-wp_install('WPERH compatibility matrix', 'integration@example.invalid', 0, '', 'temporary-test-password', 'en_US', 'integration-admin');
+wp_install('WPERH compatibility matrix', 'integration-admin', 'integration@example.invalid', 0, '', 'temporary-test-password', 'en_US');
 wp_set_current_user(1);
 
 $woocommerce_plugin = WP_PLUGIN_DIR . '/woocommerce/woocommerce.php';
