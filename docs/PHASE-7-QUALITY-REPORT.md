@@ -1,8 +1,8 @@
 # Phase 7 — Compatibility and quality audit
 
 **Started:** 2026-11-07  
-**Status:** In progress — build-31-1 (source commit `f2be75aa1c3b`) is installed and active on `/el-test`; React inbox, populated case detail, order search, reason filter, and age filter were verified on staging. CI migration, permission-denial, synthetic 10,000-case query, PHP 8.3/8.4/8.5 smoke/lint, and package checks also pass. Cron/Pro retry runtime, broader version/security coverage, full accessibility, representative-host performance, and production release gates remain open.
-**Progress estimate:** 88%
+**Status:** In progress — build-31-1 (source commit `f2be75aa1c3b`) is installed and active on `/el-test`; React inbox, populated case detail, order search, reason filter, and age filter were verified on staging. CI migration, permission-denial, synthetic 10,000-case query, PHP 8.3/8.4/8.5 smoke/lint, and package checks also pass. The Free WordPress-Cron sweep is now verified on staging. Pro workflow/retry runtime, broader version/security coverage, full accessibility, representative-host performance, and production release gates remain open.
+**Progress estimate:** 89%
 **Scope:** PHP/plugin bootstrap, schema upgrades, WooCommerce/HPOS access paths, multilingual expectations, REST capability boundaries, accessibility, performance, and package readiness.
 
 ## Work completed
@@ -78,3 +78,14 @@ No WP-CLI command, CLI-only merchant feature, or merchant setup flow was added. 
 - **Browser runtime:** No Order Rescue Hub console error appeared in the captured error/warning entries. Captured errors were from the browser extension content script. Admin requests displayed the existing WordPress core `ob_end_flush()` notice at `wp-includes/functions.php:5581`. WooCommerce Logs listed no `fatal-errors` file dated 2026-11-09; this is not proof against hidden server/PHP issues, and no app-specific PHP log stream was available.
 - **Data boundary:** No order, payment, refund, cancellation, customer, stock, or case state was changed during this build-31 retest. Search and filters were restored to defaults.
 - **Status:** Closes the build-31 staging installation and basic read-only workflow retest only. Cron sweep execution, Pro retry/runtime, cross-version matrices, full security and accessibility coverage, representative-host performance, release Free/Pro packaging, and submission readiness remain open. Progress remains an estimate of 88%; Phase 7 is not complete or release-certified.
+
+
+## 2026-11-10 — Build 31 targeted WP-Cron sweep verification
+
+- **Environment/build:** Authorized `/el-test` staging path, WordPress 7.1.4, WooCommerce 11.2.2, PHP 8.3.36, HPOS enabled; active Build 31 (`f2be75aa1c3b`). The site reports environment type `production`, so test actions were kept narrowly scoped.
+- **Trigger:** Temporarily installed official WordPress.org WP Crontrol 2.0.0 to inspect the registered event. It showed `wperh_exception_sweep` scheduled every 15 minutes and mapped to `WPEssential\\OrderRescueHub\\Service\\Detector->sweep()`. Used WP Crontrol's Run Now control for this specific hook.
+- **Observed result:** The Hub inbox now contains four open cases. Existing cases #49 and #85 remain present; new Processing delay cases appeared for orders #51 and #52, first detected at 2026-11-09 19:13:42. This verifies the Free detector's scheduled sweep against the available aged processing orders on the staging store.
+- **Data safety:** Order statuses stayed unchanged (orders #51 and #52 were still Processing on read-only inspection); no payment, refund, cancellation, stock, or customer action was run. No case was manually edited during this check.
+- **Temporary helper:** WP Crontrol was deactivated after the targeted check and left installed but inactive to avoid a destructive file removal. It can be deleted through Plugins if desired.
+- **Limitations:** This is one live Free cron sweep on one staging environment, not a broad recurrence/reliability test. Pro workflow/retry runtime remains unverified because Pro licensing/runtime fixtures are not available here. WordPress admin continues to display a site-level `ob_end_flush()` notice from `wp-includes/functions.php:5581`; no plugin-specific fatal was observed in this UI check.
+- **Status:** Free scheduled detection runtime gate advanced to verified for this fixture. Phase 7 remains in progress; the remaining release gates above are not waived.
