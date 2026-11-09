@@ -94,6 +94,9 @@ jobs:
       - name: Run case service validation smoke tests
         run: php tests/CaseServiceSmokeTest.php
 
+      - name: Run forbidden autonomous action guard
+        run: php tests/SecuritySurfaceSmokeTest.php
+
       - name: Run Pro settings validation smoke tests
         run: php tests/ProSettingsSmokeTest.php
 
@@ -118,6 +121,7 @@ jobs:
           php tests/DetectorSmokeTest.php
           php tests/InstallerSmokeTest.php
           php tests/CaseServiceSmokeTest.php
+          php tests/SecuritySurfaceSmokeTest.php
 
       - name: Set up PHP 8.5
         uses: shivammathur/setup-php@v2
@@ -134,6 +138,7 @@ jobs:
           php tests/DetectorSmokeTest.php
           php tests/InstallerSmokeTest.php
           php tests/CaseServiceSmokeTest.php
+          php tests/SecuritySurfaceSmokeTest.php
 
       - name: Assemble and verify the WordPress plugin package
         run: |

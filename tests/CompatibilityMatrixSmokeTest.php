@@ -216,12 +216,89 @@ if (!($detail instanceof WP_REST_Response) || 'pending' !== ($order_snapshot['st
     fwrite(STDERR, "Populated case detail did not include the expected WooCommerce order snapshot.\n");
     exit(1);
 }
+$second_order = wc_create_order(array('status' => 'pending'));
+if (is_wp_error($second_order) || !($second_order instanceof WC_Order)) {
+    fwrite(STDERR, "Could not create the second disposable order for access isolation.\n");
+    exit(1);
+}
+$second_order->add_product(wc_get_product($product_id), 1);
+$second_order->calculate_totals();
+$second_order->save();
+$second_order_id = (int) $second_order->get_id();
+$second_case = $repository->find_by_order($second_order_id);
+if (!$second_case) {
+    $second_case = $repository->detect($second_order_id, array('missing_shipping'), array('status' => 'pending', 'shipping_missing' => true));
+}
+if (!$second_case) {
+    fwrite(STDERR, "The second order did not produce a case for access isolation.\n");
+    exit(1);
+}
+$scope_user_id = wp_create_user('wperh-order-scope', 'temporary-scope-password', 'scope@example.invalid');
+if (is_wp_error($scope_user_id)) {
+    fwrite(STDERR, "Could not create the isolated order-scope user.\n");
+    exit(1);
+}
+wp_set_current_user((int) $scope_user_id);
+$allowed_order_id = $order_id;
+$scope_capability = static function (array $caps, string $cap, int $user_id, array $args) use ($allowed_order_id): array {
+    if ('edit_shop_order' === $cap) {
+        return isset($args[0]) && $allowed_order_id === (int) $args[0] ? array('read') : array('do_not_allow');
+    }
+    return $caps;
+};
+add_filter('map_meta_cap', $scope_capability, 99, 4);
+$allowed_request = new WP_REST_Request('GET', '/wperh/v1/cases/' . (int) $case['case_id']);
+$allowed_request->set_url_params(array('id' => (int) $case['case_id']));
+$allowed_scoped_detail = $controller->get_case($allowed_request);
+$denied_request = new WP_REST_Request('GET', '/wperh/v1/cases/' . (int) $second_case['case_id']);
+$denied_request->set_url_params(array('id' => (int) $second_case['case_id']));
+$denied_scoped_detail = $controller->get_case($denied_request);
+remove_filter('map_meta_cap', $scope_capability, 99);
+if (!($allowed_scoped_detail instanceof WP_REST_Response)
+    || !is_wp_error($denied_scoped_detail) || 403 !== $denied_scoped_detail->get_error_data()['status']
+) {
+    fwrite(STDERR, "Order-specific edit capability did not isolate access to the permitted order.\n");
+    exit(1);
+}
+wp_set_current_user(0);
+
+// Exercise WordPress core's REST cookie-auth nonce check over the registered
+// route, with a disposable session cookie. No browser or customer session is used.
+wp_set_current_user((int) $test_admin->ID);
+$session_expiration = time() + DAY_IN_SECONDS;
+$session_token = WP_Session_Tokens::get_instance((int) $test_admin->ID)->create($session_expiration);
+$previous_logged_in_cookie = $_COOKIE[LOGGED_IN_COOKIE] ?? null;
+$_COOKIE[LOGGED_IN_COOKIE] = wp_generate_auth_cookie(
+    (int) $test_admin->ID,
+    $session_expiration,
+    'logged_in',
+    $session_token
+);
+$invalid_nonce_request = new WP_REST_Request('GET', '/wperh/v1/cases');
+$invalid_nonce_request->set_header('X-WP-Nonce', 'invalid-wperh-rest-nonce');
+$invalid_nonce_response = rest_do_request($invalid_nonce_request);
+if (403 !== $invalid_nonce_response->get_status()) {
+    fwrite(STDERR, 'An authenticated REST request with an invalid nonce returned HTTP ' . $invalid_nonce_response->get_status() . "; expected 403.\n");
+    exit(1);
+}
+$valid_nonce_request = new WP_REST_Request('GET', '/wperh/v1/cases');
+$valid_nonce_request->set_header('X-WP-Nonce', wp_create_nonce('wp_rest'));
+$valid_nonce_response = rest_do_request($valid_nonce_request);
+if (200 !== $valid_nonce_response->get_status()) {
+    fwrite(STDERR, 'An authenticated REST request with a valid nonce returned HTTP ' . $valid_nonce_response->get_status() . "; expected 200.\n");
+    exit(1);
+}
+if (null === $previous_logged_in_cookie) {
+    unset($_COOKIE[LOGGED_IN_COOKIE]);
+} else {
+    $_COOKIE[LOGGED_IN_COOKIE] = $previous_logged_in_cookie;
+}
 wp_set_current_user(0);
 
 $wordpress_version = get_bloginfo('version');
 $woocommerce_version = defined('WC_VERSION') ? WC_VERSION : 'unknown';
 fwrite(STDOUT, sprintf(
-    "Compatibility smoke passed: WordPress %s, WooCommerce %s, activation, 1.0.0-to-1.1.0 upgrade, populated order detail, admin callback, and REST permission boundary.\n",
+    "Compatibility smoke passed: WordPress %s, WooCommerce %s, activation, 1.0.0-to-1.1.0 upgrade, populated order detail, cross-order capability isolation, admin callback, REST permission boundary, and invalid/valid REST nonce behavior.\n",
     $wordpress_version,
     $woocommerce_version
 ));

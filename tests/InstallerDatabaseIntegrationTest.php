@@ -183,6 +183,13 @@ if (!is_wp_error($denied_transition) || 403 !== $denied_transition->get_error_da
     exit(1);
 }
 wp_set_current_user(0);
+$invalid_filter_request = new WP_REST_Request('GET', '/wperh/v1/cases');
+$invalid_filter_request->set_param('state', 'delete_all');
+$invalid_filter = $controller->list_cases($invalid_filter_request);
+if (!is_wp_error($invalid_filter) || 400 !== $invalid_filter->get_error_data()['status']) {
+    fwrite(STDERR, "An unsupported case-list state filter was not rejected with HTTP 400.\n");
+    exit(1);
+}
 fwrite(STDOUT, "WordPress subscriber list/detail/mutation permission checks passed.\n");
 
 $reason_change_events = 0;

@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 15551)
-Total output lines: 414
-
 # Project status log
 
 ## 2026-11-06 — Initial product framing
@@ -158,7 +155,102 @@ Total output lines: 414
 
 - **Phase:** 7 — Compatibility and quality (in progress, 62%).
 - **Latest build installed:** Downloaded workflow artifact `13573814951` from successful run `42373873838` (commit `d7f70def40cf06c59b3e98ba5a19f1835af46c99`) and updated the existing plugin through WordPress. WordPress reported successful update; the Order Rescue Hub admin screen loaded.
-- **HPOS runtime checks:** One existing pending sample order with incomplete shipping appeared as an exception. The order detail/history loaded. Read-only filters returned t…3551 tokens truncated… **Artifact/staging:** CI produced a validated installable artifact. It has not yet been installed on `/el-test`; the existing staging install remains the previously tested build. HPOS is restored. No merchant CLI feature/task was added.
+- **HPOS runtime checks:** One existing pending sample order with incomplete shipping appeared as an exception. The order detail/history loaded. Read-only filters returned the expected results: pending payment 1, failed payment 0, high priority 1, normal priority 0, and older than 24 hours 0.
+- **Case lifecycle:** Exercised `open → triaged → open` through the REST-backed UI. Both saves returned “Case updated”; final case state is open. The two test transition events remain in the case audit history. WooCommerce order state and payment data were not changed.
+- **Log review:** Latest fatal log entries still originate from `wpessential-return-insights-prevention-woocommerce/includes/RestController.php:538`; no Order Rescue Hub fatal appeared after its update. The log view also shows an `ob_end_flush()` PHP notice from the site environment.
+- **WPML/Polylang dry-run:** Static review passed for optional-dependency behavior, WooCommerce CRUD-based order access, stable text domain and WordPress script translations, and order-ID-based case identity. Neither multilingual plugin is available for runtime testing; the planned admin order-language context is not implemented yet.
+- **Safety and boundary:** WooCommerce reports environment type `production`, while the user identifies `/el-test` as the testing site. No new order fixture was created and no order, payment, refund, customer, stock, or production setting changed. The sample case state was restored after the reversible test.
+- **Remaining gates:** Legacy order storage; actual WPML and Polylang plus their WooCommerce add-ons; real schema migration/idempotence/cron behavior; cross-user/nonce security tests; full accessibility review; representative performance measurements; Free/Pro release packaging and metadata.
+- **CLI constraint:** No merchant-facing CLI command or CLI task was added.
+- **Report:** See `docs/PHASE-7-QUALITY-REPORT.md` for the detailed evidence and remaining gates.
+
+
+## 2026-11-07 — Phase 7 detector regression fix and latest build verified
+
+- **Source fix:** Detector now excludes completed/cancelled/refunded terminal orders from newly generated exceptions, includes `on-hold` in scheduled sweeps, and ignores missing/deleted product records instead of reporting them as stock issues.
+- **Regression verification:** Added focused detector smoke checks for those conditions. PHP 8.3 lint, behavior smoke checks and canonical ZIP/package checks passed in GitHub Actions run `42377348447` (job `128417559778`). The test checks are engineering verification, not a merchant-facing CLI feature.
+- **Staging:** Artifact `13575723255` from commit `09eff0649bddf81d671251c8d2ea7c584eea544c` replaced the existing plugin successfully. WordPress reported “Plugin updated successfully”; the Order Rescue Hub admin inbox loaded and displayed the existing open sample case #49 afterward.
+- **Multilingual:** WPML/Polylang remain a static dry-run only, as requested; no runtime add-ons are available on the site.
+- **Phase 7:** Progress estimate updated to 66%; still incomplete. Legacy order storage, real migration/cron fixtures, broader security and accessibility reviews, representative performance benchmarks, and release package review remain open. No order/payment data was changed during this update, and no merchant CLI task was added.
+
+
+## 2026-11-07 — Phase 7 protected REST route check
+
+- **Check:** Opened the registered inbox REST endpoint directly without supplying a WordPress REST nonce. WordPress returned `401 rest_forbidden` and “Sorry, you are not allowed to do that”; no case data was returned.
+- **Interpretation:** Confirms the protected route does not expose inbox data to a nonce-less request in this staging session. It does not replace a separate low-privilege user, cross-order capability, or mutation-route security test.
+- **Staging restored:** Returned to the Order Rescue Hub admin inbox; existing case #49 remained Open. No mutation was sent by the REST check.
+- **Status:** Phase 7 progress estimate updated to 68%. Package/release row now points to latest artifact `13575723255`; no merchant CLI task was added.
+
+
+## 2026-11-07 — Schema upgrade gate and latest artifact verified
+
+- **Test coverage:** Added `tests/InstallerSmokeTest.php` to verify that an older/missing schema version invokes both table installers and persists version `1.1.0`, then skips repeat installation for an already-current schema. This covers the version gate; a live database `dbDelta()` migration test remains open.
+- **CI:** Latest run `42379950258` succeeded (job `128425256480`): PHP 8.3 lint, detector smoke checks, installer gate smoke checks, and staging ZIP packaging all passed.
+- **Staging:** Downloaded artifact `13577117599` (commit `a4c8d92a0d7d7177e7c2581e67e8e30dfb46313e`) and replaced the existing plugin. WordPress reported “Plugin updated successfully.” Dashboard loaded after the update and showed the existing open case #49.
+- **Artifact hashes:** Inner plugin ZIP SHA-256 `e02f5b5a548460e7f95b61fe2f274c38789d510b9a6f708f421e2128a1134982`; workflow artifact digest `sha256:e9ead026d97757e8b8fee919f068917106d7df1cdf3f2028a68ab9e5fb6754d8`.
+- **Boundary:** No order/payment data changed; no merchant-facing CLI task added. Phase 7 estimate moves to 70%; legacy order storage, real DB migration/cron, low-privilege security, full accessibility/performance, and release package review remain outstanding.
+
+
+## 2026-11-07 — Multilingual dry-run scope clarified
+
+- **User-directed scope:** WPML and Polylang are not installed on the test site; complete the requested compatibility dry-run from code paths and dependency behavior rather than waiting for the add-ons.
+- **Dry-run result:** No hard dependency or direct WPML/Polylang API call was found. Order reads use WooCommerce CRUD; admin strings use the plugin text domain and WordPress script translation path; case identity is keyed by WooCommerce order ID. Dry-run is recorded as complete for this requested scope.
+- **Boundary:** This does not claim vendor runtime certification. The planned order-language context is an implementation gap to track separately from the integration dry-run.
+
+
+## 2026-11-07 — Legacy storage source audit
+
+- **Source scan:** Searched plugin files for direct `$wpdb->posts`, `$wpdb->postmeta`, `get_post_meta()` and `get_posts()` access; no matches found. Order reads use `wc_get_order()` and candidate sweeps use `wc_get_orders()`.
+- **Status:** Source-level legacy-storage compatibility check passed. No order-storage mode switch was made on the staging site; legacy authoritative runtime testing remains open.
+
+## 2026-11-07 — Phase 7 PHP matrix and latest staging artifact
+
+- **Phase:** 7 — Compatibility and quality (in progress; 74% estimate). The estimate reflects completed verification work; it is not a claim that all release gates passed.
+- **CI:** Workflow run `42381219334`, job `128429043504`, commit `86e99f0065a069786672896da7918193a50e5f65` passed PHP 8.3, 8.4, and 8.5 lint plus detector, installer-gate, and case-service smoke checks on each version; package validation and ZIP build passed. Artifact `13577333807` has digest `sha256:10c2e5cbf46f9bbb451a40b079929e503b10c918c89a15112629e5ad66d80848`.
+- **Staging:** Installed the latest artifact through WordPress Add Plugins. WordPress reported “Plugin updated successfully.” The Order Rescue Hub inbox rendered the existing case #49 as Open after update; no order or payment record was changed. Inner ZIP SHA-256: `e02f5b5a548460e7f95b61fe2f274c38789d510b9a6f708f421e2128a1134982`.
+- **Environment notice:** WordPress upload rendered repeated `ob_end_flush()` notices from core `wp-includes/functions.php:5581`. No plugin-specific fatal was shown during the verified flow.
+- **Still open:** Real DB/dbDelta migration and cron/retry fixtures; runtime legacy-storage mode; low-privilege/cross-order security matrix; complete screen-reader/contrast/reduced-motion audit; representative performance benchmarks; Free/Pro release package and directory/Marketplace submission readiness. WPML/Polylang dry-run remains complete for the requested scope, without vendor runtime certification.
+- **Boundary:** No merchant-facing CLI command or work item added. No production order, payment, refund, customer, or stock data changed. Phase 7 is not complete while the listed gates remain open.
+
+## 2026-11-07 — Case transition conflict and reopen regression coverage
+
+- **Coverage added:** tests/CaseServiceSmokeTest.php now checks a simulated optimistic update conflict returns an error without changing the case; valid closure retains state; reopening starts a new episode and clears stale closure, outcome, and SLA timestamps/state.
+- **CI:** Run 42384516382, job 128438969037, passed PHP lint and detector, installer-gate, and case-service smoke tests on PHP 8.3, 8.4, and 8.5, plus package validation/build. Artifact 13578589096, digest sha256:1c3f85b87b52d96b3b7fb078496e24a9ea83cd0af86f97102218c45845a055da.
+- **Scope:** This adds service-level test coverage with a fake repository. It does not replace a real database/REST concurrency test or a staging upload. Plugin runtime source did not change in this test-only commit, so the already-installed runtime ZIP remains representative of the same plugin code.
+- **Phase 7:** Updated estimate to 75%. Migration, legacy storage runtime, low-privilege REST matrix, full accessibility, representative performance, and release submission gates remain open. No merchant CLI task added.
+
+## 2026-11-07 — CI runner and artifact build verification
+
+- **Workflow maintenance:** Pinned the runner to Ubuntu 24.04 and upgraded actions/checkout to v5 after GitHub warned that ubuntu-latest would migrate and checkout v4 was using the deprecated Node 20 runtime.
+- **Latest CI:** Run 42384803209, job 128439825083, commit 52241de89d3fa3292b5d6eda25efb11e89b50e13 completed successfully. PHP 8.3/8.4/8.5 lint, detector/installer/case-service smoke checks, and package integrity passed.
+- **Artifact:** 13579261738, digest sha256:9f924c0ed0e7f877d8e88a7d28d3fc55e747462b34540297c95245653b4b1b5d; expires 2026-11-21 UTC.
+- **Remaining workflow notice:** actions/upload-artifact@v4 still reports its Node 20 deprecation and was forced to Node 24. The action succeeded; no compatible newer major was used in this run.
+- **Staging relationship:** The commits since the last staging install changed tests, documentation, and workflow configuration only. The plugin runtime source packaged and installed on staging did not change.
+- **Phase 7:** 76% estimate. Real DB migration/cron, legacy storage runtime, broader security/accessibility/performance validation, and Free/Pro release/submission gates remain open.
+
+
+## 2026-11-07 — Phase 7 staging compatibility extension
+
+- **Completed:** User clarified `/el-test` is the test website and authorized testing there. Completed WooCommerce's built-in HPOS-to-legacy compatibility sync from the admin UI; Action Scheduler recorded `wc_run_batch_process` as complete. Switched to legacy WordPress posts storage and verified the existing Order Rescue Hub inbox and case detail for order #49 (`pending`, incomplete shipping) rendered. Restored HPOS through WooCommerce settings and verified the HPOS radio is selected; the inbox again displays the same open case.
+- **Mutation boundary:** No WooCommerce order, payment, refund, customer, inventory, or case state was changed by this check. No fixture was created. This is one-order runtime evidence, not a full version/fixture matrix.
+- **Observed site issue:** The admin pages emit repeated WordPress `ob_end_flush()` notices from `wp-includes/functions.php:5581`; no Order Rescue Hub fatal appeared in the tested screen.
+- **Phase 7 status:** 81% estimated, still in progress. Live multilingual integrations are unavailable and remain a requested dry-run; schema migration/cron fixtures, wider security role coverage, complete accessibility review, representative-volume performance measurement and final package/release review are still open. No CLI task was added. Full evidence is in `docs/PHASE-7-QUALITY-REPORT.md`.
+
+
+## 2026-11-07 — Phase 7 accessibility and UI verification
+
+- **Accessibility spot-check:** Search and all four filters have programmatic names; keyboard navigation reaches the filter controls, and the focused select displays a visible 2px focus ring. Sampled contrast: filter labels 10.03:1, table headings 12.82:1 and table actions 4.81–5.23:1. This is a focused check only, not a screen-reader or complete WCAG audit.
+- **UI correction:** Fixed the inbox case count to use WordPress pluralization (`1 case` / `2 cases`) and localized number formatting (commit `020a319e22015ef9214daff82dfa515e6465442d`). CI/package build run `42388177816` passed; artifact `13580500958`, digest `sha256:72ed73f1754952c4cfc9cde35c1dab2cfecb9bca9d3b1b7899fa4fc573fcf3a9`.
+- **Staging state:** The new artifact has not yet been installed on `/el-test`; current installed screen remains the previously verified package. HPOS remains restored and selected.
+- **Phase 7 estimate:** 83%, still incomplete. Real schema migration/cron, low-privilege permission checks, complete accessibility, representative-load performance and final package/release review remain open. No merchant-facing CLI feature/task was introduced.
+
+
+## 2026-11-07 — Phase 7 database, security and scale checks
+
+- **CI correction:** The first added subscriber test incorrectly attempted to extend the final CaseRepository; fixed it to use an isolated real repository row. A second run exposed fixture overlap in the pending-payment synthetic filter; changed the security fixture reason so it is excluded from the scale count.
+- **Latest CI:** Run 42389443743, job 128453719473, commit 2d2c28a3ddaa9a6a33935c38a44198aa4f0b9bea, completed successfully. WordPress 7.1.4/MySQL 8.0.46 migration from schema 1.0.0 to 1.1.0 passed with required columns/indexes and repeat-run idempotence. Subscriber list capability, cross-order case detail and transition denials passed. PHP 8.3/8.4/8.5 lint/smoke and package validation passed.
+- **Synthetic performance:** 10,000 isolated cases filtered to the expected 5,000 matches; first page contained 25 rows over 200 pages. Query completed in 6.6 ms in CI. This is a synthetic baseline, not production-host benchmark evidence.
+- **Artifact/staging:** CI produced a validated installable artifact. It has not yet been installed on `/el-test`; the existing staging install remains the previously tested build. HPOS is restored. No merchant CLI feature/task was added.
 - **Phase 7:** Updated estimate 88%, still in progress. Cron/retry, broader WP/Woo/PHP and security-role matrices, full accessibility/screen-reader checks, representative host performance, latest artifact live installation, and final release-package gates remain open. WPML/Polylang dry-run remains accepted for requested scope.
 
 
@@ -312,7 +404,7 @@ Total output lines: 414
 - **Official version basis:** As of this snapshot, the WordPress release archive lists 7.1.4 and 7.0.8 as the latest patches in its two current series; WooCommerce releases list 11.2.2 and 11.1.2. Woo's official L-1 policy tests latest patches for the latest and previous series, and Marketplace submission requires support for the two latest major versions. Sources and target PHP version are recorded in `docs/PLATFORM-BASELINE.md`.
 - **Working CI deliverable:** Added a four-cell GitHub Actions compatibility job for WP 7.0.8/7.1.4 × WooCommerce 11.1.2/11.2.2 on PHP 8.3, with isolated MySQL and clean activation/schema/admin-callback/REST-permission checks.
 - **Verification:** CI run [42705722445](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42705722445) passed the package job and every matrix cell. Harness issues fixed during this task were incorrect `wp_install()` arguments and WordPress clearing the test current user on plugin activation; the final matrix tests unauthenticated denial rather than fabricating a logged-in user.
-- **Scope limit / next:** Populated order detail, previous-release upgrade on each claimed cell, HPOS/legacy and browser UI remain open. P7-02 is in progress; Phase 7 remains 4/10 (40%) because partial gates do not count. No merchant CLI task/feature added.
+- **Scope limit at that checkpoint:** That first smoke did not yet cover populated order detail or previous-release upgrades; both have since been added and verified in the entry below. No merchant CLI task/feature added.
 
 
 ## 2026-11-10 — P7-02 four-cell compatibility smoke passed
@@ -320,3 +412,19 @@ Total output lines: 414
 - **CI:** Run [42705722445](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42705722445) passed package/lint/smoke checks and WP 7.0.8/7.1.4 × WooCommerce 11.1.2/11.2.2 on PHP 8.3. Activation, schema, admin callback, REST route and unauthenticated denial passed in each cell.
 - **Harness fixes:** Corrected the WordPress fixture setup and made the REST check explicitly validate the unauthenticated permission boundary after plugin activation's sandbox clears the simulated user.
 - **Still open:** P7-02 populated order detail and upgrade coverage; P7-05 security breadth; accessibility; performance; Pro runtime; Free/Pro engineering package review. Phase 7 is still 4/10 (40%). No marketplace approval or merchant CLI work is claimed.
+
+
+## 2026-11-10 — P7-02 compatibility gate closed; P7-05 started
+
+- **P7-02 evidence:** CI run [42708829994](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42708829994) passed package/lint/smoke checks and four WordPress/WooCommerce cells: 7.0.8/7.1.4 × 11.1.2/11.2.2 on PHP 8.3. Each cell passed clean activation, schema 1.0.0→1.1.0 upgrade, admin callback/REST route registration and permission denial, WooCommerce CRUD order creation, and populated detail resolution. Artifact `13714083809`; digest `sha256:57ef60ca15e08b74c185c43cc554ee030bab8441c8ba1a5ad0eeb500d429d063`.
+- **Code defect found in test flow:** When reasons stayed constant but safe evidence changed, detector updates reused the original unique event key and logged duplicate-key database errors. `CaseRepository` now hashes reasons, normalized evidence, episode and time bucket into its event key; regression checks cover changed evidence and exact-repeat idempotency. CI run 63 passed with the fix.
+- **Progress:** P7-02 closed; five of ten gates complete (50%). P7-05 is active: subscriber denial, invalid-filter validation, cross-order isolation, and a static forbidden-financial-action guard are being added. REST nonce behavior still needs explicit verification. No merchant CLI feature or payment/refund/cancel action was added.
+
+
+## 2026-11-10 — P7-05 REST/security checks implemented; CI pending
+
+- **Scope added:** Compatibility smoke now exercises a disposable WordPress logged-in session across the registered REST route, requiring invalid nonce denial (403) and valid nonce acceptance (200). It also verifies order-specific capability isolation between two WooCommerce orders.
+- **Existing check retained:** Database integration now rejects an unsupported case-list state with HTTP 400 and covers detection event idempotency across changed and repeated evidence. CI's static guard scans plugin runtime for payment, refund, cancellation, stock-reduction, and order-status calls.
+- **Local validation:** `git diff --check` and workflow YAML parsing pass. PHP runtime is not installed in this workspace, so PHP lint/execution is delegated to the existing CI matrix; no pass is claimed until the new workflow completes.
+- **Current gate/progress:** P7-02 is complete from CI run `42708829994`; P7-05 remains open pending the new CI execution. Five of ten Phase 7 gates are accepted (50%).
+- **Next action:** Commit these changes to `main`, inspect every package and four-cell compatibility job, repair any failures, then continue with P7-07 accessibility.
