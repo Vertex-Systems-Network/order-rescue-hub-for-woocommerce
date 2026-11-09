@@ -120,7 +120,9 @@ final class Settings
             if (!is_array($rule)) {
                 continue;
             }
-            $trigger = is_scalar($rule['trigger'] ?? null) ? sanitize_key((string) $rule['trigger']) : '';
+            // Trigger IDs are dotted protocol values. sanitize_key() strips their separators,
+            // so preserve the exact text and validate it against the allowlist below.
+            $trigger = is_scalar($rule['trigger'] ?? null) ? sanitize_text_field((string) $rule['trigger']) : '';
             $action = is_scalar($rule['action'] ?? null) ? sanitize_key((string) $rule['action']) : '';
             if (!in_array($trigger, $allowed_triggers, true) || !in_array($action, $allowed_actions, true)) {
                 continue;
