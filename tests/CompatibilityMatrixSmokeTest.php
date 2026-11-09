@@ -82,17 +82,23 @@ if ('1.1.0' !== get_option('wperh_schema_version')) {
     exit(1);
 }
 
-do_action('admin_menu');
-global $submenu;
+global $wp_filter;
+$admin_menu_callbacks = $wp_filter['admin_menu']->callbacks ?? array();
 $hub_menu_registered = false;
-foreach (($submenu['woocommerce'] ?? array()) as $menu_item) {
-    if (isset($menu_item[2]) && 'wperh-order-rescue-hub' === $menu_item[2]) {
-        $hub_menu_registered = true;
-        break;
+foreach ($admin_menu_callbacks as $priority_callbacks) {
+    foreach ($priority_callbacks as $callback) {
+        $callable = $callback['function'] ?? null;
+        if (is_array($callable) && isset($callable[0], $callable[1])
+            && $callable[0] instanceof \WPEssential\OrderRescueHub\Admin\Screen
+            && 'add_menu' === $callable[1]
+        ) {
+            $hub_menu_registered = true;
+            break 2;
+        }
     }
 }
 if (!$hub_menu_registered) {
-    fwrite(STDERR, "Order Rescue Hub did not register its WooCommerce admin screen.\n");
+    fwrite(STDERR, "Order Rescue Hub did not attach its WooCommerce admin menu callback.\n");
     exit(1);
 }
 
