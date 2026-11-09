@@ -370,3 +370,12 @@
 - **Safety/idempotency:** Existing workflow episode-key deduplication suppresses repeated callbacks and prevents recursive duplicates. No order, payment, refund, cancellation, stock or customer-message actions were introduced.
 - **Verification:** CI run [42691173295](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42691173295) passed the new Pro workflow smoke, six-trigger settings test, prior alert retry smoke, database migration, detector, installer, case-service checks, PHP 8.3/8.4/8.5 matrix, and package build. Artifact `13706099449`; source commit `cd07ac8cfb52483685dcd44a8c21b9f7898fce00`.
 - **Limits:** Workflow trigger tests use deterministic PHP test doubles. Staging is still on the Free edition; Pro UI/runtime and real mail delivery remain open. No CLI task or command feature was added.
+
+
+## 2026-11-10 — Build 50 installed and inbox render verified
+
+- **Environment/build:** Authorized `/el-test` WordPress staging URL; Plugins screen confirms active version 0.1.0, `build-50-1 · cd07ac8cfb52`.
+- **Live UI:** Order Rescue Hub React inbox rendered the Exceptions workspace, four existing cases (#49, #85, #51, #52), search, four filters, Review actions, and pagination. All four visible cases were Open.
+- **Safety:** Read-only screen check; no case or order was opened/edited and no payment, refund, cancellation, stock, or customer action was performed.
+- **Observed site-level notice:** `ob_end_flush()` from WordPress core `functions.php:5581` remains visible. No Order Rescue Hub blank screen was observed.
+- **Phase 7:** Progress remains 90%, not complete. Pro browser/mail runtime, expanded compatibility/security/accessibility/performance checks, and Free/Pro production package gates remain open. The latest CI run is `42691173295` for Build 50 source. No CLI task or merchant CLI feature was added.
