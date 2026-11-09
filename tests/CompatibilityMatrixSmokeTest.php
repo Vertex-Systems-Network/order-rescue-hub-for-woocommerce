@@ -114,10 +114,17 @@ if (!isset($routes['/wperh/v1/cases'])) {
 }
 
 // Plugin activation runs in WordPress' plugin sandbox, which clears the current user.
-wp_set_current_user(1);
-$test_admin = get_userdata(1);
-if ($test_admin) {
-    $test_admin->add_cap('manage_woocommerce');
+$test_admin = get_user_by('login', 'integration-admin');
+if (!$test_admin) {
+    fwrite(STDERR, "The compatibility fixture administrator could not be loaded.\n");
+    exit(1);
+}
+$test_admin->set_role('administrator');
+$test_admin->add_cap('manage_woocommerce');
+wp_set_current_user((int) $test_admin->ID);
+if (!current_user_can('manage_woocommerce')) {
+    fwrite(STDERR, "The compatibility fixture administrator lacks manage_woocommerce.\n");
+    exit(1);
 }
 $response = rest_do_request(new WP_REST_Request('GET', '/wperh/v1/cases'));
 if (200 !== $response->get_status()) {
