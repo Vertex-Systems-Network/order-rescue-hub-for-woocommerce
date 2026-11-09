@@ -25,13 +25,7 @@ final class Plugin
 
     public function boot(): void
     {
-        add_action('init', static function (): void {
-            load_plugin_textdomain(
-                'wpessential-order-rescue-hub',
-                false,
-                dirname(plugin_basename(WPERH_FILE)) . '/languages'
-            );
-        }, 0);
+        // WordPress 4.6+ automatically loads translations for directory-hosted plugins.
 
         if (!$this->woocommerce_ready()) {
             add_action('admin_notices', array($this, 'dependency_notice'));
