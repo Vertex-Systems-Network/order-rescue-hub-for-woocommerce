@@ -42,6 +42,19 @@ final class WorkflowEngine
         $this->run_for('case.opened', $case);
     }
 
+    public function on_case_transitioned(int $case_id, string $state): void
+    {
+        $case = $this->repository->find($case_id);
+        if ($case && $case['state'] === $state) {
+            $this->run_for('case.state_changed', $case);
+        }
+    }
+
+    public function on_case_reasons_changed(array $case): void
+    {
+        $this->run_for('case.reason_changed', $case);
+    }
+
     public function on_scheduled_sweep(): void
     {
         $first = $this->repository->list(array('state' => 'all', 'page' => 1, 'per_page' => 100));
