@@ -35,6 +35,7 @@ if (false === file_put_contents($wordpress_root . 'wp-config.php', $config)) {
 }
 
 define('WP_INSTALLING', true);
+define('WP_ADMIN', true);
 $_SERVER['HTTP_HOST'] = '127.0.0.1';
 $_SERVER['REQUEST_URI'] = '/';
 $_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
