@@ -47,6 +47,10 @@ require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 wp_install('WPERH compatibility matrix', 'integration-admin', 'integration@example.invalid', 0, '', 'temporary-test-password', 'en_US');
 wp_set_current_user(1);
+$test_admin = get_userdata(1);
+if ($test_admin) {
+    $test_admin->add_cap('manage_woocommerce');
+}
 
 $woocommerce_plugin = WP_PLUGIN_DIR . '/woocommerce/woocommerce.php';
 if (!is_file($woocommerce_plugin)) {
