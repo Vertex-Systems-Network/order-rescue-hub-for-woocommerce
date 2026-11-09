@@ -208,6 +208,27 @@ if (1 !== $reason_change_events || !$reason_case || 'closed' !== $reason_case['s
 }
 fwrite(STDOUT, "Case reason-change hooks ignore empty stale reason sets and preserve real reason updates.\n");
 
+$evidence_case = $repository->detect(424244, array('missing_shipping'), array('status' => 'pending', 'shipping_missing' => true));
+if (!$evidence_case) {
+    fwrite(STDERR, "Could not create the isolated evidence-change fixture.\n");
+    exit(1);
+}
+$repository->detect(424244, array('missing_shipping'), array('status' => 'pending', 'shipping_missing' => false));
+$evidence_case = $repository->find_by_order(424244);
+$evidence_events = $evidence_case ? $repository->events((int) $evidence_case['case_id']) : array();
+if (!$evidence_case || false !== ($evidence_case['evidence']['shipping_missing'] ?? null)
+    || 2 !== count($evidence_events) || 'detection_updated' !== ($evidence_events[0]['event_type'] ?? '')
+) {
+    fwrite(STDERR, "A changed evidence snapshot must persist exactly one detection update event.\n");
+    exit(1);
+}
+$repository->detect(424244, array('missing_shipping'), array('status' => 'pending', 'shipping_missing' => false));
+if (2 !== count($repository->events((int) $evidence_case['case_id']))) {
+    fwrite(STDERR, "A repeated identical evidence snapshot must not create a duplicate event.\n");
+    exit(1);
+}
+fwrite(STDOUT, "Detection event idempotency distinguishes changed evidence and suppresses identical repeats.\n");
+
 $fixture_count = 10000;
 $chunk_size = 250;
 for ($offset = 0; $offset < $fixture_count; $offset += $chunk_size) {

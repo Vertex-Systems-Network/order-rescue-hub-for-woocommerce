@@ -156,7 +156,7 @@ final class CaseRepository
             if (!$case_id) {
                 return $this->find_by_order($order_id);
             }
-            $this->add_event($case_id, 'detected', array('reasons' => $reason_codes), null, 'detect:' . $order_id . ':' . hash('sha256', wp_json_encode($reason_codes) . gmdate('YmdH')));
+            $this->add_event($case_id, 'detected', array('reasons' => $reason_codes), null, $this->detection_event_key($order_id, 1, $reason_codes, $evidence));
             $case = $this->find($case_id);
             if ($case) {
                 do_action('wperh_case_detected', $case);
@@ -165,6 +165,7 @@ final class CaseRepository
         }
 
         $was_closed = 'closed' === $existing['state'];
+        $next_episode = $was_closed && $reason_codes ? (int) $existing['episode'] + 1 : (int) $existing['episode'];
         $dismissed_outcomes = array('dismissed', 'duplicate', 'no_action_required');
         if ($was_closed && in_array($existing['outcome'], $dismissed_outcomes, true) && $reason_codes === $existing['reason_codes']) {
             return $existing;
@@ -189,7 +190,7 @@ final class CaseRepository
                 'sla_resolution_due_at' => $was_closed && $reason_codes ? null : $existing['sla_resolution_due_at'],
                 'sla_state' => $was_closed && $reason_codes ? '' : $existing['sla_state'],
                 'sla_paused_at' => $was_closed && $reason_codes ? null : $existing['sla_paused_at'],
-                'episode' => $was_closed && $reason_codes ? (int) $existing['episode'] + 1 : (int) $existing['episode'],
+                'episode' => $next_episode,
                 'row_version' => (int) $existing['row_version'] + 1,
             ),
             array('case_id' => (int) $existing['case_id']),
@@ -203,7 +204,7 @@ final class CaseRepository
             $event_type,
             array('reasons' => $reason_codes),
             null,
-            'detect:' . $order_id . ':' . hash('sha256', wp_json_encode($reason_codes) . gmdate('YmdH'))
+            $this->detection_event_key($order_id, $next_episode, $reason_codes ?: $existing['reason_codes'], $evidence)
         );
 
         $updated = $this->find((int) $existing['case_id']);
@@ -311,6 +312,18 @@ final class CaseRepository
         $row['reason_codes'] = json_decode((string) $row['reason_codes'], true) ?: array();
         $row['evidence'] = json_decode((string) $row['evidence'], true) ?: array();
         return $row;
+    }
+
+    private function detection_event_key(int $order_id, int $episode, array $reason_codes, array $evidence): string
+    {
+        return hash('sha256', implode(':', array(
+            'detect',
+            $order_id,
+            $episode,
+            gmdate('YmdH'),
+            wp_json_encode($reason_codes),
+            wp_json_encode($evidence),
+        )));
     }
 
     private function redact_evidence(array $evidence): array

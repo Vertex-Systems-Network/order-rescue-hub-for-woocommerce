@@ -190,7 +190,10 @@ $order_id = (int) $order->get_id();
 $repository = new \WPEssential\OrderRescueHub\Repository\CaseRepository();
 $service = new \WPEssential\OrderRescueHub\Service\CaseService($repository);
 $controller = new \WPEssential\OrderRescueHub\Rest\CasesController($repository, $service);
-$case = $repository->detect($order_id, array('missing_shipping'), array('status' => 'pending'));
+$case = $repository->find_by_order($order_id);
+if (!$case) {
+    $case = $repository->detect($order_id, array('missing_shipping'), array('status' => 'pending', 'shipping_missing' => true));
+}
 if (!$case) {
     fwrite(STDERR, "The populated WooCommerce order did not create a Hub exception.\n");
     exit(1);
