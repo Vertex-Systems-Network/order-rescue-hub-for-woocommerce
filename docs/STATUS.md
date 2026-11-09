@@ -379,3 +379,11 @@
 - **Safety:** Read-only screen check; no case or order was opened/edited and no payment, refund, cancellation, stock, or customer action was performed.
 - **Observed site-level notice:** `ob_end_flush()` from WordPress core `functions.php:5581` remains visible. No Order Rescue Hub blank screen was observed.
 - **Phase 7:** Progress remains 90%, not complete. Pro browser/mail runtime, expanded compatibility/security/accessibility/performance checks, and Free/Pro production package gates remain open. The latest CI run is `42691173295` for Build 50 source. No CLI task or merchant CLI feature was added.
+
+
+## 2026-11-10 — Build 51 stale reason-change trigger fixed
+
+- **Working fix:** `CaseRepository::detect()` no longer emits a Pro reason-change hook when the detector reports an empty reason set; that path retains the case's prior reason data until the existing auto-resolution closes it, so dispatching the event with old reasons was misleading.
+- **Regression test:** The isolated WordPress/MySQL integration test verifies that a real non-empty reason change emits one hook, while clearing the last reason emits none and closes the case.
+- **Verification:** GitHub Actions run [42696965927](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42696965927) passed the database-backed regression, migration/permissions, focused plugin smoke tests, PHP 8.3/8.4/8.5 matrix, and staging ZIP assembly. Artifact `13710355705`; digest `sha256:b77c4d3c3aea9fb4da7116465679d66727a9c965abe42e26d7faf172070bfc51`; install ZIP SHA-256 `d7331511603fd5d103b09ecbe1ab9f2af6614dfd784e668dd10ed5cafc3b7fa7`.
+- **Release state:** Build 50 is the last staging build confirmed in the browser. Build 51 is ready for staging installation; Phase 7 is still 90% and incomplete. No order/customer/payment/stock action or CLI work was done.
