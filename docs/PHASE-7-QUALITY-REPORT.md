@@ -128,3 +128,12 @@ No WP-CLI command, CLI-only merchant feature, or merchant setup flow was added. 
 - **Mutation boundary:** This was a read-only render check. No case was opened or edited, and no order/payment/customer/inventory action was performed.
 - **Site notices:** WordPress admin still emitted the existing `ob_end_flush()` notice from `wp-includes/functions.php:5581`; it is outside the plugin.
 - **Limits:** This closes Build 50 installation identity and inbox rendering only. It does not prove Pro screens, alert delivery, workflow runtime, broad compatibility, full accessibility/performance, or submission readiness. Phase 7 remains in progress at 90%. No merchant CLI work was added.
+
+
+## 2026-11-10 — Cleared-reason workflow regression fixed (Build 51)
+
+- **Bug:** When detection cleared the last exception reason, the repository emitted `wperh_case_reasons_changed` with the case's retained old reason set immediately before auto-resolving it. A Pro reason-change rule could therefore run on stale reason data.
+- **Fix:** Emit the reason-change hook only when the new normalized reason set is non-empty and differs from the previous set. Clearing all reasons follows the existing case auto-resolution path without a misleading reason-change event.
+- **Regression check:** Extended the isolated WordPress/MySQL database integration test: a real non-empty reason change emits exactly one hook; clearing the final reason emits none and the case resolves closed.
+- **CI/package:** GitHub Actions run [42696965927](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42696965927) passed the new database-backed assertion, migration and permission checks, detector/installer/case/Pro smoke checks, PHP 8.3/8.4/8.5 matrix, and ZIP assembly. Build artifact `13710355705`, `wperh-staging-test-51-1-485484e34b756fe03fa617b5af70ad67bb26c940`; artifact digest `sha256:b77c4d3c3aea9fb4da7116465679d66727a9c965abe42e26d7faf172070bfc51`; inner install ZIP SHA-256 `d7331511603fd5d103b09ecbe1ab9f2af6614dfd784e668dd10ed5cafc3b7fa7`.
+- **Staging boundary:** Build 50 remains the last confirmed live install; Build 51 has not yet been installed on staging. No order/payment/customer/inventory mutation and no merchant CLI task was added. Phase 7 remains in progress at 90%.
