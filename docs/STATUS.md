@@ -361,3 +361,12 @@
 - **Regression coverage:** Added `tests/ProAlertSmokeTest.php` for thrown and false send results, audit recording, lock cleanup, retry attempts 2/3 and stop-after-3 behavior, plus successful delivery without retry.
 - **Verification:** CI run [42689685878](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42689685878) passed all PHP 8.3/8.4/8.5 checks, migration/integration smoke tests, Pro settings/alert tests, and package assembly. Artifact `13707285193`, commit `b83f59e92f1a6a565096c7b7a6021ec18afcd935`.
 - **Limits:** Mail transport was mocked in the smoke test. Staging is running the Free build, so live Pro alert delivery remains unverified. No CLI task or command feature was added.
+
+
+## 2026-11-10 — Pro case-change workflow triggers implemented
+
+- **Phase:** 7 — compatibility and quality audit; progress estimate 90%, still in progress.
+- **Working feature:** Pro workflow rules can now trigger when a case changes state or when detection updates its exception-reason set. The React workflow builder exposes both options. State-change handlers fetch the latest case to reject stale callbacks; reason-change events fire only when reason codes actually change on an open case.
+- **Safety/idempotency:** Existing workflow episode-key deduplication suppresses repeated callbacks and prevents recursive duplicates. No order, payment, refund, cancellation, stock or customer-message actions were introduced.
+- **Verification:** CI run [42691173295](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42691173295) passed the new Pro workflow smoke, six-trigger settings test, prior alert retry smoke, database migration, detector, installer, case-service checks, PHP 8.3/8.4/8.5 matrix, and package build. Artifact `13706099449`; source commit `cd07ac8cfb52483685dcd44a8c21b9f7898fce00`.
+- **Limits:** Workflow trigger tests use deterministic PHP test doubles. Staging is still on the Free edition; Pro UI/runtime and real mail delivery remain open. No CLI task or command feature was added.
