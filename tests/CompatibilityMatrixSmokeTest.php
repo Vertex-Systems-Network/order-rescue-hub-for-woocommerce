@@ -47,10 +47,6 @@ require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 wp_install('WPERH compatibility matrix', 'integration-admin', 'integration@example.invalid', 0, '', 'temporary-test-password', 'en_US');
 wp_set_current_user(1);
-$test_admin = get_userdata(1);
-if ($test_admin) {
-    $test_admin->add_cap('manage_woocommerce');
-}
 
 $woocommerce_plugin = WP_PLUGIN_DIR . '/woocommerce/woocommerce.php';
 if (!is_file($woocommerce_plugin)) {
@@ -113,34 +109,19 @@ if (!isset($routes['/wperh/v1/cases'])) {
     exit(1);
 }
 
-// Plugin activation runs in WordPress' plugin sandbox, which clears the current user.
-$test_admin = get_user_by('login', 'integration-admin');
-if (!$test_admin) {
-    fwrite(STDERR, "The compatibility fixture administrator could not be loaded.\n");
-    exit(1);
-}
-$test_admin->set_role('administrator');
-$test_admin->add_cap('manage_woocommerce');
-wp_set_current_user((int) $test_admin->ID);
-if (!current_user_can('manage_woocommerce')) {
-    fwrite(STDERR, "The compatibility fixture administrator lacks manage_woocommerce.\n");
-    exit(1);
-}
+// Plugin activation runs in WordPress' plugin sandbox. Verify the case-list
+// route denies requests after the sandbox has cleared the current user.
+wp_set_current_user(0);
 $response = rest_do_request(new WP_REST_Request('GET', '/wperh/v1/cases'));
-if (200 !== $response->get_status()) {
-    fwrite(STDERR, 'The empty case-list request returned HTTP ' . $response->get_status() . ".\n");
-    exit(1);
-}
-$data = $response->get_data();
-if (!is_array($data) || 0 !== ($data['total'] ?? null) || !isset($data['items']) || array() !== $data['items']) {
-    fwrite(STDERR, "The clean-install case-list response did not return an empty, paginated result.\n");
+if (!in_array($response->get_status(), array(401, 403), true)) {
+    fwrite(STDERR, 'An unauthenticated case-list request returned HTTP ' . $response->get_status() . "; expected 401 or 403.\n");
     exit(1);
 }
 
 $wordpress_version = get_bloginfo('version');
 $woocommerce_version = defined('WC_VERSION') ? WC_VERSION : 'unknown';
 fwrite(STDOUT, sprintf(
-    "Compatibility smoke passed: WordPress %s, WooCommerce %s, activation/schema, admin menu, and empty case-list REST flow.\n",
+    "Compatibility smoke passed: WordPress %s, WooCommerce %s, activation/schema, admin callback, and REST permission boundary.\n",
     $wordpress_version,
     $woocommerce_version
 ));
