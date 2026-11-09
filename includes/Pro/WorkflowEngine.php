@@ -21,6 +21,8 @@ final class WorkflowEngine
     public function register(): void
     {
         add_action('wperh_case_detected', array($this, 'on_case_detected'), 20);
+        add_action('wperh_case_transitioned', array($this, 'on_case_transitioned'), 20, 2);
+        add_action('wperh_case_reasons_changed', array($this, 'on_case_reasons_changed'), 20);
         add_action('wperh_sla_event', array($this, 'on_sla_event'), 20, 2);
         add_action('wperh_exception_sweep', array($this, 'on_scheduled_sweep'), 30);
         add_action('wperh_retry_workflow', array($this, 'retry_rule'), 10, 5);
