@@ -97,6 +97,9 @@ jobs:
       - name: Run Pro settings validation smoke tests
         run: php tests/ProSettingsSmokeTest.php
 
+      - name: Run Pro alert retry smoke tests
+        run: php tests/ProAlertSmokeTest.php
+
       - name: Set up PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
