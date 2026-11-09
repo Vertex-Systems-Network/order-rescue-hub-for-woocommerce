@@ -96,7 +96,7 @@ Notes are internal Hub notes. UI copy must not imply they are WooCommerce custom
 
 Keep rules bounded to exception cases and internal operations. A rule comprises: enabled/paused state, name, trigger, conditions, actions, priority, dry-run mode, and version/history.
 
-- Triggers: a supported exception opens, changes reason/state, approaches/breaches an SLA, or matches a scheduled age check.
+- Triggers: a supported exception opens, its reason or case state changes, an SLA approaches or breaches, or it matches a scheduled age check. Case-change triggers are deduplicated per rule and case episode to prevent recursive workflow loops.
 - Conditions: reason, age band, case state, priority, store order properties available through supported APIs.
 - Actions: set case priority, assign an eligible staff member, change case state where valid, and send an administrator notification.
 - Show a readable “when / if / then” summary before saving.
