@@ -98,7 +98,7 @@ final class AlertService
         try {
             try {
                 $sent = wp_mail($recipients, $subject, $message);
-            } catch (\\Throwable $exception) {
+            } catch (\Throwable $exception) {
                 // Treat transport exceptions like a failed delivery so the bounded
                 // retry path runs and the scheduler callback does not fatal.
                 $sent = false;
