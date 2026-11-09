@@ -94,6 +94,9 @@ jobs:
       - name: Run case service validation smoke tests
         run: php tests/CaseServiceSmokeTest.php
 
+      - name: Run Pro settings validation smoke tests
+        run: php tests/ProSettingsSmokeTest.php
+
       - name: Set up PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
