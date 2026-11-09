@@ -332,3 +332,14 @@
 - **Fix included:** Removed an early translated string from `plugin_row_meta` build metadata, avoiding the plugin text-domain translation call before WordPress `init`.
 - **Scope:** Build 31 was tested in isolated Playground, not uploaded to the merchant staging site. It does not supersede staging build 27 evidence. No order/payment/refund/customer/stock data was changed. No CLI task or merchant-facing CLI feature was added.
 - **Remaining:** Plugin-specific PHP log confirmation, populated-order workflows on build 31, staging retest, cron/retry runtime, broader compatibility/security/accessibility/performance evidence, and Free/Pro production package review remain open. Phase 7 stays at 88% and is not certified complete.
+
+
+## 2026-11-09 — Build 31 staging verification
+
+- **Phase:** 7 — Compatibility and quality (in progress; 88%).
+- **Package:** Build 31 from commit `f2be75aa1c3ba2041f0189ae679948a035d72172` uploaded via WordPress plugin ZIP flow; staging confirmed active `build-31-1 · f2be75aa1c3b` after “Plugin updated successfully.”
+- **Environment:** WordPress 7.1.4, WooCommerce 11.2.2, PHP 8.3.36, MySQL 8.0.46, HPOS enabled. WooCommerce Status reports environment type `production` even though the path is `/el-test`.
+- **Checks:** Hub inbox rendered existing QA cases #49/#85; opened #85 details; search `85` returned one case; “Missing shipping details” filter returned #85; “Older than 24 hours” returned #49 and excluded #85. Search and filters restored to defaults; both cases remained Open.
+- **Runtime evidence:** No Order Rescue Hub browser console errors observed. Only browser extension content-script errors appeared. WordPress core `ob_end_flush()` notice remains at `functions.php:5581`. WooCommerce Logs had no `fatal-errors` file dated Nov 9; absence of a dated log is not proof of no server-side issue.
+- **Data:** No order/payment/refund/cancel/customer/stock/case-state data changed. No CLI task was added.
+- **Remaining:** Plugin-specific PHP log confirmation, cron sweep and Pro retry/runtime, broader compatibility/security/accessibility matrices, representative-host benchmark, and Free/Pro production release package remain open. Phase 7 remains 88% and uncertified.
