@@ -44,7 +44,7 @@ namespace {
         );
     }, $triggers);
 
-    $clean = \\WPEssential\\OrderRescueHub\\Pro\\Settings::sanitize_rules($rules);
+    $clean = \WPEssential\\OrderRescueHub\\Pro\\Settings::sanitize_rules($rules);
     if (count($clean) !== count($triggers)) {
         fail_pro_settings_test('All supported dotted Pro workflow triggers must survive settings sanitization.');
     }
@@ -56,7 +56,7 @@ namespace {
 
     $invalid = $rules[0];
     $invalid['trigger'] = 'case.evil';
-    if (\\WPEssential\\OrderRescueHub\\Pro\\Settings::sanitize_rules(array($invalid))) {
+    if (\WPEssential\\OrderRescueHub\\Pro\\Settings::sanitize_rules(array($invalid))) {
         fail_pro_settings_test('Unrecognized workflow trigger values must be rejected.');
     }
 
