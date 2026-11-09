@@ -343,3 +343,12 @@
 - **Runtime evidence:** No Order Rescue Hub browser console errors observed. Only browser extension content-script errors appeared. WordPress core `ob_end_flush()` notice remains at `functions.php:5581`. WooCommerce Logs had no `fatal-errors` file dated Nov 9; absence of a dated log is not proof of no server-side issue.
 - **Data:** No order/payment/refund/cancel/customer/stock/case-state data changed. No CLI task was added.
 - **Remaining:** Plugin-specific PHP log confirmation, cron sweep and Pro retry/runtime, broader compatibility/security/accessibility matrices, representative-host benchmark, and Free/Pro production release package remain open. Phase 7 remains 88% and uncertified.
+
+
+## 2026-11-10 — Pro workflow trigger settings fix
+
+- **Phase:** 7 — compatibility and quality audit; still in progress.
+- **Working feature changed:** Fixed Pro rule validation so the supported dotted trigger identifiers are preserved during settings sanitization instead of being stripped by WordPress `sanitize_key()`. Unsupported trigger values remain rejected by the allowlist.
+- **Regression coverage:** Added `tests/ProSettingsSmokeTest.php` and wired it into the staging-package workflow.
+- **Verification:** GitHub Actions run [42688671803](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42688671803) passed, including PHP 8.3 lint and smoke tests, migration/integration checks, the new Pro trigger sanitizer test, PHP 8.4/8.5 lint and smoke suites, and artifact assembly. Artifact `13705638910`, source commit `737c7b444385121cb35c41240c44b2e746266b0b`.
+- **Limits:** The local environment has no PHP runtime, so execution was delegated to the project CI. This validates settings sanitization but not the Pro browser screen, scheduled retry delivery, or external alert transport. Pro runtime/release review remains open. No CLI task or command feature was added.
