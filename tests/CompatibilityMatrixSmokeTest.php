@@ -268,6 +268,11 @@ wp_set_current_user(0);
 // Exercise the same WordPress REST authentication filter used by cookie-auth
 // requests. rest_do_request() dispatches routes directly and does not run this filter.
 wp_set_current_user((int) $test_admin->ID);
+global $wp_rest_auth_cookie;
+$previous_rest_auth_cookie = $wp_rest_auth_cookie ?? null;
+// WordPress sets this marker after validating the logged-in auth cookie; the
+// isolated fixture calls the authentication filter without an HTTP server.
+$wp_rest_auth_cookie = true;
 $previous_nonce_header = $_SERVER['HTTP_X_WP_NONCE'] ?? null;
 $_SERVER['HTTP_X_WP_NONCE'] = 'invalid-wperh-rest-nonce';
 $invalid_nonce_result = apply_filters('rest_authentication_errors', null);
@@ -287,6 +292,11 @@ if (null === $previous_nonce_header) {
     unset($_SERVER['HTTP_X_WP_NONCE']);
 } else {
     $_SERVER['HTTP_X_WP_NONCE'] = $previous_nonce_header;
+}
+if (null === $previous_rest_auth_cookie) {
+    unset($wp_rest_auth_cookie);
+} else {
+    $wp_rest_auth_cookie = $previous_rest_auth_cookie;
 }
 if (null === $previous_logged_in_cookie) {
     unset($_COOKIE[LOGGED_IN_COOKIE]);

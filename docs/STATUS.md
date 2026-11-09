@@ -443,3 +443,9 @@
 - **Remaining failure:** Each cell then failed only at the REST nonce assertion because the test used `rest_do_request()`, which directly dispatches routes without applying the REST authentication filter. This was a harness mismatch, not a failed runtime permission check.
 - **Correction:** The nonce assertion now invokes WordPress's registered `rest_authentication_errors` filter directly with invalid and valid `X-WP-Nonce` values and expects a 403 `rest_cookie_invalid_nonce` error then `true` for the valid nonce.
 - **Next:** Run the corrected test in all four matrix cells. P7-05 stays open until CI passes.
+
+## 2026-11-10 — REST nonce test now models core's validated-cookie marker
+
+- **Run 66:** Package job passed; all four matrix cells passed the scoped cross-order capability check. The nonce check still failed because WordPress deliberately bypasses cookie-nonce validation when another authentication method is marked as active. The isolated fixture had not modeled core's `$wp_rest_auth_cookie` marker, which core sets after validating the logged-in cookie.
+- **Correction:** The fixture now temporarily sets that core marker before applying `rest_authentication_errors`, then restores it. The test asserts invalid nonce returns `rest_cookie_invalid_nonce`/403 and valid nonce returns `true`.
+- **Next:** Verify the corrected auth-filter fixture through CI. This remains test harness work; plugin REST nonce behavior is still unaccepted pending the run.
