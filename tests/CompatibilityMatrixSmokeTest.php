@@ -113,6 +113,12 @@ if (!isset($routes['/wperh/v1/cases'])) {
     exit(1);
 }
 
+// Plugin activation runs in WordPress' plugin sandbox, which clears the current user.
+wp_set_current_user(1);
+$test_admin = get_userdata(1);
+if ($test_admin) {
+    $test_admin->add_cap('manage_woocommerce');
+}
 $response = rest_do_request(new WP_REST_Request('GET', '/wperh/v1/cases'));
 if (200 !== $response->get_status()) {
     fwrite(STDERR, 'The empty case-list request returned HTTP ' . $response->get_status() . ".\n");
