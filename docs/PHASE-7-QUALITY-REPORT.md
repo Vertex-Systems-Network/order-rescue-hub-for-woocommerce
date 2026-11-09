@@ -44,7 +44,7 @@ Workflow run `42531841867` passed the PHP 8.3/8.4/8.5 lint/smoke matrix, databas
 
 | Gate | Status | Required evidence |
 |---|---|---|
-| PHP syntax and runtime | Partial | PHP 8.3/8.4/8.5 lint and focused smoke suite pass in CI; Free bootstrap/admin screen passes on one WP/Woo/PHP environment. Pro runtime behavior and supported-version breadth remain unverified. |
+| PHP syntax and runtime | Partial | PHP 8.3/8.4/8.5 lint and focused smoke suite pass in CI; Build 50 Free bootstrap and populated inbox render on one WP/Woo/PHP environment. Pro runtime behavior and supported-version breadth remain unverified. |
 | WordPress/WooCommerce compatibility | Partial | One environment verified (WP 7.1.4, WooCommerce 11.2.2, PHP 8.3.36), with the inbox/case-detail exercised under both HPOS and legacy storage. Dependency-missing behavior, CRUD/REST flows with a fixture matrix, schema upgrade and wider versions remain unverified. |
 | HPOS | Partial | On HPOS, a pending sample order was detected, its detail/history loaded, filters matched expected results, and a case state was transitioned and restored. Resolution/clear behavior, concurrent updates and broader fixtures remain unverified. |
 | Legacy order storage | Partial pass | Source audit found no direct order-table reads. Runtime inbox and case-detail read passed with legacy storage authoritative against one existing order; this is not broad-version or edge-case certification. |
@@ -53,7 +53,7 @@ Workflow run `42531841867` passed the PHP 8.3/8.4/8.5 lint/smoke matrix, databas
 | Security | Partial | Static capability review and the authenticated manager flows passed. A direct GET without a REST nonce returned WordPress `401 rest_forbidden`; the database-backed WordPress subscriber checks passed list capability denial and cross-order detail/transition denials (403). Broader role/capability matrix and nonce/mutation abuse cases remain open. |
 | Accessibility | Partial | Labels and keyboard tab order spot-checked; screen reader, contrast, focus-visible, reduced motion and full empty/error-state review remain pending. |
 | Performance | Partial | Database-backed filtering and pagination over 10,000 synthetic case rows returned the expected 5,000 matching rows, 25-row page and 200 pages in 6.6 ms in CI. This is a synthetic CI baseline, not a merchant-host benchmark or full WooCommerce order scan benchmark. |
-| Package/release | Partial | The build-26-1 staging package was installed and live-tested; its React dashboard and core case workflow pass the recorded staging checks. This is still a development test package. Free/Pro release split, clean production package contents, language assets, release metadata, and final installation/upgrade review remain open. |
+| Package/release | Partial | Build 50 is installed and active on staging; the live React inbox renders four exception cases. Earlier builds have populated-order and core case-workflow evidence. This is still a development test package. Free/Pro release split, clean production package contents, language assets, release metadata, and final installation/upgrade review remain open. |
 
 ## Execution boundary
 
@@ -119,3 +119,12 @@ No WP-CLI command, CLI-only merchant feature, or merchant setup flow was added. 
 - **Regression coverage:** `tests/ProWorkflowSmokeTest.php` verifies state and reason change previews, ignores stale state callbacks, and confirms duplicate state callbacks are idempotent. `tests/ProSettingsSmokeTest.php` now covers all six trigger identifiers and rejects unknown triggers.
 - **Verification:** GitHub Actions run [42691173295](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42691173295) passed PHP 8.3 lint and migration/detector/installer/case/Pro-settings/Pro-alert/Pro-workflow tests, PHP 8.4 and 8.5 lint/smoke suites, and installable ZIP assembly. Artifact `13706099449`, `wperh-staging-test-50-1-cd07ac8cfb52483685dcd44a8c21b9f7898fce00`, SHA-256 `cafec6012ca8a3155d7b62e8fb9b6173755bcfae003b57d0333de48e69fe93ed`.
 - **Limit:** Pro paths are tested with deterministic PHP stubs; the available staging install is Free, so Pro browser interaction and real alert delivery remain unverified. Phase 7 remains open.
+
+
+## 2026-11-10 — Build 50 staging installation and inbox render
+
+- **Installed build:** WordPress Plugins screen identifies active WPEssential Order Rescue Hub as version 0.1.0, `Build build-50-1 · cd07ac8cfb52`.
+- **Runtime/UI:** Opened WooCommerce → Order Rescue Hub. The React inbox rendered the Exceptions heading, count of four cases, order search, state/reason/priority/age filters, case rows, and Review controls. The visible cases were #49, #85, #51, and #52; all showed Open. This confirms the live Free dashboard no longer renders blank on Build 50.
+- **Mutation boundary:** This was a read-only render check. No case was opened or edited, and no order/payment/customer/inventory action was performed.
+- **Site notices:** WordPress admin still emitted the existing `ob_end_flush()` notice from `wp-includes/functions.php:5581`; it is outside the plugin.
+- **Limits:** This closes Build 50 installation identity and inbox rendering only. It does not prove Pro screens, alert delivery, workflow runtime, broad compatibility, full accessibility/performance, or submission readiness. Phase 7 remains in progress at 90%. No merchant CLI work was added.
