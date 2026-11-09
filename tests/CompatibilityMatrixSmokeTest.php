@@ -72,6 +72,7 @@ if (is_wp_error($plugin_result)) {
 // Plugin activation loads files after WordPress' first plugins_loaded event.
 // Dispatch it once in this isolated process so the activated test plugins boot.
 do_action('plugins_loaded');
+do_action('init');
 if (!class_exists('WooCommerce') || !function_exists('wc_get_order')) {
     fwrite(STDERR, "WooCommerce did not initialize its order CRUD API.\n");
     exit(1);
