@@ -1,7 +1,7 @@
 # Phase 7 — Compatibility and quality audit
 
 **Started:** 2026-11-07  
-**Status:** In progress — build-31-1 (source commit `f2be75aa1c3b`) is installed and active on `/el-test`; React inbox, populated case detail, order search, reason filter, and age filter were verified on staging. CI migration, permission-denial, synthetic 10,000-case query, PHP 8.3/8.4/8.5 smoke/lint, and package checks also pass. The Free WordPress-Cron sweep is now verified on staging. Pro workflow/retry runtime, broader version/security coverage, full accessibility, representative-host performance, and production release gates remain open.
+**Status:** In progress — build-31-1 (source commit `f2be75aa1c3b`) is installed and active on `/el-test`; React inbox, populated case detail, order search, reason filter, and age filter were verified on staging. CI migration, permission-denial, synthetic 10,000-case query, PHP 8.3/8.4/8.5 smoke/lint, and package checks also pass. The Free WordPress-Cron sweep is now verified on staging. Pro delivery/runtime (including retry execution), broader version/security coverage, full accessibility, representative-host performance, and production release gates remain open. Dotted workflow trigger configuration now has a PHP regression test.
 **Progress estimate:** 89%
 **Scope:** PHP/plugin bootstrap, schema upgrades, WooCommerce/HPOS access paths, multilingual expectations, REST capability boundaries, accessibility, performance, and package readiness.
 
@@ -13,6 +13,7 @@
 | Schema upgrade | Changed the schema gate to upgrade only versions below 1.1.0 and persist 1.1.0, preventing every admin request from rerunning and downgrading the recorded schema version. | `includes/Database/Installer.php` source review |
 | Case lifecycle and SLA | Manual case transitions now emit the transition hook after a successful optimistic update, allowing Pro SLA pause/resume/close evaluation to run immediately. | `includes/Service/CaseService.php`; `includes/Pro/SlaClock.php` |
 | Pro batch fairness | SLA and age-workflow scans remain capped at ten 100-case pages per cron run but rotate their starting page, so stores above 1,000 cases are not permanently limited to the first page window. | `includes/Pro/SlaClock.php`; `includes/Pro/WorkflowEngine.php` |
+| Pro workflow trigger settings | Fixed the settings sanitizer to preserve dotted, allowlisted trigger IDs (`case.opened`, `case.age_check`, `sla.warning`, `sla.breached`); added a regression smoke test that verifies all valid IDs survive and an unknown ID is rejected. | `includes/Pro/Settings.php`; `tests/ProSettingsSmokeTest.php`; CI run `42688671803` passed on PHP 8.3/8.4/8.5 and package assembly |
 | Admin input parsing | Fixed timezone-offset matching and holiday-list splitting. | `assets/admin.js` |
 | JavaScript syntax and count localization | Parsed successfully with the JavaScript runtime after the fixes. Corrected the inbox count to use WordPress pluralization (`1 case`, `2 cases`) and WordPress number formatting. | V8 `new Function(source)` check, 2026-11-07; commit `020a319e22015ef9214daff82dfa515e6465442d`; workflow run `42388177816` passed |
 | Composer collision | Added a guard in `vendor/composer/autoload_real.php` to reuse an already-loaded Composer ClassLoader while retaining the Composer PSR-4 map and direct `vendor/autoload.php` bootstrap. No handwritten class loader was added. | Commit `8731cdb9fab47ac9fe98c5b4bee3f05829ca07df` |
@@ -89,3 +90,12 @@ No WP-CLI command, CLI-only merchant feature, or merchant setup flow was added. 
 - **Temporary helper:** WP Crontrol was deactivated after the targeted check and left installed but inactive to avoid a destructive file removal. It can be deleted through Plugins if desired.
 - **Limitations:** This is one live Free cron sweep on one staging environment, not a broad recurrence/reliability test. Pro workflow/retry runtime remains unverified because Pro licensing/runtime fixtures are not available here. WordPress admin continues to display a site-level `ob_end_flush()` notice from `wp-includes/functions.php:5581`; no plugin-specific fatal was observed in this UI check.
 - **Status:** Free scheduled detection runtime gate advanced to verified for this fixture. Phase 7 remains in progress; the remaining release gates above are not waived.
+
+
+## 2026-11-10 — Pro workflow settings defect fixed
+
+- **Issue:** WordPress `sanitize_key()` strips periods from identifiers, but all four supported Pro workflow triggers use a period. Consequently the settings sanitizer could discard valid workflow rules during save.
+- **Change:** `includes/Pro/Settings.php` now preserves the trigger string with `sanitize_text_field()` and still validates exact values against the fixed allowlist. Unknown trigger values remain rejected. No order-action approval boundary changed.
+- **Regression coverage:** Added `tests/ProSettingsSmokeTest.php`, checking all four dotted trigger values round-trip through sanitization and unsupported trigger values are rejected. The CI workflow runs the new check and lints the suite across the PHP 8.3/8.4/8.5 matrix.
+- **Verification:** GitHub Actions run [42688671803](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42688671803) passed all checks, including database migration, detector, installer, case service, Pro settings smoke test, PHP 8.4/8.5 lint/smokes, and ZIP assembly. Build artifact `13705638910`, `wperh-staging-test-37-1-737c7b444385121cb35c41240c44b2e746266b0b`, SHA-256 `0dbc411df05bf40c5134fe3f03dbb4d5ce696ce762418a779e327877000c6150`.
+- **Boundary:** The Pro code is gated by `WPERH_PRO_EDITION`; the staging install currently runs Free. This fix is covered by executable PHP CI, not an end-to-end Pro settings screen on staging. Pro alert/workflow/retry execution remains an open release gate.
