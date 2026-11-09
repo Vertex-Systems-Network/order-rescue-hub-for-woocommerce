@@ -6,6 +6,7 @@
     var h = wp.element.createElement;
     var useState = wp.element.useState;
     var useEffect = wp.element.useEffect;
+    var useRef = wp.element.useRef;
     var __ = wp.i18n ? wp.i18n.__ : function (text) { return text; };
     var pluralize = wp.i18n && 'function' === typeof wp.i18n._n ? wp.i18n._n : function (single, plural, number) { return 1 === number ? single : plural; };
     var sprintf = wp.i18n ? wp.i18n.sprintf : function (format, number) { return format.replace('%d', number); };
@@ -71,6 +72,8 @@
         var _o = useState(null), proSettings = _o[0], setProSettings = _o[1];
         var _p = useState([]), team = _p[0], setTeam = _p[1];
         var _q = useState(''), assignee = _q[0], setAssignee = _q[1];
+        var detailPanelRef = useRef(null);
+        var returnFocusRef = useRef(null);
 
         function loadCases() {
             setLoading(true);
@@ -129,7 +132,36 @@
             });
         }
 
+        function closeCase() {
+            setSelected(null);
+            window.requestAnimationFrame(function () {
+                if (returnFocusRef.current && document.contains(returnFocusRef.current)) {
+                    returnFocusRef.current.focus();
+                }
+            });
+        }
+
+        useEffect(function () {
+            if (selected && detailPanelRef.current) {
+                detailPanelRef.current.focus();
+            }
+        }, [selected && selected.case_id]);
+
+        useEffect(function () {
+            if (!selected) {
+                return undefined;
+            }
+            function handleDetailKey(event) {
+                if ('Escape' === event.key) {
+                    closeCase();
+                }
+            }
+            document.addEventListener('keydown', handleDetailKey);
+            return function () { document.removeEventListener('keydown', handleDetailKey); };
+        }, [selected]);
+
         function openCase(caseId) {
+            returnFocusRef.current = document.activeElement;
             setError('');
             setNotice('');
             setSelected(null);
@@ -376,7 +408,6 @@
                     h('legend', null, __('SLA policy', 'wpessential-order-rescue-hub-woocommerce')),
                     h('p', null, __('Store timezone: ', 'wpessential-order-rescue-hub-woocommerce') + proSettings.timezone),
                     h('p', null, __('SLA policy changes apply to newly detected cases. Open cases retain their recorded deadlines.', 'wpessential-order-rescue-hub-woocommerce')),
-                    h('p', null, __('Store timezone: ', 'wpessential-order-rescue-hub-woocommerce') + proSettings.timezone),
                     h('label', null, __('First response target (hours)', 'wpessential-order-rescue-hub-woocommerce'),
                         h('input', { type: 'number', min: 1, max: 720, value: proSettings.response_hours, onChange: function (event) { updatePro('response_hours', Number(event.target.value)); } })
                     ),
@@ -433,7 +464,8 @@
                 h('td', null, h('button', {
                     type: 'button',
                     className: 'wperh-link-button',
-                    onClick: function () { openCase(item.case_id); }
+                    onClick: function () { openCase(item.case_id); },
+                    'aria-label': sprintf(__('Review details for order #%d', 'wpessential-order-rescue-hub-woocommerce'), item.order_id)
                 }, '#' + item.order_id),
                 window.wperhSettings && window.wperhSettings.orderEditUrlPrefix ? h('a', { href: window.wperhSettings.orderEditUrlPrefix + item.order_id }, __('Open order', 'wpessential-order-rescue-hub-woocommerce')) : null),
                 h('td', null, h('strong', null, reasons || __('Review case details', 'wpessential-order-rescue-hub-woocommerce'))),
@@ -456,6 +488,8 @@
 
         var detail = selected ? h('aside', {
             className: 'wperh-detail',
+            ref: detailPanelRef,
+            tabIndex: -1,
             role: 'region',
             'aria-labelledby': 'wperh-detail-title'
         },
@@ -464,12 +498,11 @@
                     h('h2', { id: 'wperh-detail-title' }, __('Order', 'wpessential-order-rescue-hub-woocommerce') + ' #' + selected.order_id),
                     h('p', null, (selected.reason_codes || []).map(labelForReason).join(', ') || __('No active reason recorded', 'wpessential-order-rescue-hub-woocommerce'))
                 ),
-                h('button', { type: 'button', className: 'button', onClick: function () { setSelected(null); }, 'aria-label': __('Close case details', 'wpessential-order-rescue-hub-woocommerce') }, '×')
+                h('button', { type: 'button', className: 'button', onClick: closeCase, 'aria-label': __('Close case details', 'wpessential-order-rescue-hub-woocommerce') }, '×')
             ),
             window.wperhSettings && window.wperhSettings.isPro ? h('section', { className: 'wperh-pro-case-fields', 'aria-label': __('Pro case routing and SLA', 'wpessential-order-rescue-hub-woocommerce') },
                 h('p', null, h('strong', null, __('SLA status: ', 'wpessential-order-rescue-hub-woocommerce')), selected.sla_state || __('Starting', 'wpessential-order-rescue-hub-woocommerce')),
                 h('p', null, __('Deadlines use the store timezone: ', 'wpessential-order-rescue-hub-woocommerce') + ((window.wperhSettings && window.wperhSettings.timezone) || 'UTC')),
-                h('p', null, h('strong', null, __('Assigned to: ', 'wpessential-order-rescue-hub-woocommerce')), team.filter(function (member) { return Number(member.id) === Number(selected.assignee_id); }).map(function (member) { return member.name; })[0] || __('Unassigned', 'wpessential-order-rescue-hub-woocommerce')),
                 h('p', null, h('strong', null, __('Assigned to: ', 'wpessential-order-rescue-hub-woocommerce')), team.filter(function (member) { return Number(member.id) === Number(selected.assignee_id); }).map(function (member) { return member.name; })[0] || __('Unassigned', 'wpessential-order-rescue-hub-woocommerce')),
                 selected.sla_response_due_at ? h('p', null, __('First response due: ', 'wpessential-order-rescue-hub-woocommerce') + formatDate(selected.sla_response_due_at)) : null,
                 selected.sla_resolution_due_at ? h('p', null, __('Resolution due: ', 'wpessential-order-rescue-hub-woocommerce') + formatDate(selected.sla_resolution_due_at)) : null,
@@ -556,8 +589,8 @@
                     ),
                     h('span', { className: 'wperh-count' }, sprintf(pluralize('%d case', '%d cases', total, 'wpessential-order-rescue-hub-woocommerce'), total))
                 ),
-                error ? h('div', { className: 'notice notice-error' }, h('p', null, error)) : null,
-                notice ? h('div', { className: 'notice notice-success' }, h('p', null, notice)) : null,
+                error ? h('div', { className: 'notice notice-error', role: 'alert' }, h('p', null, error)) : null,
+                notice ? h('div', { className: 'notice notice-success', role: 'status', 'aria-live': 'polite' }, h('p', null, notice)) : null,
                 h('div', { className: 'wperh-filters' },
                     h('label', { htmlFor: 'wperh-search' }, __('Search order ID', 'wpessential-order-rescue-hub-woocommerce')),
                     h('input', { id: 'wperh-search', type: 'search', placeholder: __('e.g. 1042', 'wpessential-order-rescue-hub-woocommerce'), onChange: searchChanged }),

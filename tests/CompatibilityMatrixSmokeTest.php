@@ -238,10 +238,13 @@ if (is_wp_error($scope_user_id)) {
     fwrite(STDERR, "Could not create the isolated order-scope user.\n");
     exit(1);
 }
+wp_update_user(array('ID' => (int) $scope_user_id, 'role' => 'subscriber'));
 wp_set_current_user((int) $scope_user_id);
 $allowed_order_id = $order_id;
-$scope_capability = static function (array $caps, string $cap, int $user_id, array $args) use ($allowed_order_id): array {
-    if ('edit_shop_order' === $cap) {
+$capability_trace = array();
+$scope_capability = static function (array $caps, string $cap, int $user_id, array $args) use ($allowed_order_id, &$capability_trace): array {
+    if (in_array($cap, array('edit_shop_order', 'edit_post'), true)) {
+        $capability_trace[] = array('cap' => $cap, 'args' => $args);
         return isset($args[0]) && $allowed_order_id === (int) $args[0] ? array('read') : array('do_not_allow');
     }
     return $caps;
@@ -257,7 +260,7 @@ remove_filter('map_meta_cap', $scope_capability, 99);
 if (!($allowed_scoped_detail instanceof WP_REST_Response)
     || !is_wp_error($denied_scoped_detail) || 403 !== $denied_scoped_detail->get_error_data()['status']
 ) {
-    fwrite(STDERR, "Order-specific edit capability did not isolate access to the permitted order.\n");
+    fwrite(STDERR, "Order-specific access failed (allowed=" . (is_wp_error($allowed_scoped_detail) ? $allowed_scoped_detail->get_error_code() : get_debug_type($allowed_scoped_detail)) . ", denied=" . (is_wp_error($denied_scoped_detail) ? $denied_scoped_detail->get_error_code() : get_debug_type($denied_scoped_detail)) . ", traced=" . wp_json_encode($capability_trace) . ").\n");
     exit(1);
 }
 wp_set_current_user(0);

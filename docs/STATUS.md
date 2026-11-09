@@ -428,3 +428,11 @@
 - **Local validation:** `git diff --check` and workflow YAML parsing pass. PHP runtime is not installed in this workspace, so PHP lint/execution is delegated to the existing CI matrix; no pass is claimed until the new workflow completes.
 - **Current gate/progress:** P7-02 is complete from CI run `42708829994`; P7-05 remains open pending the new CI execution. Five of ten Phase 7 gates are accepted (50%).
 - **Next action:** Commit these changes to `main`, inspect every package and four-cell compatibility job, repair any failures, then continue with P7-07 accessibility.
+
+## 2026-11-10 — CI 64 exposed a cross-order test fixture defect; fix prepared
+
+- **Result:** Package job passed PHP 8.3/8.4/8.5 lint and smoke tests, the security action guard, and ZIP assembly. All four compatibility cells failed at the cross-order isolation assertion; earlier activation/schema/populated-detail steps completed. This is currently a test-fixture failure, not evidence of a plugin runtime defect.
+- **Diagnosis work:** The simulated subscriber's Woo order-edit capability mapping did not grant the permitted fixture order. The fixture now explicitly sets the user role to subscriber, captures relevant mapped capability arguments, and reports allowed/denied results if it fails again; it also handles Woo's `edit_post` meta-cap mapping.
+- **P7-07 implementation started:** Case detail now moves keyboard focus into the details region, Escape closes it, and focus returns to the activating control. Errors/successes have explicit live semantics, loading state is announced with `aria-busy`, and the app root no longer marks the entire UI as a live region. Order detail buttons have contextual accessible names. Removed duplicate Pro assignment/timezone fields found during source review.
+- **Local checks:** `node --check assets/admin.js`, CI YAML parsing, forbidden-action static scan, and `git diff --check` pass. PHP runtime is unavailable locally. Do not count P7-05 or P7-07 complete until the matrix and manual keyboard/screen-reader review pass.
+- **Next:** Push the fixture and accessibility fixes, inspect the complete new CI run, then continue the remaining Phase 7 gates.

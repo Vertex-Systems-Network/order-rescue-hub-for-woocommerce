@@ -29,7 +29,7 @@ final class Screen
 
         echo '<div class="wrap wperh-wrap">';
         echo '<h1>' . esc_html__('Order Rescue Hub', 'wpessential-order-rescue-hub-woocommerce') . '</h1>';
-        echo '<div id="wperh-app" aria-live="polite"></div>';
+        echo '<div id="wperh-app"></div>';
         echo '</div>';
     }
 }
