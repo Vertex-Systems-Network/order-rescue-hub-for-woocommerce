@@ -238,6 +238,8 @@
                 h('label', null, __('When', 'wpessential-order-rescue-hub-woocommerce'),
                     h('select', { value: rule.trigger, onChange: function (event) { updateRule(index, 'trigger', event.target.value); } },
                         h('option', { value: 'case.opened' }, __('A case opens', 'wpessential-order-rescue-hub-woocommerce')),
+                        h('option', { value: 'case.state_changed' }, __('A case state changes', 'wpessential-order-rescue-hub-woocommerce')),
+                        h('option', { value: 'case.reason_changed' }, __('Exception reasons change', 'wpessential-order-rescue-hub-woocommerce')),
                         h('option', { value: 'case.age_check' }, __('Scheduled age check', 'wpessential-order-rescue-hub-woocommerce')),
                 h('option', { value: 'sla.warning' }, __('SLA is approaching', 'wpessential-order-rescue-hub-woocommerce')),
                         h('option', { value: 'sla.breached' }, __('SLA is breached', 'wpessential-order-rescue-hub-woocommerce'))
