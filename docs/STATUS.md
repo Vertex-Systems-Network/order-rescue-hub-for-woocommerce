@@ -312,3 +312,12 @@
 - **Check:** Closed the case using the required “No action required” outcome; UI confirmed “Case updated” and the case disappeared from the Open queue. Reopened it; UI confirmed the case returned to Open, the history lists both state changes, and its first-detected timestamp reset for the new episode, consistent with the architecture's reopen-as-new-episode behavior.
 - **Final state:** Case #85 is Open; WooCommerce order #85 remains pending with its same test item. No payment, refund, cancellation, order-status, inventory, or customer-data action was taken.
 - **Documentation:** Added evidence to docs/PHASE-7-QUALITY-REPORT.md. No CLI task was added.
+
+## 2026-11-09 — Build 27 staging verification
+
+- **Phase:** 7 — Compatibility and quality (in progress; 88%).
+- **Installed build:** WordPress Plugins screen identifies WPEssential Order Rescue Hub as active, version 0.1.0, build `build-27-1 · 69c2d845823a`.
+- **UI verification:** Freshly opened the Hub and case #85 detail. Order total renders as `₨12`; the previous literal `&#8360;12` display is fixed. The React inbox, filters, case detail, case history, and Open state render. The order remains pending and no order/payment/customer/inventory mutation was performed.
+- **Browser console:** No Order Rescue Hub JavaScript error was observed. The only error entries were emitted by the browser's installed extension content script (“Error sending browser metadata to extension: Object”); WordPress JQMIGRATE logged normally. The existing WordPress core `ob_end_flush()` notice remains visible on admin pages.
+- **CI/package:** Workflow run `42531841867` passed PHP 8.3/8.4/8.5 lint and smoke checks, migration/idempotence, permission, synthetic query, and package validation. Inner install ZIP SHA-256: `227e28508b6cf839123d6677e19543016c5026d3d71fbe1ba4192c1493b0308c`.
+- **Status:** This closes the build-27 currency rendering retest only. Phase 7 remains in progress at 88%; remaining Pro runtime, broader compatibility/security/accessibility/performance, and final Free/Pro production-package gates remain open. No CLI task was added.
