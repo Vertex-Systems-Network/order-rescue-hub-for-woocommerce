@@ -221,3 +221,71 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
+
+  compatibility:
+    name: WP/Woo L-1 compatibility smoke
+    needs: package
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wordpress: '7.0.8'
+            woocommerce: '11.1.2'
+          - wordpress: '7.0.8'
+            woocommerce: '11.2.2'
+          - wordpress: '7.1.4'
+            woocommerce: '11.1.2'
+          - wordpress: '7.1.4'
+            woocommerce: '11.2.2'
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wperh_test
+          MYSQL_USER: wperh
+          MYSQL_PASSWORD: wperh_test_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -p$MYSQL_ROOT_PASSWORD"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: curl, dom, intl, mbstring, mysqli, pdo_mysql, zip
+          coverage: none
+
+      - name: Install WordPress and WooCommerce matrix cell
+        env:
+          WP_VERSION: ${{ matrix.wordpress }}
+          WC_VERSION: ${{ matrix.woocommerce }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/wperh-wordpress
+          curl --fail --silent --show-error --location "https://wordpress.org/wordpress-${WP_VERSION}.zip" --output /tmp/wperh-wordpress.zip
+          unzip -q /tmp/wperh-wordpress.zip -d /tmp/wperh-wordpress
+          curl --fail --silent --show-error --location "https://downloads.wordpress.org/plugin/woocommerce.${WC_VERSION}.zip" --output /tmp/wperh-woocommerce.zip
+          unzip -q /tmp/wperh-woocommerce.zip -d /tmp/wperh-wordpress/wordpress/wp-content/plugins
+          plugin_dir="/tmp/wperh-wordpress/wordpress/wp-content/plugins/wpessential-order-rescue-hub-woocommerce"
+          mkdir -p "$plugin_dir"
+          cp -R assets includes vendor composer.json LICENSE readme.txt build-info.php wpessential-order-rescue-hub-woocommerce.php "$plugin_dir/"
+
+      - name: Run clean-install compatibility smoke
+        env:
+          WPERH_WORDPRESS_ROOT: /tmp/wperh-wordpress/wordpress
+          WPERH_PLUGIN_FILE: /tmp/wperh-wordpress/wordpress/wp-content/plugins/wpessential-order-rescue-hub-woocommerce/wpessential-order-rescue-hub-woocommerce.php
+          WPERH_DB_NAME: wperh_test
+          WPERH_DB_USER: wperh
+          WPERH_DB_PASSWORD: wperh_test_password
+          WPERH_DB_HOST: 127.0.0.1
+        run: php tests/CompatibilityMatrixSmokeTest.php

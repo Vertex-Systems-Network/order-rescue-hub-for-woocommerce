@@ -1,8 +1,8 @@
 # Phase 7 — Compatibility and quality audit
 
 **Started:** 2026-11-07  
-**Status:** In progress — build-31-1 (source commit `f2be75aa1c3b`) is installed and active on `/el-test`; React inbox, populated case detail, order search, reason filter, and age filter were verified on staging. CI migration, permission-denial, synthetic 10,000-case query, PHP 8.3/8.4/8.5 smoke/lint, and package checks also pass. The Free WordPress-Cron sweep is now verified on staging. End-to-end Pro delivery on the staging browser, broader version/security coverage, full accessibility, representative-host performance, and production release gates remain open. Pro workflow sanitization and mail-retry failure paths now have executable PHP regression coverage. Dotted workflow trigger configuration, case-change triggers, and mail-retry failure paths now have executable PHP regression coverage.
-**Progress estimate:** 90%
+**Status:** In progress — Build 50 (`build-50-1 · cd07ac8cfb52`) is the last browser-confirmed staging install; its React inbox rendered four cases. Build 51 is CI-verified and packaged but has not yet been installed on staging. A four-cell WordPress/WooCommerce L-1 activation/bootstrap/list smoke has now been added to CI; its first execution is pending. The active checklist is the ten binary gates in `docs/AI-PLAN.md`; four are complete (P7-01, P7-03, P7-04, P7-06), so progress is 40%. The prior 90% estimate was subjective and is withdrawn. Pro runtime, broader compatibility/security, full accessibility, representative-host performance, and Free/Pro engineering package audit remain open. WordPress.org/WooCommerce.com review is not a Phase 7 gate.
+**Progress:** 4/10 gates complete (40%)
 **Scope:** PHP/plugin bootstrap, schema upgrades, WooCommerce/HPOS access paths, multilingual expectations, REST capability boundaries, accessibility, performance, and package readiness.
 
 ## Work completed
@@ -127,7 +127,7 @@ No WP-CLI command, CLI-only merchant feature, or merchant setup flow was added. 
 - **Runtime/UI:** Opened WooCommerce → Order Rescue Hub. The React inbox rendered the Exceptions heading, count of four cases, order search, state/reason/priority/age filters, case rows, and Review controls. The visible cases were #49, #85, #51, and #52; all showed Open. This confirms the live Free dashboard no longer renders blank on Build 50.
 - **Mutation boundary:** This was a read-only render check. No case was opened or edited, and no order/payment/customer/inventory action was performed.
 - **Site notices:** WordPress admin still emitted the existing `ob_end_flush()` notice from `wp-includes/functions.php:5581`; it is outside the plugin.
-- **Limits:** This closes Build 50 installation identity and inbox rendering only. It does not prove Pro screens, alert delivery, workflow runtime, broad compatibility, full accessibility/performance, or submission readiness. Phase 7 remains in progress at 90%. No merchant CLI work was added.
+- **Limits:** This closes Build 50 installation identity and inbox rendering only. It does not prove Pro screens, alert delivery, workflow runtime, broad compatibility, full accessibility/performance, or submission readiness. Phase 7 progress is 4/10 gates (40%); see the active checklist. No merchant CLI work was added.
 
 
 ## 2026-11-10 — Cleared-reason workflow regression fixed (Build 51)
@@ -136,4 +136,21 @@ No WP-CLI command, CLI-only merchant feature, or merchant setup flow was added. 
 - **Fix:** Emit the reason-change hook only when the new normalized reason set is non-empty and differs from the previous set. Clearing all reasons follows the existing case auto-resolution path without a misleading reason-change event.
 - **Regression check:** Extended the isolated WordPress/MySQL database integration test: a real non-empty reason change emits exactly one hook; clearing the final reason emits none and the case resolves closed.
 - **CI/package:** GitHub Actions run [42696965927](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42696965927) passed the new database-backed assertion, migration and permission checks, detector/installer/case/Pro smoke checks, PHP 8.3/8.4/8.5 matrix, and ZIP assembly. Build artifact `13710355705`, `wperh-staging-test-51-1-485484e34b756fe03fa617b5af70ad67bb26c940`; artifact digest `sha256:b77c4d3c3aea9fb4da7116465679d66727a9c965abe42e26d7faf172070bfc51`; inner install ZIP SHA-256 `d7331511603fd5d103b09ecbe1ab9f2af6614dfd784e668dd10ed5cafc3b7fa7`.
-- **Staging boundary:** Build 50 remains the last confirmed live install; Build 51 has not yet been installed on staging. No order/payment/customer/inventory mutation and no merchant CLI task was added. Phase 7 remains in progress at 90%.
+- **Staging boundary:** Build 50 remains the last confirmed live install; Build 51 has not yet been installed on staging. No order/payment/customer/inventory mutation and no merchant CLI task was added. Phase 7 progress is 4/10 gates (40%); see the active checklist.
+
+
+## 2026-11-10 — Plan and execution protocol correction
+
+- **Why work looped:** The old handoff prompt asked agents to report the phase and “make only the deliverable” but did not require them to continue after an intermediate success. Phase 7 used an unweighted 90% estimate while several gates were still only partial. The package/staging loop was also treated as the whole next step, rather than keeping independent CI, code, accessibility, security, and compatibility work moving.
+- **Plan changes:** `AGENTS.md` and `docs/AI-PLAN.md` now require agents to select the next open task, continue after each passing check without awaiting another prompt, use concrete blockers only, and avoid status-only replies while work is available. Added ten binary P7 gates with acceptance evidence and next actions. External directory/Marketplace approval is separated into Phases 8–9.
+- **Progress correction:** Replaced the unsupported 90% with 4/10 gates (40%): PHP lint/smoke matrix, HPOS/legacy runtime, migration/idempotency, and the user-approved multilingual dry-run. Partial gates count as open.
+- **Current checkpoint:** Build 51 source commit `485484e34b756fe03fa617b5af70ad67bb26c940`; CI run `42696965927` and package artifact `13710355705` passed. Build 50 is still the browser-confirmed staging install. First open task is **P7-02**: define minimum/current WP/Woo targets from the documented platform baseline and implement compatibility matrix coverage. P7-05 can proceed in parallel after the baseline task; neither requires a new user answer.
+- **No CLI work item, command, or merchant CLI setup was introduced.**
+
+
+## 2026-11-10 — P7-02 L-1 compatibility matrix added
+
+- **Version basis:** WooCommerce's official L-1 guidance calls for the latest patch in the current and previous stable series; the Marketplace asks extensions to support the two latest WordPress and WooCommerce majors. WordPress release archive at this snapshot lists 7.1.4 and 7.0.8; WooCommerce releases list 11.2.2 and 11.1.2. The updated matrix is four cells: WP 7.0.8/7.1.4 × Woo 11.1.2/11.2.2, PHP 8.3.
+- **Implementation:** Added `tests/CompatibilityMatrixSmokeTest.php` and a four-cell GitHub Actions job. Each isolated MySQL job downloads the pinned WP/Woo packages, activates both plugins, verifies Hub schema/admin-menu/REST registration, and requests the empty case list. The test uses PHP internally in disposable CI; it adds no merchant-facing CLI command or setup.
+- **Verification status:** Static diff and whitespace validation pending; the CI matrix cannot be marked passed until the new workflow run completes. This initial smoke does not yet cover populated order detail, update/upgrade, or browser rendering; those remain P7-02 follow-up acceptance.
+- **Progress:** P7-02 remains open until matrix CI passes and the populated detail/upgrade evidence is added. Total stays 4/10 (40%).

@@ -387,3 +387,21 @@
 - **Regression test:** The isolated WordPress/MySQL integration test verifies that a real non-empty reason change emits one hook, while clearing the last reason emits none and closes the case.
 - **Verification:** GitHub Actions run [42696965927](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42696965927) passed the database-backed regression, migration/permissions, focused plugin smoke tests, PHP 8.3/8.4/8.5 matrix, and staging ZIP assembly. Artifact `13710355705`; digest `sha256:b77c4d3c3aea9fb4da7116465679d66727a9c965abe42e26d7faf172070bfc51`; install ZIP SHA-256 `d7331511603fd5d103b09ecbe1ab9f2af6614dfd784e668dd10ed5cafc3b7fa7`.
 - **Release state:** Build 50 is the last staging build confirmed in the browser. Build 51 is ready for staging installation; Phase 7 is still 90% and incomplete. No order/customer/payment/stock action or CLI work was done.
+
+
+## 2026-11-10 — Phase 7 plan and execution process repaired
+
+- **Diagnosis:** Prior handoff wording allowed work to stop after one deliverable and status updates; Phase 7 had a subjective 90% estimate without binary acceptance gates; staging artifact installation was allowed to dominate follow-up instead of continuing independent work.
+- **Repository changes:** `AGENTS.md` and `docs/AI-PLAN.md` now require uninterrupted task progression after passing checks, concrete-only blockers, measured progress, a precise checkpoint, and no status-only turn while work is available. Added P7-01 through P7-10 with acceptance criteria and next actions. Marketplace review is separated into Phases 8–9.
+- **Progress reset:** Prior 90% withdrawn. Four of ten binary P7 gates are fully accepted (P7-01 PHP matrix, P7-03 HPOS/legacy runtime, P7-04 migration/idempotency, P7-06 agreed multilingual dry-run): **40%**. Partial evidence does not count.
+- **Latest code evidence:** Build 51 commit `485484e34b756fe03fa617b5af70ad67bb26c940`, CI run `42696965927` passed the cleared-reason workflow regression and package build. Build 50 remains the last browser-confirmed staging version.
+- **Next action:** P7-02 — derive minimum/current WP/Woo test targets from the repository baseline, then add an executable compatibility matrix. No new user answer is required to start. P7-05 security negative cases can proceed independently after P7-02 is underway.
+- **Boundary:** No merchant CLI task/feature was created; no staging data changed during this planning correction.
+
+
+## 2026-11-10 — P7-02 version baseline and compatibility smoke started
+
+- **Official version basis:** As of this snapshot, the WordPress release archive lists 7.1.4 and 7.0.8 as the latest patches in its two current series; WooCommerce releases list 11.2.2 and 11.1.2. Woo's official L-1 policy tests latest patches for the latest and previous series, and Marketplace submission requires support for the two latest major versions. Sources and target PHP version are recorded in `docs/PLATFORM-BASELINE.md`.
+- **Working CI deliverable:** Added a four-cell GitHub Actions compatibility job for WP 7.0.8/7.1.4 × WooCommerce 11.1.2/11.2.2 on PHP 8.3, with an isolated MySQL service and a clean activation/schema/admin-menu/REST-empty-list smoke test.
+- **Scope limit:** This first matrix job does not prove populated order detail, upgrade compatibility, HPOS/legacy cells or browser UI; those stay explicit P7 follow-ups. CI has not yet run against the new matrix, so no pass is claimed.
+- **Next:** Let the workflow run, fix any compatibility failures, then add/populate the order detail and upgrade cases. P7-02 remains open; Phase 7 stays 4/10 (40%). No merchant CLI task/feature added.
