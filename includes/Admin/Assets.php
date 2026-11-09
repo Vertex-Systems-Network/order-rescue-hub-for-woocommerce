@@ -30,7 +30,7 @@ final class Assets
             true
         );
 
-        wp_set_script_translations('wperh-admin', 'wpessential-order-rescue-hub', WPERH_PATH . 'languages');
+        wp_set_script_translations('wperh-admin', 'wpessential-order-rescue-hub-woocommerce', WPERH_PATH . 'languages');
 
         wp_localize_script('wperh-admin', 'wperhSettings', array(
             'apiRoot' => esc_url_raw(rest_url('wperh/v1/')),

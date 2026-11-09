@@ -6,7 +6,7 @@
  * Requires at least: 7.0
  * Requires PHP: 8.3
  * Requires Plugins: woocommerce
- * Text Domain: wpessential-order-rescue-hub
+ * Text Domain: wpessential-order-rescue-hub-woocommerce
  * Domain Path: /languages
  * License: GPL-2.0-or-later
  */
@@ -31,7 +31,7 @@ add_filter('plugin_row_meta', static function (array $links, string $file): arra
     }
 
     $links[] = sprintf(
-        esc_html__('Build %1$s · %2$s', 'wpessential-order-rescue-hub'),
+        esc_html__('Build %1$s · %2$s', 'wpessential-order-rescue-hub-woocommerce'),
         WPERH_BUILD_ID,
         substr(WPERH_BUILD_COMMIT, 0, 12)
     );
@@ -45,7 +45,7 @@ if (is_readable($wperh_autoloader)) {
 } else {
     add_action('admin_notices', static function () {
         echo '<div class="notice notice-error"><p>' .
-            esc_html__('Order Rescue Hub could not load its Composer autoloader. Reinstall the plugin package.', 'wpessential-order-rescue-hub') .
+            esc_html__('Order Rescue Hub could not load its Composer autoloader. Reinstall the plugin package.', 'wpessential-order-rescue-hub-woocommerce') .
             '</p></div>';
     });
     return;

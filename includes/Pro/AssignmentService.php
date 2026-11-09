@@ -18,11 +18,11 @@ final class AssignmentService
     {
         $case = $this->repository->find($case_id);
         if (!$case) {
-            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub'), array('status' => 404));
+            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 404));
         }
 
         if ('closed' === $case['state']) {
-            return new WP_Error('wperh_case_closed', __('Closed cases cannot be reassigned.', 'wpessential-order-rescue-hub'), array('status' => 409));
+            return new WP_Error('wperh_case_closed', __('Closed cases cannot be reassigned.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 409));
         }
 
         if (0 === $user_id) {
@@ -32,7 +32,7 @@ final class AssignmentService
             $old = $case['assignee_id'];
             $state = 'assigned' === $case['state'] ? 'open' : $case['state'];
             if (!$this->repository->update_case($case, array('assignee_id' => null, 'state' => $state), 'case_unassigned', array('previous_user_id' => $old))) {
-                return new WP_Error('wperh_assignment_stale', __('This case changed. Refresh it and try again.', 'wpessential-order-rescue-hub'), array('status' => 409));
+                return new WP_Error('wperh_assignment_stale', __('This case changed. Refresh it and try again.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 409));
             }
             $updated = $this->repository->find($case_id);
             do_action('wperh_case_assigned', $updated, $old, null);
@@ -44,7 +44,7 @@ final class AssignmentService
 
         $user = get_user_by('id', $user_id);
         if (!$user || !user_can($user, 'manage_woocommerce') || !user_can($user, 'edit_shop_orders')) {
-            return new WP_Error('wperh_assignee_invalid', __('Choose a WooCommerce manager who can manage store orders.', 'wpessential-order-rescue-hub'), array('status' => 400));
+            return new WP_Error('wperh_assignee_invalid', __('Choose a WooCommerce manager who can manage store orders.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 400));
         }
 
         if ((int) $case['assignee_id'] === $user_id) {
@@ -59,7 +59,7 @@ final class AssignmentService
             array('previous_user_id' => $old, 'new_user_id' => $user_id)
         );
         if (!$ok) {
-            return new WP_Error('wperh_assignment_stale', __('This case changed. Refresh it and try again.', 'wpessential-order-rescue-hub'), array('status' => 409));
+            return new WP_Error('wperh_assignment_stale', __('This case changed. Refresh it and try again.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 409));
         }
 
         $updated = $this->repository->find($case_id);

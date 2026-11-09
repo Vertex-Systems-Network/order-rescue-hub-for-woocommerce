@@ -61,7 +61,7 @@ final class Plugin
         echo '<div class="notice notice-warning"><p>';
         echo esc_html__(
             'WPEssential Order Rescue Hub requires an active, supported WooCommerce installation. Order monitoring is paused until WooCommerce is available.',
-            'wpessential-order-rescue-hub'
+            'wpessential-order-rescue-hub-woocommerce'
         );
         echo '</p></div>';
     }

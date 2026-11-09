@@ -45,7 +45,7 @@ final class Detector
         if (!isset($schedules['wperh_fifteen_minutes'])) {
             $schedules['wperh_fifteen_minutes'] = array(
                 'interval' => 15 * MINUTE_IN_SECONDS,
-                'display' => __('Every 15 minutes (Order Rescue Hub)', 'wpessential-order-rescue-hub'),
+                'display' => __('Every 15 minutes (Order Rescue Hub)', 'wpessential-order-rescue-hub-woocommerce'),
             );
         }
         return $schedules;

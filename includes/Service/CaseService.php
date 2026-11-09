@@ -18,17 +18,17 @@ final class CaseService
     {
         $case = $this->repository->find($case_id);
         if (!$case) {
-            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub'), array('status' => 404));
+            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 404));
         }
 
         $note = trim(sanitize_textarea_field($raw_note));
         $note_length = function_exists('mb_strlen') ? mb_strlen($note) : strlen($note);
         if ('' === $note || $note_length > 2000) {
-            return new WP_Error('wperh_note_invalid', __('Enter a note of 1 to 2,000 characters.', 'wpessential-order-rescue-hub'), array('status' => 400));
+            return new WP_Error('wperh_note_invalid', __('Enter a note of 1 to 2,000 characters.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 400));
         }
 
         if (!$this->repository->add_note($case_id, $note)) {
-            return new WP_Error('wperh_note_failed', __('The private note could not be saved.', 'wpessential-order-rescue-hub'), array('status' => 500));
+            return new WP_Error('wperh_note_failed', __('The private note could not be saved.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 500));
         }
 
         do_action('wperh_case_note_added', $case_id);
@@ -39,11 +39,11 @@ final class CaseService
     {
         $case = $this->repository->find($case_id);
         if (!$case) {
-            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub'), array('status' => 404));
+            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 404));
         }
 
         if ((int) $case['row_version'] !== $expected_version) {
-            return new WP_Error('wperh_case_stale', __('This case changed in another session. Refresh it and try again.', 'wpessential-order-rescue-hub'), array('status' => 409));
+            return new WP_Error('wperh_case_stale', __('This case changed in another session. Refresh it and try again.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 409));
         }
 
         $allowed = array(
@@ -56,12 +56,12 @@ final class CaseService
         );
 
         if (!in_array($target, $allowed[$case['state']] ?? array(), true)) {
-            return new WP_Error('wperh_transition_invalid', __('That case transition is not allowed.', 'wpessential-order-rescue-hub'), array('status' => 400));
+            return new WP_Error('wperh_transition_invalid', __('That case transition is not allowed.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 400));
         }
 
         $valid_outcomes = array('resolved', 'dismissed', 'duplicate', 'no_action_required');
         if ('closed' === $target && !in_array($outcome, $valid_outcomes, true)) {
-            return new WP_Error('wperh_outcome_required', __('Choose a resolution outcome before closing the case.', 'wpessential-order-rescue-hub'), array('status' => 400));
+            return new WP_Error('wperh_outcome_required', __('Choose a resolution outcome before closing the case.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 400));
         }
 
         $changes = array('state' => $target);
@@ -88,7 +88,7 @@ final class CaseService
         }
 
         if (!$this->repository->update_case($case, $changes, 'state_changed', $payload)) {
-            return new WP_Error('wperh_case_conflict', __('The case changed while you were saving. Refresh and try again.', 'wpessential-order-rescue-hub'), array('status' => 409));
+            return new WP_Error('wperh_case_conflict', __('The case changed while you were saving. Refresh and try again.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 409));
         }
 
         do_action('wperh_case_transitioned', $case_id, $target);

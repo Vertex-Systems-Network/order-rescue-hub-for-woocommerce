@@ -53,8 +53,8 @@ final class AlertService
         if (!$recipients) {
             $recipients = array(get_option('admin_email'));
         }
-        $subject = sprintf(__('[%s] Order Rescue Hub alert test', 'wpessential-order-rescue-hub'), wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES));
-        $message = __('This is a test alert from WPEssential Order Rescue Hub. No customer or order data is included.', 'wpessential-order-rescue-hub');
+        $subject = sprintf(__('[%s] Order Rescue Hub alert test', 'wpessential-order-rescue-hub-woocommerce'), wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES));
+        $message = __('This is a test alert from WPEssential Order Rescue Hub. No customer or order data is included.', 'wpessential-order-rescue-hub-woocommerce');
         return wp_mail($recipients, $subject, $message);
     }
 
@@ -87,9 +87,9 @@ final class AlertService
         }
 
         $url = admin_url('admin.php?page=wperh-order-rescue-hub');
-        $subject = sprintf(__('[%s] Order exception needs review', 'wpessential-order-rescue-hub'), wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES));
+        $subject = sprintf(__('[%s] Order exception needs review', 'wpessential-order-rescue-hub-woocommerce'), wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES));
         $message = sprintf(
-            __("An order exception case needs review. Case #%1$d, order #%2$d. Open the Order Rescue Hub: %3$s", 'wpessential-order-rescue-hub'),
+            __("An order exception case needs review. Case #%1$d, order #%2$d. Open the Order Rescue Hub: %3$s", 'wpessential-order-rescue-hub-woocommerce'),
             (int) $case['case_id'],
             (int) $case['order_id'],
             esc_url_raw($url)

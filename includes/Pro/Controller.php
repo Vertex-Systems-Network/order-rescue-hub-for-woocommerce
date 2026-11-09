@@ -57,7 +57,7 @@ final class Controller
     {
         $data = $request->get_json_params();
         if (!is_array($data)) {
-            return new WP_Error('wperh_settings_invalid', __('Settings payload is invalid.', 'wpessential-order-rescue-hub'), array('status' => 400));
+            return new WP_Error('wperh_settings_invalid', __('Settings payload is invalid.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 400));
         }
         return rest_ensure_response(Settings::save($data));
     }
@@ -78,10 +78,10 @@ final class Controller
     {
         $case = $this->repository->find(absint($request['id']));
         if (!$case) {
-            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub'), array('status' => 404));
+            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 404));
         }
         if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_order', (int) $case['order_id'])) {
-            return new WP_Error('wperh_forbidden', __('You cannot manage this order.', 'wpessential-order-rescue-hub'), array('status' => 403));
+            return new WP_Error('wperh_forbidden', __('You cannot manage this order.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 403));
         }
         $result = $this->assignment->assign((int) $case['case_id'], absint($request->get_param('user_id')));
         return is_wp_error($result) ? $result : rest_ensure_response($result);
@@ -91,6 +91,6 @@ final class Controller
     {
         return $this->alerts->test_delivery()
             ? rest_ensure_response(array('sent' => true))
-            : new WP_Error('wperh_alert_failed', __('The test alert could not be sent. Check WordPress mail delivery and try again.', 'wpessential-order-rescue-hub'), array('status' => 502));
+            : new WP_Error('wperh_alert_failed', __('The test alert could not be sent. Check WordPress mail delivery and try again.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 502));
     }
 }

@@ -66,7 +66,7 @@ final class CasesController
         $state = sanitize_key((string) $request->get_param('state'));
         $allowed_states = array('all', 'open', 'triaged', 'waiting', 'assigned', 'escalated', 'closed');
         if ($state && !in_array($state, $allowed_states, true)) {
-            return new WP_Error('wperh_filter_invalid', __('Invalid case-state filter.', 'wpessential-order-rescue-hub'), array('status' => 400));
+            return new WP_Error('wperh_filter_invalid', __('Invalid case-state filter.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 400));
         }
 
         $data = $this->repository->list(array(
@@ -88,10 +88,10 @@ final class CasesController
     {
         $case = $this->repository->find(absint($request['id']));
         if (!$case) {
-            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub'), array('status' => 404));
+            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 404));
         }
         if (!$this->can_access_order((int) $case['order_id'])) {
-            return new WP_Error('wperh_forbidden', __('You cannot view this order.', 'wpessential-order-rescue-hub'), array('status' => 403));
+            return new WP_Error('wperh_forbidden', __('You cannot view this order.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 403));
         }
 
         $case['order'] = $this->order_snapshot((int) $case['order_id']);
@@ -103,10 +103,10 @@ final class CasesController
     {
         $case = $this->repository->find(absint($request['id']));
         if (!$case) {
-            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub'), array('status' => 404));
+            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 404));
         }
         if (!$this->can_access_order((int) $case['order_id'])) {
-            return new WP_Error('wperh_forbidden', __('You cannot view this order.', 'wpessential-order-rescue-hub'), array('status' => 403));
+            return new WP_Error('wperh_forbidden', __('You cannot view this order.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 403));
         }
 
         $result = $this->service->add_note((int) $case['case_id'], (string) $request->get_param('note'));
@@ -117,10 +117,10 @@ final class CasesController
     {
         $case = $this->repository->find(absint($request['id']));
         if (!$case) {
-            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub'), array('status' => 404));
+            return new WP_Error('wperh_case_missing', __('Case not found.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 404));
         }
         if (!$this->can_access_order((int) $case['order_id'])) {
-            return new WP_Error('wperh_forbidden', __('You cannot manage this order.', 'wpessential-order-rescue-hub'), array('status' => 403));
+            return new WP_Error('wperh_forbidden', __('You cannot manage this order.', 'wpessential-order-rescue-hub-woocommerce'), array('status' => 403));
         }
 
         $result = $this->service->transition(
@@ -184,7 +184,7 @@ final class CasesController
             $event['actor_name'] = '';
             if (!empty($event['actor_id'])) {
                 $actor = get_userdata((int) $event['actor_id']);
-                $event['actor_name'] = $actor ? $actor->display_name : __('Former user', 'wpessential-order-rescue-hub');
+                $event['actor_name'] = $actor ? $actor->display_name : __('Former user', 'wpessential-order-rescue-hub-woocommerce');
             }
         }
 
