@@ -114,7 +114,7 @@ final class Settings
     {
         $clean = array();
         $ids = array();
-        $allowed_triggers = array('case.opened', 'case.age_check', 'sla.warning', 'sla.breached');
+        $allowed_triggers = array('case.opened', 'case.state_changed', 'case.reason_changed', 'case.age_check', 'sla.warning', 'sla.breached');
         $allowed_actions = array('set_priority', 'assign_case', 'set_case_state', 'admin_alert');
         foreach (array_slice($rules, 0, 20) as $rule) {
             if (!is_array($rule)) {
