@@ -89,7 +89,7 @@ final class AlertService
         $url = admin_url('admin.php?page=wperh-order-rescue-hub');
         $subject = sprintf(__('[%s] Order exception needs review', 'wpessential-order-rescue-hub-woocommerce'), wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES));
         $message = sprintf(
-            __("An order exception case needs review. Case #%1$d, order #%2$d. Open the Order Rescue Hub: %3$s", 'wpessential-order-rescue-hub-woocommerce'),
+            __('An order exception case needs review. Case #%1$d, order #%2$d. Open the Order Rescue Hub: %3$s', 'wpessential-order-rescue-hub-woocommerce'),
             (int) $case['case_id'],
             (int) $case['order_id'],
             esc_url_raw($url)
