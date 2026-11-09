@@ -96,7 +96,13 @@ final class AlertService
         );
         $sent = false;
         try {
-            $sent = wp_mail($recipients, $subject, $message);
+            try {
+                $sent = wp_mail($recipients, $subject, $message);
+            } catch (\\Throwable $exception) {
+                // Treat transport exceptions like a failed delivery so the bounded
+                // retry path runs and the scheduler callback does not fatal.
+                $sent = false;
+            }
             $this->repository->record_event(
                 (int) $case['case_id'],
                 'alert_delivery',
