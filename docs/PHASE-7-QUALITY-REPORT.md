@@ -1,7 +1,7 @@
 # Phase 7 — Compatibility and quality audit
 
 **Started:** 2026-11-07  
-**Status:** In progress — build-26-1's React dashboard and core exception workflow were verified; build-27-1 (source commit `69c2d845823a`) is now installed and its currency rendering fix has been verified on staging. CI migration, permission-denial, synthetic 10,000-case query, PHP 8.3/8.4/8.5 smoke/lint, and package checks also pass. Cron/retry runtime, broader version/security coverage, full accessibility, representative-host performance, and production release gates remain open.
+**Status:** In progress — build-31-1 (source commit `f2be75aa1c3b`) is installed and active on `/el-test`; React inbox, populated case detail, order search, reason filter, and age filter were verified on staging. CI migration, permission-denial, synthetic 10,000-case query, PHP 8.3/8.4/8.5 smoke/lint, and package checks also pass. Cron/Pro retry runtime, broader version/security coverage, full accessibility, representative-host performance, and production release gates remain open.
 **Progress estimate:** 88%
 **Scope:** PHP/plugin bootstrap, schema upgrades, WooCommerce/HPOS access paths, multilingual expectations, REST capability boundaries, accessibility, performance, and package readiness.
 
@@ -66,5 +66,15 @@ No WP-CLI command, CLI-only merchant feature, or merchant setup flow was added. 
 - **Environment:** Fresh WordPress Playground with WordPress 7.1.4 and WooCommerce 11.2.2.
 - **Install/UI:** Build 31 activated successfully; Order Rescue Hub menu and admin inbox rendered. The empty state, search field, case-state/reason/priority/age filters, table headings, and pagination controls were present. This was an empty-store smoke check; it did not exercise case actions or populated order data.
 - **Fix included:** Removed an early translated string from `plugin_row_meta` build metadata, avoiding the plugin text-domain translation call before WordPress `init`.
-- **Scope:** Build 31 was tested in isolated Playground, not uploaded to the merchant staging site. It does not supersede staging build 27 evidence. No order/payment/refund/customer/stock data was changed. No CLI task or merchant-facing CLI feature was added.
-- **Remaining:** Plugin-specific PHP log confirmation, populated-order workflows on build 31, staging retest, cron/retry runtime, broader compatibility/security/accessibility/performance evidence, and Free/Pro production package review remain open. Phase 7 stays at 88% and is not certified complete.
+- **Scope:** At this point build 31 had only been tested in isolated Playground; the staging upload and populated-order retest are recorded in the following entry. No order/payment/refund/customer/stock data was changed. No CLI task or merchant-facing CLI feature was added.
+- **Remaining at that checkpoint:** Plugin-specific PHP log confirmation, populated-order workflows, staging retest, cron/retry runtime, broader compatibility/security/accessibility/performance evidence, and Free/Pro production package review remained open.
+
+
+## Build 31 staging verification (2026-11-09)
+
+- **Installed package:** Uploaded the CI artifact for commit `f2be75aa1c3ba2041f0189ae679948a035d72172` through WordPress Add Plugins and used the WordPress-provided “Replace current with uploaded” flow. WordPress reported “Plugin updated successfully.” The installed Plugins screen confirms active `Version 0.1.0 | Build build-31-1 · f2be75aa1c3b`.
+- **Environment:** WordPress 7.1.4, WooCommerce 11.2.2, PHP 8.3.36, MySQL 8.0.46; HPOS is enabled. The WooCommerce system report currently identifies environment type as `production` despite the `/el-test` path, so the QA site should not be assumed to have staging-only safeguards.
+- **Runtime/UI:** Build-31 inbox rendered two existing open QA cases (#49 and #85). Opened #85 details and confirmed pending status, PKR `₨12` total, incomplete shipping, item display, and private case history. Search `85` returned only #85. “Missing shipping details” filter retained #85. “Older than 24 hours” returned #49 only while #85 remained excluded based on its recent first-detected time. Reset search and filters; final inbox returned both cases.
+- **Browser runtime:** No Order Rescue Hub console error appeared in the captured error/warning entries. Captured errors were from the browser extension content script. Admin requests displayed the existing WordPress core `ob_end_flush()` notice at `wp-includes/functions.php:5581`. WooCommerce Logs listed no `fatal-errors` file dated 2026-11-09; this is not proof against hidden server/PHP issues, and no app-specific PHP log stream was available.
+- **Data boundary:** No order, payment, refund, cancellation, customer, stock, or case state was changed during this build-31 retest. Search and filters were restored to defaults.
+- **Status:** Closes the build-31 staging installation and basic read-only workflow retest only. Cron sweep execution, Pro retry/runtime, cross-version matrices, full security and accessibility coverage, representative-host performance, release Free/Pro packaging, and submission readiness remain open. Progress remains an estimate of 88%; Phase 7 is not complete or release-certified.
