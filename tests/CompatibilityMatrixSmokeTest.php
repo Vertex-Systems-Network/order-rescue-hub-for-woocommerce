@@ -265,31 +265,28 @@ if (!($allowed_scoped_detail instanceof WP_REST_Response)
 }
 wp_set_current_user(0);
 
-// Exercise WordPress core's REST cookie-auth nonce check over the registered
-// route, with a disposable session cookie. No browser or customer session is used.
+// Exercise the same WordPress REST authentication filter used by cookie-auth
+// requests. rest_do_request() dispatches routes directly and does not run this filter.
 wp_set_current_user((int) $test_admin->ID);
-$session_expiration = time() + DAY_IN_SECONDS;
-$session_token = WP_Session_Tokens::get_instance((int) $test_admin->ID)->create($session_expiration);
-$previous_logged_in_cookie = $_COOKIE[LOGGED_IN_COOKIE] ?? null;
-$_COOKIE[LOGGED_IN_COOKIE] = wp_generate_auth_cookie(
-    (int) $test_admin->ID,
-    $session_expiration,
-    'logged_in',
-    $session_token
-);
-$invalid_nonce_request = new WP_REST_Request('GET', '/wperh/v1/cases');
-$invalid_nonce_request->set_header('X-WP-Nonce', 'invalid-wperh-rest-nonce');
-$invalid_nonce_response = rest_do_request($invalid_nonce_request);
-if (403 !== $invalid_nonce_response->get_status()) {
-    fwrite(STDERR, 'An authenticated REST request with an invalid nonce returned HTTP ' . $invalid_nonce_response->get_status() . "; expected 403.\n");
+$previous_nonce_header = $_SERVER['HTTP_X_WP_NONCE'] ?? null;
+$_SERVER['HTTP_X_WP_NONCE'] = 'invalid-wperh-rest-nonce';
+$invalid_nonce_result = apply_filters('rest_authentication_errors', null);
+if (!is_wp_error($invalid_nonce_result) || 'rest_cookie_invalid_nonce' !== $invalid_nonce_result->get_error_code()
+    || 403 !== $invalid_nonce_result->get_error_data()['status']
+) {
+    fwrite(STDERR, "WordPress REST authentication did not reject the invalid nonce with HTTP 403.\n");
     exit(1);
 }
-$valid_nonce_request = new WP_REST_Request('GET', '/wperh/v1/cases');
-$valid_nonce_request->set_header('X-WP-Nonce', wp_create_nonce('wp_rest'));
-$valid_nonce_response = rest_do_request($valid_nonce_request);
-if (200 !== $valid_nonce_response->get_status()) {
-    fwrite(STDERR, 'An authenticated REST request with a valid nonce returned HTTP ' . $valid_nonce_response->get_status() . "; expected 200.\n");
+$_SERVER['HTTP_X_WP_NONCE'] = wp_create_nonce('wp_rest');
+$valid_nonce_result = apply_filters('rest_authentication_errors', null);
+if (true !== $valid_nonce_result) {
+    fwrite(STDERR, "WordPress REST authentication did not accept a valid nonce.\n");
     exit(1);
+}
+if (null === $previous_nonce_header) {
+    unset($_SERVER['HTTP_X_WP_NONCE']);
+} else {
+    $_SERVER['HTTP_X_WP_NONCE'] = $previous_nonce_header;
 }
 if (null === $previous_logged_in_cookie) {
     unset($_COOKIE[LOGGED_IN_COOKIE]);
@@ -301,7 +298,7 @@ wp_set_current_user(0);
 $wordpress_version = get_bloginfo('version');
 $woocommerce_version = defined('WC_VERSION') ? WC_VERSION : 'unknown';
 fwrite(STDOUT, sprintf(
-    "Compatibility smoke passed: WordPress %s, WooCommerce %s, activation, 1.0.0-to-1.1.0 upgrade, populated order detail, cross-order capability isolation, admin callback, REST permission boundary, and invalid/valid REST nonce behavior.\n",
+    "Compatibility smoke passed: WordPress %s, WooCommerce %s, activation, 1.0.0-to-1.1.0 upgrade, populated order detail, cross-order capability isolation, admin callback, REST permission boundary, and invalid/valid WordPress REST authentication-filter nonce behavior.\n",
     $wordpress_version,
     $woocommerce_version
 ));

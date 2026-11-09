@@ -436,3 +436,10 @@
 - **P7-07 implementation started:** Case detail now moves keyboard focus into the details region, Escape closes it, and focus returns to the activating control. Errors/successes have explicit live semantics, loading state is announced with `aria-busy`, and the app root no longer marks the entire UI as a live region. Order detail buttons have contextual accessible names. Removed duplicate Pro assignment/timezone fields found during source review.
 - **Local checks:** `node --check assets/admin.js`, CI YAML parsing, forbidden-action static scan, and `git diff --check` pass. PHP runtime is unavailable locally. Do not count P7-05 or P7-07 complete until the matrix and manual keyboard/screen-reader review pass.
 - **Next:** Push the fixture and accessibility fixes, inspect the complete new CI run, then continue the remaining Phase 7 gates.
+
+## 2026-11-10 — Cross-order isolation passes; nonce harness corrected
+
+- **Run 65:** Package job passed PHP 8.3/8.4/8.5 lint, migration and smoke checks, autonomous-action guard, and ZIP assembly (artifact `13714614406`, digest `sha256:e33a7bb7a9f9c4970164728014703ecf87d791b9bae3ee73cabbd73d88a90682`). All four WP/Woo matrix cells passed activation, upgrade, populated detail, and the cross-order capability test.
+- **Remaining failure:** Each cell then failed only at the REST nonce assertion because the test used `rest_do_request()`, which directly dispatches routes without applying the REST authentication filter. This was a harness mismatch, not a failed runtime permission check.
+- **Correction:** The nonce assertion now invokes WordPress's registered `rest_authentication_errors` filter directly with invalid and valid `X-WP-Nonce` values and expects a 403 `rest_cookie_invalid_nonce` error then `true` for the valid nonce.
+- **Next:** Run the corrected test in all four matrix cells. P7-05 stays open until CI passes.
