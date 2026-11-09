@@ -25,11 +25,13 @@ final class Plugin
 
     public function boot(): void
     {
-        load_plugin_textdomain(
-            'wpessential-order-rescue-hub',
-            false,
-            dirname(plugin_basename(WPERH_FILE)) . '/languages'
-        );
+        add_action('init', static function (): void {
+            load_plugin_textdomain(
+                'wpessential-order-rescue-hub',
+                false,
+                dirname(plugin_basename(WPERH_FILE)) . '/languages'
+            );
+        }, 0);
 
         if (!$this->woocommerce_ready()) {
             add_action('admin_notices', array($this, 'dependency_notice'));
