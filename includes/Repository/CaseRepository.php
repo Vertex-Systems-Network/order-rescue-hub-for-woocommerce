@@ -209,7 +209,7 @@ final class CaseRepository
         $updated = $this->find((int) $existing['case_id']);
         if ($updated && $was_closed && $reason_codes) {
             do_action('wperh_case_detected', $updated);
-        } elseif ($updated && $reason_codes !== $existing['reason_codes']) {
+        } elseif ($updated && $reason_codes && $reason_codes !== $existing['reason_codes']) {
             do_action('wperh_case_reasons_changed', $updated);
         }
         return $updated;

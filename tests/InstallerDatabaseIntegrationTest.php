@@ -185,6 +185,29 @@ if (!is_wp_error($denied_transition) || 403 !== $denied_transition->get_error_da
 wp_set_current_user(0);
 fwrite(STDOUT, "WordPress subscriber list/detail/mutation permission checks passed.\n");
 
+$reason_change_events = 0;
+add_action('wperh_case_reasons_changed', static function () use (&$reason_change_events): void {
+    $reason_change_events++;
+});
+$reason_case = $repository->detect(424243, array('pending_payment'), array('status' => 'pending'));
+if (!$reason_case) {
+    fwrite(STDERR, "Could not create the isolated reason-change workflow fixture.\n");
+    exit(1);
+}
+$reason_case = $repository->detect(424243, array('failed_payment'), array('status' => 'failed'));
+if (1 !== $reason_change_events || !$reason_case || array('failed_payment') !== $reason_case['reason_codes']) {
+    fwrite(STDERR, "A non-empty exception reason change did not emit exactly one reason-change event.\n");
+    exit(1);
+}
+$repository->detect(424243, array(), array());
+$repository->resolve_if_clear(424243);
+$reason_case = $repository->find_by_order(424243);
+if (1 !== $reason_change_events || !$reason_case || 'closed' !== $reason_case['state']) {
+    fwrite(STDERR, "Clearing the last exception reason must resolve the case without firing a stale reason-change workflow.\n");
+    exit(1);
+}
+fwrite(STDOUT, "Case reason-change hooks ignore empty stale reason sets and preserve real reason updates.\n");
+
 $fixture_count = 10000;
 $chunk_size = 250;
 for ($offset = 0; $offset < $fixture_count; $offset += $chunk_size) {
