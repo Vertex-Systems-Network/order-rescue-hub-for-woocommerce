@@ -352,3 +352,12 @@
 - **Regression coverage:** Added `tests/ProSettingsSmokeTest.php` and wired it into the staging-package workflow.
 - **Verification:** GitHub Actions run [42688671803](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42688671803) passed, including PHP 8.3 lint and smoke tests, migration/integration checks, the new Pro trigger sanitizer test, PHP 8.4/8.5 lint and smoke suites, and artifact assembly. Artifact `13705638910`, source commit `737c7b444385121cb35c41240c44b2e746266b0b`.
 - **Limits:** The local environment has no PHP runtime, so execution was delegated to the project CI. This validates settings sanitization but not the Pro browser screen, scheduled retry delivery, or external alert transport. Pro runtime/release review remains open. No CLI task or command feature was added.
+
+
+## 2026-11-10 — Pro alert failure and retry handling fixed
+
+- **Phase:** 7 — compatibility and quality audit; in progress.
+- **Working feature changed:** Pro email alerts now treat a thrown mail transport exception as failed delivery, record the failure outcome, release the duplicate-send lock, and use the existing bounded retry schedule. Also corrected the alert body so PHP preserves positional placeholders used to include case/order IDs and the Hub link.
+- **Regression coverage:** Added `tests/ProAlertSmokeTest.php` for thrown and false send results, audit recording, lock cleanup, retry attempts 2/3 and stop-after-3 behavior, plus successful delivery without retry.
+- **Verification:** CI run [42689685878](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42689685878) passed all PHP 8.3/8.4/8.5 checks, migration/integration smoke tests, Pro settings/alert tests, and package assembly. Artifact `13707285193`, commit `b83f59e92f1a6a565096c7b7a6021ec18afcd935`.
+- **Limits:** Mail transport was mocked in the smoke test. Staging is running the Free build, so live Pro alert delivery remains unverified. No CLI task or command feature was added.
