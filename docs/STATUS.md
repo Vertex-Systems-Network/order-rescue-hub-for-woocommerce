@@ -321,3 +321,14 @@
 - **Browser console:** No Order Rescue Hub JavaScript error was observed. The only error entries were emitted by the browser's installed extension content script (“Error sending browser metadata to extension: Object”); WordPress JQMIGRATE logged normally. The existing WordPress core `ob_end_flush()` notice remains visible on admin pages.
 - **CI/package:** Workflow run `42531841867` passed PHP 8.3/8.4/8.5 lint and smoke checks, migration/idempotence, permission, synthetic query, and package validation. Inner install ZIP SHA-256: `227e28508b6cf839123d6677e19543016c5026d3d71fbe1ba4192c1493b0308c`.
 - **Status:** This closes the build-27 currency rendering retest only. Phase 7 remains in progress at 88%; remaining Pro runtime, broader compatibility/security/accessibility/performance, and final Free/Pro production-package gates remain open. No CLI task was added.
+
+
+## 2026-11-09 — Build 31 isolated Playground verification
+
+- **Phase:** 7 — Compatibility and quality (in progress; 88%).
+- **Build:** `f2be75aa1c3ba2041f0189ae679948a035d72172`; GitHub Actions run `42540326778` passed. Artifact `13640533630`, digest `sha256:894dde25b090aef0965c8d100dc59a5a42cd30030ca5c031bace190853ee5d69`.
+- **Environment:** Fresh WordPress Playground with WordPress 7.1.4 and WooCommerce 11.2.2.
+- **Install/UI:** Build 31 activated successfully; Order Rescue Hub menu and admin inbox rendered. The empty state, search field, case-state/reason/priority/age filters, table headings, and pagination controls were present. This was an empty-store smoke check; it did not exercise case actions or populated order data.
+- **Fix included:** Removed an early translated string from `plugin_row_meta` build metadata, avoiding the plugin text-domain translation call before WordPress `init`.
+- **Scope:** Build 31 was tested in isolated Playground, not uploaded to the merchant staging site. It does not supersede staging build 27 evidence. No order/payment/refund/customer/stock data was changed. No CLI task or merchant-facing CLI feature was added.
+- **Remaining:** Plugin-specific PHP log confirmation, populated-order workflows on build 31, staging retest, cron/retry runtime, broader compatibility/security/accessibility/performance evidence, and Free/Pro production package review remain open. Phase 7 stays at 88% and is not certified complete.
