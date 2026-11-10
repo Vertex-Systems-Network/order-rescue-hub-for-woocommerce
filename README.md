@@ -46,6 +46,25 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 
 **Current verified status (2026-11-10):** Phases 0–6 are complete for their documented implementation scope. Phase 7 has **5/10 binary gates complete (50%)**. P7-05 security acceptance passed in GitHub Actions run [42712129164](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42712129164), commit `402227a95df6a4f173502c27574fa689a8f4be0b`; all five jobs passed, including the four-cell WP/Woo matrix, REST authorization/nonce cases, cross-order isolation, and package build. P7-01 is **open again** after a source audit found pending-payment detection fires after one hour for every payment method while the documented product rule says not to misclassify valid delayed/offline payment; configurable pending-age policy is absent from Pro settings and detector regression coverage. The last browser-confirmed staging install remains Build 50. Build 67 passed CI and produced an Actions artifact, but it was not installed on staging; no staging result is claimed. Next task: define and implement a conservative, configurable pending-payment policy and add focused regression coverage. P7-07 accessibility, P7-08 performance, P7-09 Pro runtime, and P7-10 Free/Pro package acceptance remain open. WPML/Polylang completion is limited to the user-approved dry-run; no vendor runtime certification is claimed. WordPress.org and WooCommerce.com review remains in later distribution phases. The gate ledger and exact evidence are in [docs/AI-PLAN.md](docs/AI-PLAN.md) and [the Phase 7 quality report](docs/PHASE-7-QUALITY-REPORT.md); the source/spec gap review is in [docs/AI-PLAN-AUDIT.md](docs/AI-PLAN-AUDIT.md).
 
+## Phase 7 task tracker
+
+Progress is binary and tied to each gate's acceptance evidence. A gate shows 100% only after all listed checks pass; partial checks remain open. The overall figure is completed gates divided by ten.
+
+| Task | Deliverable | Status | Progress | Start | End / target | Next action |
+|---|---|---|---|---|---|---|
+| P7-01 | Detection fidelity and PHP smoke matrix | Open — reopened | `░░░░░ 0%` | 2026-11-10 | Target: 2027-01-08 | Define safe pending-payment grace policy; align options and UX; implement and test threshold and gateway cases |
+| P7-02 | WordPress/WooCommerce compatibility matrix | Complete | `█████ 100%` | 2026-11-07 | Accepted by 2026-11-10 | Keep the four-cell matrix green on runtime changes |
+| P7-03 | HPOS and legacy order storage | Complete | `█████ 100%` | 2026-11-07 | Accepted by 2026-11-10 | Reopen only if order access paths change |
+| P7-04 | Schema migration and idempotency | Complete | `█████ 100%` | 2026-11-07 | Accepted by 2026-11-10 | Reopen when schema or migration code changes |
+| P7-05 | REST and security acceptance matrix | Complete — CI run 42712129164 | `█████ 100%` | 2026-11-07 | 2026-11-10 | Preserve automated checks; this is not an independent penetration audit |
+| P7-06 | WPML/Polylang agreed dry-run | Complete for approved scope | `█████ 100%` | 2026-11-07 | Accepted by 2026-11-10 | No runtime certification claimed without the products installed |
+| P7-07 | Accessibility acceptance | Open | `░░░░░ 0%` | Not started | Target: 2027-01-08 | Check keyboard, screen reader, focus, contrast, zoom/reflow, reduced motion, empty/error states |
+| P7-08 | Performance acceptance | Open | `░░░░░ 0%` | Not started | Target: 2027-01-08 | Set reproducible budgets; measure bounded Woo order scans, case queries and latency/memory |
+| P7-09 | Pro runtime acceptance | Open | `░░░░░ 0%` | Not started | Target: 2027-01-08 | Verify isolated Pro UI/settings, assignment, SLA, workflows, retries and alerts |
+| P7-10 | Free/Pro engineering packages | Open | `░░░░░ 0%` | Not started | Target: 2027-01-08 | Audit both packages, install/upgrade evidence and hashes; keep ZIPs out of chat |
+
+**Phase 7 total: 5/10 accepted gates (50%).** Current open tasks: P7-01, P7-07, P7-08, P7-09 and P7-10. Gate evidence and definitions: [`docs/AI-PLAN.md`](docs/AI-PLAN.md); audit notes: [`docs/AI-PLAN-AUDIT.md`](docs/AI-PLAN-AUDIT.md).
+
 ## Build a staging test package
 
 A GitHub Actions workflow builds a clean WordPress-installable ZIP when runtime files change on `main`, or when you start it manually. It checks the Composer PSR-4 mapping, confirms the Composer class-collision guard is present, verifies the single plugin header, and checks ZIP integrity and its canonical folder structure. Every run stamps a unique `build-<run number>-<attempt>` ID plus the source commit into the package. The installed plugin displays `Build <ID> · <short commit>` in its Plugins row, and the CSS/JavaScript cache keys use the build ID so updated assets are fetched after each build.
