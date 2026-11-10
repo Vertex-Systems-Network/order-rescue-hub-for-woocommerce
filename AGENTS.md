@@ -2,9 +2,11 @@
 
 ## Before starting
 
-1. Read `README.md` and `docs/STATUS.md`.
-2. Identify the active phase and the requested deliverable. Do not advance a phase by assertion; use its acceptance evidence.
-3. Read relevant specifications in `docs/` and check canonical option keys before proposing a setting or subsystem.
+1. Read `README.md`, `AGENTS.md`, and the current checkpoint at the top of `docs/STATUS.md`.
+2. Treat `docs/AI-PLAN.md` as the canonical executable backlog and `docs/PHASE-7-QUALITY-REPORT.md` as the gate evidence ledger. Append-only status entries below the latest checkpoint are historical evidence, not current state.
+3. Identify the active phase and the first open, unblocked, highest-priority task. Do not advance a phase by assertion; use its acceptance evidence.
+4. Read relevant specifications in `docs/` and check the canonical options bank before proposing a setting or subsystem.
+5. When repository documents disagree, use the newest dated current checkpoint and executable gate table; correct the conflicting document in the same change instead of copying the conflict forward.
 
 ## Product rules
 
@@ -39,4 +41,8 @@
 
 ## Tooling boundary
 
-No CLI-related task or work item may be created, scheduled, implemented, or run before final plugin readiness. Do not add a user-facing CLI or CLI-only merchant workflow. Revisit CLI work only after finalization.
+Before final plugin readiness, do not create a user-facing WP-CLI command, CLI-only merchant setup, or planned product/development work item whose deliverable is a CLI feature. Automated CI/build workflows may use shell commands and PHP/Node runtimes as internal verification mechanics; these commands are not plugin features or CLI backlog tasks. Do not expose CI commands as merchant requirements.
+
+## Artifact handoff boundary
+
+Do not attach or provide plugin ZIPs or other project files in chat. When an authorized test-site upload is part of the task, use the connected browser flow, verify the installed build identity, then delete temporary local package copies. If browser upload fails, do not repeat the same failing flow in a loop: keep the artifact in GitHub Actions, record the exact failure, continue independent code/CI/docs work, and request a manual site action only when no available route can complete the required installation.

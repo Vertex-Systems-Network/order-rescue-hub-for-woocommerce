@@ -1,5 +1,16 @@
 # Project status log
 
+## Current verified checkpoint — 2026-11-10
+
+- **Repository/head:** `main` at `402227a95df6a4f173502c27574fa689a8f4be0b`.
+- **Phase 7:** 5/10 binary gates complete (50%). P7-02, P7-03, P7-04, P7-05 and P7-06 are complete; P7-01, P7-07, P7-08, P7-09 and P7-10 are open. See the canonical acceptance ledger in `docs/AI-PLAN.md`.
+- **Latest CI:** Run [42712129164](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42712129164), commit `402227a95df6a4f173502c27574fa689a8f4be0b`, succeeded across all five jobs. P7-05 security acceptance is complete for the recorded automated matrix.
+- **Audit finding / next action:** P7-01 was reopened because the detector labels every pending order `pending_payment` at one hour, without an editable grace threshold or test coverage for valid offline/delayed payment. Update product/UX/options and implement/test a safe configurable policy before lower-priority gates. This source gap remains unfixed.
+- **Staging:** Build 50 is the last browser-confirmed install. Build 67 is CI-green but not installed on staging; the browser file chooser timed out and no deployment success was observed.
+- **Delivery:** No ZIP or project file is to be attached in chat. Temporary test packages are removed from local storage after attempts; the GitHub Actions artifact remains the package record. No CLI feature or CLI backlog item was added.
+- **Historical-log rule:** Entries below this checkpoint are append-only earlier-state records. Do not treat them as current if they conflict with this checkpoint or the gate ledger.
+
+
 ## 2026-11-06 — Initial product framing
 
 - **Phase:** 1 — Market and requirements (in progress).
@@ -449,3 +460,12 @@
 - **Run 66:** Package job passed; all four matrix cells passed the scoped cross-order capability check. The nonce check still failed because WordPress deliberately bypasses cookie-nonce validation when another authentication method is marked as active. The isolated fixture had not modeled core's `$wp_rest_auth_cookie` marker, which core sets after validating the logged-in cookie.
 - **Correction:** The fixture now temporarily sets that core marker before applying `rest_authentication_errors`, then restores it. The test asserts invalid nonce returns `rest_cookie_invalid_nonce`/403 and valid nonce returns `true`.
 - **Next:** Verify the corrected auth-filter fixture through CI. This remains test harness work; plugin REST nonce behavior is still unaccepted pending the run.
+
+
+## 2026-11-10 — Deep repository and plan audit; canonical status repair
+
+- Audited the repository tree, `main` history through Build 67, current README/AI rules, Phase 7 report, detector, Pro settings, and relevant automated tests.
+- Reconciled gate count and AI-01/AI-02 completion labels; clarified the no-CLI boundary and removed the ZIP-in-chat fallback. Details: `docs/AI-PLAN-AUDIT.md`.
+- P7-05 closed from green run `42712129164`. P7-01 reopened after source review confirmed the pending-payment false-positive/configuration gap. Phase 7 remains 5/10; next work is the P7-01 behavior/threshold repair.
+- Build 67 has not been installed on staging. Browser file chooser timed out; the temporary package copy was removed and no staging result is claimed.
+- This audit commit changes documentation only; no code or tests were modified. No CLI feature or backlog item was added.
