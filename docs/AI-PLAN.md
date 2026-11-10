@@ -23,7 +23,7 @@ AI-08 Pro capability source is complete for the documented scope. Pro activation
 
 ## Phase 5 completion note
 
-AI-07 implementation is complete for the planned Free MVP scope. Do not treat this as a production release or compatibility certification. Phase 7 owns PHP runtime, WordPress/WooCommerce/HPOS, WPML/Polylang, accessibility, security and performance validation. No CLI-related backlog item was added.
+AI-07 implementation is complete for the planned Free MVP scope. Do not treat this as a production release or compatibility certification. Phase 7 owns PHP runtime, WordPress/WooCommerce/HPOS, accessibility, security and performance validation. Standard WordPress localization is in scope; third-party multilingual integrations are out of scope by owner decision. No CLI-related backlog item was added.
 
 ## Execution protocol (applies to all models)
 
@@ -43,7 +43,7 @@ AI-07 implementation is complete for the planned Free MVP scope. Do not treat th
 
 ## Phase 7 executable gates
 
-Use this priority order; a gate is complete only when every criterion in its acceptance evidence is recorded. Partial evidence does not count toward the progress numerator. Equal-weight gate progress is completed gates / 10. Current count: 5/10. P7-01 is deliberately reopened because new source evidence invalidated the previous business-behavior coverage; this is not a new percentage estimate. WordPress.org and WooCommerce.com submission/review are separate later phases, not Phase 7 engineering gates.
+Use this priority order; a gate is complete only when every criterion in its acceptance evidence is recorded. Partial evidence does not count toward the progress numerator. Equal-weight gate progress is completed active gates / 9. P7-06 is retired and excluded from the denominator by owner decision. Current count: 4/9 (44%). P7-01 is deliberately reopened because new source evidence invalidated the previous business-behavior coverage; this is not a new percentage estimate. WordPress.org and WooCommerce.com submission/review are separate later phases, not Phase 7 engineering gates.
 
 | ID | Gate | Current state | Owner | Acceptance evidence | Next action |
 |---|---|---|---|---|---|
@@ -52,11 +52,10 @@ Use this priority order; a gate is complete only when every criterion in its acc
 | P7-03 | HPOS and legacy storage runtime | Complete | Agent | Inbox and case detail verified in both modes on the authorized site; HPOS restored; single-environment limitation recorded | Reopen only if order access paths change |
 | P7-04 | Schema migration and idempotency | Complete | Agent | WordPress/MySQL integration migration 1.0.0→1.1.0 passes; required columns/indexes persist; repeat run is unchanged | Reopen only when schema/migration code changes |
 | P7-05 | REST/security acceptance matrix | Complete — CI 42712129164 | Agent | Subscriber denial, scoped order access, invalid input, REST auth nonce behavior, stale/concurrent mutation guards, and sensitive-action absence checks pass in the four-cell matrix and static guard | Preserve the checks on runtime changes; do not overstate this as an independent security certification or live HTTP penetration test |
-| P7-06 | WPML/Polylang agreed dry-run | Complete | Agent | Static review confirms no hard dependency/direct vendor API assumptions; translation-ready strings and WooCommerce CRUD identity documented; user-approved dry-run scope recorded | No vendor runtime required unless user later supplies the plugins |
 | P7-07 | Accessibility acceptance | Open | Agent | Keyboard-only workflows, screen-reader names/state, focus, contrast, zoom/reflow, reduced motion, error/empty states checked against the documented target | Finish remaining admin UI review; fix and recheck failures |
 | P7-08 | Performance acceptance | Open | Agent | CI synthetic query budget plus bounded WooCommerce order-scan and representative staging latency/memory baseline recorded | Extend beyond the case-table-only synthetic query |
 | P7-09 | Pro runtime acceptance | Open | Agent | Paid-build UI, settings persistence, assignment, SLA transitions, workflow execution/idempotency/retry and alert delivery tested in isolated Pro fixture; sensitive order actions remain unavailable | Use an isolated Pro fixture; CI stubs alone do not close this gate |
-| P7-10 | Free/Pro engineering package acceptance | Open | Agent | Free and Pro package contents audited separately; Composer runtime and translation assets present; build identity, exclusions, clean install/upgrade and hashes recorded; no directory approval implied | Build and inspect both edition artifacts; use the authorized test site when the browser flow works; keep artifacts in Actions and never attach them in chat |
+| P7-10 | Free/Pro engineering package acceptance | Open | Agent | Free and Pro package contents audited separately; Composer runtime and WordPress localization assets present; build identity, exclusions, clean install/upgrade and hashes recorded; no directory approval implied | Build and inspect both edition artifacts; use the authorized test site when the browser flow works; keep artifacts in Actions and never attach them in chat |
 
 ## Model-specific repository entry points
 

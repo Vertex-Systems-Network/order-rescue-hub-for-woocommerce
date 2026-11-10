@@ -21,7 +21,7 @@ Before submission:
 - Prepare a complete installable production ZIP and directory readme/assets. Remove development-only artifacts, placeholders, uncompiled source-only UI and unnecessary files; the package must be ready for end users.
 - Audit the complete plugin against current detailed directory guidelines, security practices, privacy/data handling, trademark rules and external-service disclosures.
 - Confirm the chosen slug/name, developer/support contact and update ownership.
-- Test activation, upgrade, deactivation, uninstall behavior, supported WordPress/PHP/WooCommerce combinations, HPOS and multilingual scenarios.
+- Test activation, upgrade, deactivation, uninstall behavior, supported WordPress/PHP/WooCommerce combinations and HPOS.
 - Submit through the official Plugin Directory process. If accepted, use the assigned SVN repository for directory releases and follow current readme/release requirements.
 - Keep upgrade prompts restrained and compliant; do not make the Free plugin a non-functional shell for paid software.
 
@@ -51,7 +51,7 @@ Before application/submission:
 3. **Dependency behavior:** Pro must clearly identify whether the Free base is required; fail gracefully and explain missing dependencies.
 4. **Data migration:** define schema upgrades, rollback expectations, uninstall behavior, retention and export/delete responsibilities.
 5. **Security:** capabilities, nonces, input validation, escaping, privacy minimization, redacted logs and explicit approval for financially consequential actions.
-6. **Compatibility:** Use the baseline in `docs/PLATFORM-BASELINE.md`; recheck the latest two stable WP/Woo majors, PHP lifecycle and Marketplace policy before release. Test HPOS, classic storage where supported, WPML and Polylang; advertise only verified combinations.
+6. **Compatibility:** Use the baseline in `docs/PLATFORM-BASELINE.md`; recheck the latest two stable WP/Woo majors, PHP lifecycle and Marketplace policy before release. Test HPOS and classic storage where supported; advertise only verified combinations. Third-party multilingual integrations are out of scope.
 7. **Packaging:** separate clean production artifacts from source/docs/test tooling. No CLI-related task or user-facing CLI work before the plugin is final.
 8. **Pricing/support:** finalize price parity, license activation/renewal, update policy, support channel and service expectations.
 9. **Review closure:** track WordPress.org and Woo Marketplace review comments separately; do not conflate submission with approval or publication.

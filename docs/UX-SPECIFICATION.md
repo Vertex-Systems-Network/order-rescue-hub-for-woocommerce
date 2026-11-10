@@ -147,7 +147,7 @@ Target WCAG 2.2 AA and WordPress/WooCommerce accessibility conventions.
 - Dialogs and side panels must have correct labeling, focus containment when modal, Escape behavior where safe, and return focus to the launching control.
 - Respect reduced-motion settings; do not use animation as the only status signal.
 - Keep strings translation-ready with WordPress internationalization conventions. Use locale-aware dates/numbers and avoid constructing sentences from concatenated fragments. Preserve RTL layout behavior.
-- WPML and Polylang remain compatibility requirements; language context may be shown for an order only when safely available.
+- Third-party multilingual plugin integrations and order-language context are out of scope. The admin UI follows the site's WordPress locale.
 
 ## 9. Phase 2 acceptance checklist
 

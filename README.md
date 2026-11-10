@@ -39,12 +39,12 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 | 4. Pre-development package | Technical decisions, acceptance criteria, threat model, release and test matrix | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 5. Free MVP implementation | Exception inbox, filters, notes, audit history, accessible admin UI, bundled Composer PSR-4 autoloader | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
 | 6. Pro capabilities | Admin email alerts, bounded workflows, team assignment, SLA clocks and approval boundary | Complete | `█████ 100%` | 2026-11-06 | 2026-11-06 |
-| 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, WPML, Polylang, security, performance and detection fidelity | In progress — 5/10 binary gates; CI run 42712129164 passes P7-05 security matrix; P7-01 reopened after source audit found pending-payment false-positive/configuration gap | `██░░░ 50%` | 2026-11-07 | 2027-01-08
+| 7. Compatibility and quality | WordPress/WooCommerce matrix, HPOS, security, performance and detection fidelity | In progress — 4/9 active binary gates; P7-01 reopened after source audit found pending-payment false-positive/configuration gap; P7-05 security matrix passes CI | `████░░░░░ 44%` | 2026-11-07 | 2027-01-08
 | 8. WordPress.org Free submission | GPL-compatible Free package, readme/assets, directory review submission and SVN release preparation | Not started | `░░░░░ 0%` | 2027-01-09 | 2027-01-22 |
 | 9. WooCommerce.com Pro submission | Vendor application, paid Pro package, QIT/UX evidence, Marketplace review and feedback fixes | Not started | `░░░░░ 0%` | 2027-01-23 | 2027-02-05 |
 | 10. Release and maintenance readiness | Approval-dependent launch checklist, versioned releases, support and update process | Not started | `░░░░░ 0%` | 2027-02-06 | 2027-02-12 |
 
-**Current verified status (2026-11-10):** Phases 0–6 are complete for their documented implementation scope. Phase 7 has **5/10 binary gates complete (50%)**. P7-05 security acceptance passed in GitHub Actions run [42712129164](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42712129164), commit `402227a95df6a4f173502c27574fa689a8f4be0b`; all five jobs passed, including the four-cell WP/Woo matrix, REST authorization/nonce cases, cross-order isolation, and package build. P7-01 is **open again** after a source audit found pending-payment detection fires after one hour for every payment method while the documented product rule says not to misclassify valid delayed/offline payment; configurable pending-age policy is absent from Pro settings and detector regression coverage. The last browser-confirmed staging install remains Build 50. Build 67 passed CI and produced an Actions artifact, but it was not installed on staging; no staging result is claimed. Next task: define and implement a conservative, configurable pending-payment policy and add focused regression coverage. P7-07 accessibility, P7-08 performance, P7-09 Pro runtime, and P7-10 Free/Pro package acceptance remain open. WPML/Polylang completion is limited to the user-approved dry-run; no vendor runtime certification is claimed. WordPress.org and WooCommerce.com review remains in later distribution phases. The gate ledger and exact evidence are in [docs/AI-PLAN.md](docs/AI-PLAN.md) and [the Phase 7 quality report](docs/PHASE-7-QUALITY-REPORT.md); the source/spec gap review is in [docs/AI-PLAN-AUDIT.md](docs/AI-PLAN-AUDIT.md).
+**Current verified status (2026-11-11):** Phases 0–6 are complete for their documented implementation scope. Phase 7 has **4/9 active binary gates complete (44%)**. P7-05 security acceptance passed in GitHub Actions run [42712129164](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42712129164), commit `402227a95df6a4f173502c27574fa689a8f4be0b`; all five jobs passed, including the four-cell WP/Woo matrix, REST authorization/nonce cases, cross-order isolation, and package build. P7-01 is **open again** after a source audit found pending-payment detection fires after one hour for every payment method while the documented product rule says not to misclassify valid delayed/offline payment; configurable pending-age policy is absent from Pro settings and detector regression coverage. The last browser-confirmed staging install remains Build 50. Build 67 passed CI and produced an Actions artifact, but it was not installed on staging; no staging result is claimed. Next task: define and implement a conservative, configurable pending-payment policy and add focused regression coverage. P7-07 accessibility, P7-08 performance, P7-09 Pro runtime, and P7-10 Free/Pro package acceptance remain open. P7-06 multilingual integration dry-run is retired and excluded from the denominator by owner decision. WPML and Polylang integrations are out of scope by owner decision; standard WordPress localization remains supported. WordPress.org and WooCommerce.com review remains in later distribution phases. The gate ledger and exact evidence are in [docs/AI-PLAN.md](docs/AI-PLAN.md) and [the Phase 7 quality report](docs/PHASE-7-QUALITY-REPORT.md); the source/spec gap review is in [docs/AI-PLAN-AUDIT.md](docs/AI-PLAN-AUDIT.md).
 
 ## Phase 7 task tracker
 
@@ -57,13 +57,12 @@ Progress is binary and tied to each gate's acceptance evidence. A gate shows 100
 | P7-03 | HPOS and legacy order storage | Complete | `█████ 100%` | 2026-11-07 | Accepted by 2026-11-10 | Reopen only if order access paths change |
 | P7-04 | Schema migration and idempotency | Complete | `█████ 100%` | 2026-11-07 | Accepted by 2026-11-10 | Reopen when schema or migration code changes |
 | P7-05 | REST and security acceptance matrix | Complete — CI run 42712129164 | `█████ 100%` | 2026-11-07 | 2026-11-10 | Preserve automated checks; this is not an independent penetration audit |
-| P7-06 | WPML/Polylang agreed dry-run | Complete for approved scope | `█████ 100%` | 2026-11-07 | Accepted by 2026-11-10 | No runtime certification claimed without the products installed |
 | P7-07 | Accessibility acceptance | Open | `░░░░░ 0%` | Not started | Target: 2027-01-08 | Check keyboard, screen reader, focus, contrast, zoom/reflow, reduced motion, empty/error states |
 | P7-08 | Performance acceptance | Open | `░░░░░ 0%` | Not started | Target: 2027-01-08 | Set reproducible budgets; measure bounded Woo order scans, case queries and latency/memory |
 | P7-09 | Pro runtime acceptance | Open | `░░░░░ 0%` | Not started | Target: 2027-01-08 | Verify isolated Pro UI/settings, assignment, SLA, workflows, retries and alerts |
 | P7-10 | Free/Pro engineering packages | Open | `░░░░░ 0%` | Not started | Target: 2027-01-08 | Audit both packages, install/upgrade evidence and hashes; keep ZIPs out of chat |
 
-**Phase 7 total: 5/10 accepted gates (50%).** Current open tasks: P7-01, P7-07, P7-08, P7-09 and P7-10. Gate evidence and definitions: [`docs/AI-PLAN.md`](docs/AI-PLAN.md); audit notes: [`docs/AI-PLAN-AUDIT.md`](docs/AI-PLAN-AUDIT.md).
+**Phase 7 total: 4/9 active gates (44%).** Current open tasks: P7-01, P7-07, P7-08, P7-09 and P7-10. Gate evidence and definitions: [`docs/AI-PLAN.md`](docs/AI-PLAN.md); audit notes: [`docs/AI-PLAN-AUDIT.md`](docs/AI-PLAN-AUDIT.md).
 
 ## Build a staging test package
 
@@ -116,7 +115,7 @@ Research is based on published listings and documentation, not hands-on plugin t
 
 ## Phase 4: pre-development package
 
-**Status: complete (100%, 2026-11-06).** Implementation contracts, Free MVP acceptance, threat review, dated PHP/WP/WooCommerce/HPOS/database/WPML/Polylang test matrix, and release gates are recorded in [docs/PRE-DEVELOPMENT-PLAN.md](docs/PRE-DEVELOPMENT-PLAN.md). The plan was completed before implementation began; actual implementation evidence is recorded in the Phase 5 and Phase 6 reports.
+**Status: complete (100%, 2026-11-06).** Implementation contracts, Free MVP acceptance, threat review, dated PHP/WP/WooCommerce/HPOS/database test matrix, and release gates are recorded in [docs/PRE-DEVELOPMENT-PLAN.md](docs/PRE-DEVELOPMENT-PLAN.md). The plan was completed before implementation began; actual implementation evidence is recorded in the Phase 5 and Phase 6 reports.
 
 ## Phase 6: Pro capability implementation
 
@@ -151,7 +150,7 @@ Each capability has one canonical key. Filter controls, rule logic and delivery 
 | `reporting.metrics` | Open case count and queue totals | Basic | Trends are a later phase | Export and aggregate reporting require separate privacy/performance review |
 | `data.retention` | Retain/purge Hub-owned case data | Safe defaults | Configurable | Never delete WooCommerce order records |
 | `privacy.data_rights` | Export/erase Hub-owned personal data where applicable | Yes | Yes | Separate from order deletion or WooCommerce record ownership |
-| `integrations.multilingual` | Translation-ready admin UI and order-language context | Yes | Yes | WPML/Polylang are optional and must be tested |
+| `admin.localization` | Translation-ready admin UI, locale-aware dates/numbers, and RTL layout | Yes | Yes | Uses WordPress localization APIs; third-party multilingual integrations are out of scope |
 
 ### Systems bank (separate from settings)
 
@@ -167,7 +166,7 @@ Each capability has one canonical key. Filter controls, rule logic and delivery 
 10. **Approval/action:** Proposal and execution separated; require fresh state, nonce/capability checks, human approval, idempotency and audit record.
 11. **Storage/migration:** Hub case records separate from WooCommerce truth; schema upgrades, retention and uninstall behavior.
 12. **Privacy/access:** Least privilege, data minimization, redacted logs and export/erase handling.
-13. **Localization/compatibility:** WordPress i18n, HPOS plus supported legacy storage, WPML and Polylang verification.
+13. **Localization/compatibility:** WordPress i18n, locale-aware formatting, RTL layout, HPOS plus supported legacy storage.
 14. **Performance/observability:** Measured query cost, cache invalidation and actionable errors without customer/payment payloads.
 
 No CLI tasks or CLI work items are included before the plugin is final.
@@ -180,7 +179,7 @@ No CLI tasks or CLI work items are included before the plugin is final.
 - **Integration boundary:** The add-on should detect WooCommerce availability, fail gracefully when dependencies are missing, and keep the WPEssential suite relationship optional unless a concrete shared-core dependency is justified.
 - **CLI deferral:** Do not create, schedule, implement, or run any CLI-related task before the plugin is final. Do not add WP-CLI commands or CLI-only merchant setup. Revisit CLI work only after finalization.
 - **Supported versions:** Exact minimum PHP, WordPress, WooCommerce, browser, and database versions remain **TBD** until market, hosting, and test-matrix review. Phase 1 must record a proposed baseline and the evidence for it. Do not advertise compatibility until verified.
-- **Multilingual:** English source strings, translation-ready text domain, plural/context support. Validate WPML integration (including `wpml-config.xml` only if plugin-owned translatable settings require it) and Polylang behavior. No claim of official certification without the vendor process.
+- **Localization:** English source strings, WordPress translation APIs, plural/context support, locale-aware formatting, and RTL layout. Third-party multilingual integrations are out of scope.
 - **Licensing and distribution:** Target WordPress.org for the Free edition and WooCommerce.com Marketplace for paid Pro. The exact Pro listing model, billing, vendor account, GPL-compatible license, trademark checks, package split and submission evidence are tracked in `docs/DISTRIBUTION-PLAN.md`; do not imply approval before both review processes finish.
 
 ## AI collaboration instructions
@@ -209,11 +208,9 @@ Phase 1 market and platform review completed 2026-11-06 using official WooCommer
 - WooCommerce HPOS recipe book: https://developer.woocommerce.com/docs/features/orders/high-performance-order-storage/recipe-book/
 - WordPress plugin handbook: https://developer.wordpress.org/plugins/
 - WordPress React element package: https://developer.wordpress.org/block-editor/reference-guides/packages/packages-element/
-- WPML WooCommerce translation: https://wpml.org/documentation/translating-your-contents/translate-woocommerce/
-- Polylang for WooCommerce: https://polylang.pro/documentation/support/guides/polylang-wc-installation/
 - Market comparison: `docs/MARKET-AND-OPTIONS.md`.
 - Platform requirements: `docs/PLATFORM-BASELINE.md`.
-- PHP/WordPress/WooCommerce/WPML/Polylang and Marketplace source links are listed in those documents.
+- PHP/WordPress/WooCommerce and Marketplace source links are listed in those documents.
 
 ## Distribution strategy
 
@@ -240,4 +237,4 @@ Official references checked 2026-11-06:
 
 ## Phase 7: Compatibility and quality
 
-**Status: in progress (5/10 binary gates, 50%; snapshot 2026-11-10).** P7-01 has been reopened by a source-level product-fit audit: `Detector::evaluate()` classifies any `pending` order as `pending_payment` after one hour, without a configurable grace threshold or payment-method policy; the current smoke test has no pending-payment boundary cases. That conflicts with the product requirement not to treat valid delayed/offline payment as a failure. The next task is to define the safe threshold behavior, align the canonical option bank and settings UX, implement it, and add regression evidence. P7-05 is complete for its recorded CI acceptance in run [42712129164](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42712129164), including subscriber denial, invalid filters, scoped cross-order access, REST nonce checks, and forbidden-action scan. Build 50 remains the last browser-confirmed staging build; Build 67 passed CI but was not installed on staging. P7-07 accessibility, P7-08 performance, P7-09 Pro runtime, and P7-10 Free/Pro package acceptance remain open. WordPress.org/WooCommerce.com review is tracked separately. See [docs/AI-PLAN.md](docs/AI-PLAN.md) and [docs/PHASE-7-QUALITY-REPORT.md](docs/PHASE-7-QUALITY-REPORT.md).
+**Status: in progress (4/9 active binary gates, 44%; snapshot 2026-11-11).** P7-01 has been reopened by a source-level product-fit audit: `Detector::evaluate()` classifies any `pending` order as `pending_payment` after one hour, without a configurable grace threshold or payment-method policy; the current smoke test has no pending-payment boundary cases. That conflicts with the product requirement not to treat valid delayed/offline payment as a failure. The next task is to define the safe threshold behavior, align the canonical option bank and settings UX, implement it, and add regression evidence. P7-05 is complete for its recorded CI acceptance in run [42712129164](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42712129164), including subscriber denial, invalid filters, scoped cross-order access, REST nonce checks, and forbidden-action scan. Build 50 remains the last browser-confirmed staging build; Build 67 passed CI but was not installed on staging. P7-07 accessibility, P7-08 performance, P7-09 Pro runtime, and P7-10 Free/Pro package acceptance remain open. WordPress.org/WooCommerce.com review is tracked separately. See [docs/AI-PLAN.md](docs/AI-PLAN.md) and [docs/PHASE-7-QUALITY-REPORT.md](docs/PHASE-7-QUALITY-REPORT.md).

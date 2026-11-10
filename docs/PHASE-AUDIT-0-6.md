@@ -35,5 +35,5 @@
 
 ## Verification limitations and next gate
 
-This was a source/documentation audit. It did not include PHP parsing/runtime, WordPress/WooCommerce installation, HPOS/legacy storage, live mail delivery, accessibility, security penetration, performance, WPML/Polylang, or Marketplace checks. Do not advertise compatibility from this audit. Run the dated Phase 7 matrix before production packaging and refresh the platform snapshot at that time.
+This was a source/documentation audit. It did not include PHP parsing/runtime, WordPress/WooCommerce installation, HPOS/legacy storage, live mail delivery, accessibility, security penetration, performance, or Marketplace checks. Third-party multilingual integrations are out of scope by owner decision. Do not advertise compatibility from this audit. Run the dated Phase 7 matrix before production packaging and refresh the platform snapshot at that time.
 

@@ -40,8 +40,8 @@ The implementation phase does not establish release compatibility. These checks 
 - HPOS and legacy order storage flows; scheduled sweep correctness under real WooCommerce versions.
 - Role/capability and REST authorization scenarios, including nonces and cross-case access.
 - Notes/event behavior, duplicate hooks, stale-state handling, database errors, and migration recovery.
-- WPML and Polylang integration, translations, RTL and locale/timezone display.
+- WordPress localization, RTL and locale/timezone display; third-party multilingual integrations are out of scope.
 - Keyboard and screen-reader review, contrast and responsive admin behavior.
 - Large-store query/performance profiling and WordPress.org/WooCommerce.com review tooling.
 
-No claim of WordPress.org, WooCommerce.com, HPOS, WPML, Polylang, PHP runtime, accessibility, security audit, or performance compatibility is made by this Phase 5 record.
+Third-party multilingual integrations are out of scope. This Phase 5 record makes no claim of WordPress.org/WooCommerce.com approval, HPOS, PHP runtime, accessibility, security audit, or performance compatibility.

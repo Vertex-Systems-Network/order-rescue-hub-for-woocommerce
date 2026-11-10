@@ -60,7 +60,7 @@ These are system responsibilities, not duplicate UI settings:
 10. **Approval/action gateway:** Keep proposal separate from execution; fresh order/payment-state check, explicit per-order approval, idempotency and append-only audit before any approved high-impact action.
 11. **Storage and migrations:** Store case data separately from WooCommerce order truth; schema versioning, upgrade, retention, export/delete and uninstall behavior documented before implementation.
 12. **Access, privacy and audit:** Existing WordPress capabilities/nonces, least privilege, input/output safety, minimized personal data, redacted logs and attributable case history.
-13. **Localization and compatibility:** WordPress translation APIs for PHP/React strings; HPOS and supported classic order storage tests; WPML/Polylang test matrix without hard dependency on either.
+13. **Localization and compatibility:** WordPress translation APIs for PHP/React strings, locale-aware formatting and RTL; HPOS and supported classic order storage tests. WPML and Polylang integrations are out of scope.
 14. **Performance and observability:** Bounded queries, indexed plugin-owned case fields if justified, cache invalidation, actionable admin errors and no payment/customer payloads in routine logs.
 
 ## Phase 1 completion record
@@ -69,7 +69,7 @@ These are system responsibilities, not duplicate UI settings:
 - [x] Recorded product overlap, market gap, differentiation and explicit non-goals.
 - [x] Expanded the canonical option bank and documented key ownership to avoid duplicate settings.
 - [x] Separated product options from system responsibilities.
-- [x] Recorded supported-version baseline and multilingual test targets in `docs/PLATFORM-BASELINE.md`.
+- [x] Recorded supported-version baseline and localization requirements in `docs/PLATFORM-BASELINE.md`.
 - [x] Added both distribution tracks and their policy gates to `docs/DISTRIBUTION-PLAN.md`.
 - [x] Deferred customer willingness-to-pay, Woo Marketplace listing-model confirmation and changing release-time versions to explicit future gates; they do not block this requirements phase.
 

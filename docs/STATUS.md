@@ -3,7 +3,7 @@
 ## Current verified checkpoint — 2026-11-10
 
 - **Repository/main HEAD:** `e85edf8532ffe485b3933df50a33ddf4f5ccb61a` (this documentation repair). **Audited runtime source commit:** `402227a95df6a4f173502c27574fa689a8f4be0b`.
-- **Phase 7:** 5/10 binary gates complete (50%). P7-02, P7-03, P7-04, P7-05 and P7-06 are complete; P7-01, P7-07, P7-08, P7-09 and P7-10 are open. See the canonical acceptance ledger in `docs/AI-PLAN.md`.
+- **Phase 7 (current, 2026-11-11):** 4/9 active gates complete (44%): P7-02 through P7-05. Open: P7-01 and P7-07 through P7-10. P7-06 multilingual integration dry-run is retired and excluded from the denominator by owner decision. Standard WordPress localization remains in scope. See `docs/AI-PLAN.md`.
 - **Latest CI:** Run [42712129164](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42712129164), commit `402227a95df6a4f173502c27574fa689a8f4be0b`, succeeded across all five jobs. P7-05 security acceptance is complete for the recorded automated matrix.
 - **Audit finding / next action:** P7-01 was reopened because the detector labels every pending order `pending_payment` at one hour, without an editable grace threshold or test coverage for valid offline/delayed payment. Update product/UX/options and implement/test a safe configurable policy before lower-priority gates. This source gap remains unfixed.
 - **Staging:** Build 50 is the last browser-confirmed install. Build 67 is CI-green but not installed on staging; the browser file chooser timed out and no deployment success was observed.
@@ -37,7 +37,7 @@
 - **Phase:** 1 — Market and requirements (**Complete, 100%**). Phase 2 remains planned.
 - **Completed:** Compared WooCommerce core and seven adjacent products; documented overlap, price evidence where published, product gap and non-goals; expanded the canonical options bank; separated product options from system responsibilities; set the Phase 1 platform baseline; recorded Free/Pro directory submission requirements and release gates.
 - **Market evidence:** Public listings/documentation reviewed for Order Workflows, Stale Order Alerts, Failed Order Rescue, Order Priority, Assign Orders, Universal Workflow Automation and Out The Door. Assign Orders displayed $79/year in its Marketplace listing; the planned $99/year Pro price remains a hypothesis, not a validated willingness-to-pay result.
-- **Platform baseline recorded:** Target PHP 8.3+; WordPress 7.0+; WooCommerce 11.1+ at the Phase 1 decision date. Current reference matrix is WordPress 7.0/7.1 and WooCommerce 11.1/11.2; refresh to the two latest stable major releases before launch. Current WPML and Polylang reference versions and the HPOS/legacy storage requirements are documented in `docs/PLATFORM-BASELINE.md`.
+- **Platform baseline recorded:** Target PHP 8.3+; WordPress 7.0+; WooCommerce 11.1+ at the Phase 1 decision date. Current reference matrix is WordPress 7.0/7.1 and WooCommerce 11.1/11.2; refresh to the two latest stable major releases before launch. The HPOS/legacy storage requirements are documented in `docs/PLATFORM-BASELINE.md`.
 - **Distribution:** Free-to-WordPress.org and paid-Pro-to-WooCommerce.com tracks are in the README and `docs/DISTRIBUTION-PLAN.md`. Marketplace vendor approval, listing model, billing terms, price parity and reviewer acceptance remain external release gates.
 - **Compatibility risk:** Woo Marketplace's current generic guidance still lists PHP 7.4+ while WooCommerce 11.6 is announced to require PHP 8.1+ from January 2027; PHP 8.1 is upstream EOL. The plan targets PHP 8.3+ and requires written Marketplace clarification before submission.
 - **CLI constraint:** No CLI task/work item was added. README, AGENTS.md and AI-PLAN now defer all CLI-related work until after the plugin is final.
@@ -466,6 +466,6 @@
 
 - Audited the repository tree, `main` history through Build 67, current README/AI rules, Phase 7 report, detector, Pro settings, and relevant automated tests.
 - Reconciled gate count and AI-01/AI-02 completion labels; clarified the no-CLI boundary and removed the ZIP-in-chat fallback. Details: `docs/AI-PLAN-AUDIT.md`.
-- P7-05 closed from green run `42712129164`. P7-01 reopened after source review confirmed the pending-payment false-positive/configuration gap. Phase 7 remains 5/10; next work is the P7-01 behavior/threshold repair.
+- P7-05 closed from green run `42712129164`. P7-01 reopened after source review confirmed the pending-payment false-positive/configuration gap. At this dated checkpoint, the denominator was 10; the current denominator is 9 after retiring P7-06.
 - Build 67 has not been installed on staging. Browser file chooser timed out; the temporary package copy was removed and no staging result is claimed.
 - This audit commit changes documentation only; no code or tests were modified. No CLI feature or backlog item was added.

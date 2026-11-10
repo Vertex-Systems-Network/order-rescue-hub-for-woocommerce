@@ -100,13 +100,11 @@ This is the required pre-release matrix, not evidence that compatibility has bee
 
 | Dimension | Planned minimum / baseline | Test coverage required |
 |---|---|---|
-| PHP | Plugin minimum target 8.3; run a latest supported PHP branch as well | PHP 8.3 and 8.5 on supported WordPress/WooCommerce set; PHP 8.4 included for multilingual combinations where vendor guidance requires it |
+| PHP | Plugin minimum target 8.3; run a latest supported PHP branch as well | PHP 8.3, 8.4, and 8.5 on the supported WordPress/WooCommerce set |
 | WordPress | Minimum target 7.0; stable-major branches 7.0 and 7.1 | Latest stable patch for each branch: 7.0.8 and 7.1.4 at snapshot date |
 | WooCommerce | Minimum target 11.1; stable-major branches 11.1 and 11.2 | Latest stable patch for each: 11.1.2 and 11.2.2 at snapshot date |
 | Order storage | HPOS required; legacy post storage where supported | Run core case flows in both modes; test compatibility declaration and migrations |
 | Database | WordPress recommended baseline: MySQL 8.0+ or MariaDB 10.11+ | Validate custom schema and indexes on supported MySQL/MariaDB versions; never rely on unverified JSON-column/index features |
-| WPML | Latest compatible WPML Multilingual CMS/String Translation and WooCommerce Multilingual integration; reference set CMS 5.3.0, String Translation 5.3.0, WooCommerce Multilingual 5.8.0 | Verify admin UI localization, order language context, REST payload, currency/order reads and no duplicate cases; use vendor-supported PHP versions |
-| Polylang | Polylang 3.9.1 plus Polylang for WooCommerce 2.2.7 reference set | Verify translated order language context, admin list, REST behavior and no duplicate cases; test with both free/Pro combinations where supported |
 | React/admin | WordPress package versions available on target WP branches; Woo admin patterns | Keyboard, WCAG 2.2 AA, all admin color schemes, RTL, narrow viewport, reduced motion, loading/empty/error states |
 | Distribution | Free WordPress.org and paid WooCommerce.com | WordPress.org Plugin Check/guideline/security review; Woo QIT and current Marketplace UX/accessibility/security gates; source/license review |
 
@@ -118,7 +116,7 @@ This is the required pre-release matrix, not evidence that compatibility has bee
 - Capability matrix for admin/order manager/support/read-only user; direct REST requests with missing nonce/capability; cross-order/case ID attempts.
 - XSS/SQL validation for notes, settings, filters, exported data and error handling.
 - Retention boundary, privacy export/erase, uninstall keep/purge choice, multisite per-site isolation.
-- WPML and Polylang integration cases above; translation extraction, locale formatting, RTL.
+- WordPress translation extraction, locale formatting, and RTL behavior; third-party multilingual integrations are out of scope.
 - React UI keyboard-only and assistive-technology review; contrast/color scheme; mobile-width admin fallback; WCAG 2.2 AA manual review plus automated accessibility scan.
 - Performance profiling against a representative large order dataset, query count and memory; set numeric budgets in Phase 7 based on baseline measurement.
 
@@ -129,8 +127,8 @@ This is the required pre-release matrix, not evidence that compatibility has bee
 - Minimum PHP and WordPress/WooCommerce header values must match the tested package and active distribution rules.
 - Woo Marketplace’s generic minimum PHP 7.4 requirement conflicts with the project’s planned PHP 8.3 minimum. Do not lower the security baseline without written policy clarification; record reviewer/vendor outcome before submission.
 - WordPress and WooCommerce recommend PHP 8.3 or newer; WordPress recommends MySQL 8.0 or MariaDB 10.11+. Project does not advertise tested support until verification evidence exists.
-- Support WPML/Polylang through optional integrations and tested behavior; never imply official certification unless the vendors grant it.
-- Current release branches and multilingual versions are recorded in docs/PLATFORM-BASELINE.md.
+- Keep admin strings translation-ready and preserve locale-aware formatting and RTL behavior; third-party multilingual integrations are out of scope.
+- Current WordPress, WooCommerce, PHP, and database targets are recorded in `docs/PLATFORM-BASELINE.md`.
 
 ## 8. Phase 4 acceptance checklist
 
@@ -138,7 +136,7 @@ This is the required pre-release matrix, not evidence that compatibility has bee
 - [x] Ordered Free MVP work packages and dependencies are defined.
 - [x] Definition of Done is documented.
 - [x] Threats, controls and evidence requirements are documented.
-- [x] PHP, WordPress, WooCommerce, database, HPOS, WPML and Polylang matrix is dated and source-backed.
+- [x] PHP, WordPress, WooCommerce, database, and HPOS matrix is dated and source-backed; third-party multilingual integrations are excluded by owner decision.
 - [x] Functional, security, privacy, accessibility, performance and distribution test scenarios are specified.
 - [x] Composer PSR-4 uses includes/ and direct vendor/autoload.php load; no custom SPL loader.
 - [x] No CLI task or CLI work item has been added.
@@ -157,9 +155,5 @@ Snapshot checked 2026-11-06:
 - WooCommerce server recommendations: https://woocommerce.com/document/update-php-wordpress/
 - PHP supported versions: https://www.php.net/supported-versions.php
 - WooCommerce 11.6 PHP requirement notice: https://developer.woocommerce.com/2026/09/29/php-8-1-requirement/
-- WPML minimum requirements: https://wpml.org/home/minimum-requirements/
-- WPML versions and WooCommerce compatibility: https://wpml.org/version/ and https://wpml.org/plugin/woocommerce-2/
-- Polylang directory requirements/version: https://wordpress.org/plugins/polylang/
-- Polylang for WooCommerce changelog: https://polylang.pro/polylang-for-woocommerce-changelog/
 - Woo Marketplace submission requirements: https://developer.woocommerce.com/docs/woo-marketplace/submitting-your-product
 - WordPress.org plugin guidelines: https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/
