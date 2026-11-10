@@ -48,7 +48,7 @@ Progress is tracked from reviewable deliverables. Planned dates are estimates an
 
 ## Phase 7 task tracker
 
-Progress is binary and tied to each gate's acceptance evidence. A gate shows 100% only after all listed checks pass; partial checks remain open. The overall figure is completed gates divided by ten.
+Progress is binary and tied to each gate's acceptance evidence. A gate shows 100% only after all listed checks pass; partial checks remain open. The overall figure is accepted active gates divided by nine; retired P7-06 is excluded.
 
 | Task | Deliverable | Status | Progress | Start | End / target | Next action |
 |---|---|---|---|---|---|---|
@@ -80,7 +80,7 @@ The Actions artifact expires after 14 days. This is a development/staging packag
 
 ## Phase 5: Free MVP implementation
 
-**Status: complete (100%, 2026-11-06).** The Free implementation, React admin inbox, REST endpoints, case/event storage, Composer PSR-4 runtime, and developer package notes are recorded in [docs/IMPLEMENTATION-FREE-MVP.md](docs/IMPLEMENTATION-FREE-MVP.md). JavaScript syntax was checked with Node. Phase 7 now records PHP 8.3 lint across all plugin PHP files and a successful Free admin bootstrap on one WordPress/WooCommerce staging environment. Broader version, order-fixture, multilingual, security, accessibility, and performance validation remains open. No CLI work item was added.
+**Status: complete (100%, 2026-11-06).** The Free implementation, React admin inbox, REST endpoints, case/event storage, Composer PSR-4 runtime, and developer package notes are recorded in [docs/IMPLEMENTATION-FREE-MVP.md](docs/IMPLEMENTATION-FREE-MVP.md). JavaScript syntax was checked with Node. Phase 7 now records PHP 8.3 lint across all plugin PHP files and a successful Free admin bootstrap on one WordPress/WooCommerce staging environment. Broader version, order-fixture, security, accessibility, and performance validation remains open. Standard WordPress localization and RTL behavior remain in scope; third-party multilingual integrations are out of scope. No CLI work item was added.
 
 ## Phase 0: product framing
 
