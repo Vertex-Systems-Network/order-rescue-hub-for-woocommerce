@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-11-10  
 **Audited repository:** `Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce`  
-**Audited branch/head:** `main` at `402227a95df6a4f173502c27574fa689a8f4be0b`  
+**Audited runtime source:** `main` at `402227a95df6a4f173502c27574fa689a8f4be0b`  
 **Purpose:** Reconcile the plan and agent instructions with current source, CI evidence, staging evidence, and the user's delivery constraints. This is an engineering/source review, not a third-party security certification.
 
 ## Audit findings and repairs

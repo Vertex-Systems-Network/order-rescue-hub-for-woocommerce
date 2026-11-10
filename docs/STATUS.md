@@ -2,7 +2,7 @@
 
 ## Current verified checkpoint — 2026-11-10
 
-- **Repository/head:** `main` at `402227a95df6a4f173502c27574fa689a8f4be0b`.
+- **Repository/main HEAD:** `e85edf8532ffe485b3933df50a33ddf4f5ccb61a` (this documentation repair). **Audited runtime source commit:** `402227a95df6a4f173502c27574fa689a8f4be0b`.
 - **Phase 7:** 5/10 binary gates complete (50%). P7-02, P7-03, P7-04, P7-05 and P7-06 are complete; P7-01, P7-07, P7-08, P7-09 and P7-10 are open. See the canonical acceptance ledger in `docs/AI-PLAN.md`.
 - **Latest CI:** Run [42712129164](https://github.com/Vertex-Systems-Network/wpessential-order-rescue-hub-woocommerce/actions/runs/42712129164), commit `402227a95df6a4f173502c27574fa689a8f4be0b`, succeeded across all five jobs. P7-05 security acceptance is complete for the recorded automated matrix.
 - **Audit finding / next action:** P7-01 was reopened because the detector labels every pending order `pending_payment` at one hour, without an editable grace threshold or test coverage for valid offline/delayed payment. Update product/UX/options and implement/test a safe configurable policy before lower-priority gates. This source gap remains unfixed.
